@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Portal da-tica — Servicios</title>
+  <meta name="description" content="Portal de presentación - página estática autocontenida usando solo HTML, CSS y JavaScript.">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Inline fallback styles: if styles.css not present, this guarantees basic readability */
+    :root{
+      --bg:#f6f8fa;
+      --card:#ffffff;
+      --muted:#6b7280;
+      --accent:#ff6b35;
+      --accent-2:#0066cc;
+      --text:#0b1220;
+      --glass: rgba(255,255,255,0.6);
+      --radius:12px;
+    }
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;
+      background:linear-gradient(180deg,var(--bg),#eef2f7 120%);
+      color:var(--text);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.45;
+    }
+    .site{
+      max-width:1100px;
+      margin:0 auto;
+      padding:28px;
+    }
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:24px;
+    }
+    .brand{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      text-decoration:none;
+      color:inherit;
+    }
+    .logo{
+      width:48px;height:48px;border-radius:10px;display:inline-grid;place-items:center;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      color:white;font-weight:700;font-size:18px;
+      box-shadow: 0 6px 18px rgba(3,10,22,0.08);
+    }
+    nav{display:flex;gap:12px;align-items:center}
+    nav a{
+      color:var(--muted);text-decoration:none;padding:8px 12px;border-radius:8px;font-weight:600;font-size:14px;
+    }
+    nav a.active, nav a:hover{color:var(--text);background:var(--glass)}
+    .controls{display:flex;gap:10px;align-items:center}
+    .btn{
+      background:var(--accent);color:white;padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:700;
+      box-shadow: 0 6px 18px rgba(255,107,53,0.12);
+    }
+    .ghost{background:transparent;color:var(--accent-2);border:1px solid rgba(0,0,0,0.06);padding:8px 12px;border-radius:10px}
+    /* Hero */
+    .hero{
+      display:grid;
+      grid-template-columns:1fr 380px;
+      gap:24px;
+      align-items:center;
+      margin-bottom:28px;
+    }
+    .hero-card{
+      background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.75));
+      border-radius:var(--radius);
+      padding:28px; box-shadow: 0 8px 30px rgba(11,18,32,0.06);
+    }
+    h1{margin:0 0 8px;font-size:28px}
+    p.lead{margin:0;color:var(--muted)}
+    .stat-grid{display:flex;gap:12px;margin-top:16px}
+    .stat{background:rgba(6,34,44,0.02);padding:10px;border-radius:10px;flex:1;text-align:center}
+    .stat strong{display:block;font-size:18px}
+    /* Services */
+    .services{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:28px 0}
+    .card{background:var(--card);border-radius:12px;padding:18px;box-shadow: 0 6px 16px rgba(8,15,30,0.04)}
+    .card h3{margin:8px 0;font-size:18px}
+    .icon{width:44px;height:44px;border-radius:10px;display:inline-grid;place-items:center;background:linear-gradient(135deg,#e6f4ff,#dff3ff);color:#0366d6}
+    /* Testimonials / carousel */
+    .carousel{margin:20px 0;padding:18px;border-radius:12px;background:linear-gradient(180deg,#fff,#fbfdff);display:flex;gap:12px;align-items:center}
+    .testimonial{flex:1}
+    .quote{font-style:italic;color:var(--muted)}
+    /* Contact form */
+    form{display:grid;gap:10px}
+    input,textarea,select{
+      padding:10px;border-radius:8px;border:1px solid rgba(11,18,32,0.06);font-size:14px;
+    }
+    .row{display:flex;gap:10px}
+    footer{margin-top:40px;padding-top:20px;border-top:1px solid rgba(11,18,32,0.04);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+    @media (max-width:900px){
+      .hero{grid-template-columns:1fr; }
+      .services{grid-template-columns:repeat(1,1fr)}
+    }
+  </style>
+</head>
+<body>
+  <div class="site" id="app-root" data-theme="light">
+    <header role="banner">
+      <a class="brand" href="#" id="home-link" aria-label="Ir al inicio">
+        <div class="logo" aria-hidden="true">DT</div>
+        <div>
+          <div style="font-weight:800">da-tica</div>
+          <small style="color:var(--muted)">Portal de Servicios</small>
+        </div>
+      </a>
+
+      <nav role="navigation" aria-label="Principal">
+        <a href="#/" class="navlink active">Inicio</a>
+        <a href="#/services" class="navlink">Servicios</a>
+        <a href="#/about" class="navlink">Acerca</a>
+        <a href="#/contact" class="navlink">Contacto</a>
+      </nav>
+
+      <div class="controls" role="group" aria-label="Controles">
+        <button class="ghost" id="theme-toggle" aria-pressed="false" title="Cambiar tema">🌙</button>
+        <button class="btn" id="cta-demo">Solicitar demo</button>
+      </div>
+    </header>
+
+    <main role="main">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-card" id="hero-left">
+          <h1 id="hero-title">Soluciones y servicios para tu infraestructura</h1>
+          <p class="lead">Deploys reproducibles, buenas prácticas en contenedores y despliegue con Coolify. Lista para producción con Cloudflare.</p>
+
+          <div class="stat-grid" aria-hidden="true">
+            <div class="stat"><strong>99.9%</strong><small style="color:var(--muted)">Uptime objetivo</small></div>
+            <div class="stat"><strong>3 min</strong><small style="color:var(--muted)">Deploy promedio</small></div>
+            <div class="stat"><strong>1 stack</strong><small style="color:var(--muted)">Zero surprises</small></div>
+          </div>
+
+          <div style="margin-top:18px;display:flex;gap:10px">
+            <button class="btn" id="hero-cta">Empieza ahora</button>
+            <button class="ghost" id="hero-learn">Ver la guía</button>
+          </div>
+        </div>
+
+        <aside class="card" id="hero-right" aria-label="Resumen">
+          <h3>Resumen rápido</h3>
+          <p style="color:var(--muted)">Stack listo para Coolify: no mapea puertos host, healthchecks, volúmenes persistentes y configuración lista para Cloudflare & Traefik.</p>
+          <ul style="margin:8px 0 0 16px;color:var(--muted)">
+            <li>Exposición interna: 8080</li>
+            <li>Restart: unless-stopped</li>
+            <li>Usuario no-root</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section id="services" aria-labelledby="services-title">
+        <h2 id="services-title">Servicios</h2>
+        <div class="services" role="list">
+          <article class="card" role="listitem">
+            <div style="display:flex;gap:12px;align-items:center">
+              <div class="icon" aria-hidden="true">⚙️</div>
+              <h3>Despliegues (Coolify)</h3>
+            </div>
+            <p style="color:var(--muted)">Preparación de docker-compose, healthchecks, y guías para publicar en Coolify con TLS gestionado.</p>
+          </article>
+
+          <article class="card" role="listitem">
+            <div style="display:flex;gap:12px;align-items:center">
+              <div class="icon" style="background:linear-gradient(135deg,#fff2e6,#fff6f0)" aria-hidden="true">🔒</div>
+              <h3>Seguridad & secretos</h3>
+            </div>
+            <p style="color:var(--muted)">Mejores prácticas: variables, no hardcode, roles y acceso mínimo en contenedores.</p>
+          </article>
+
+          <article class="card" role="listitem">
+            <div style="display:flex;gap:12px;align-items:center">
+              <div class="icon" style="background:linear-gradient(135deg,#e8fff2,#e8fff8)" aria-hidden="true">⚡</div>
+              <h3>Rendimiento</h3>
+            </div>
+            <p style="color:var(--muted)">Optimización de imágenes, límites de recursos y recomendaciones para VPS con recursos limitados.</p>
+          </article>
+        </div>
+      </section>
+
+      <section aria-labelledby="demo-title" style="margin-top:20px;display:grid;gap:12px">
+        <h2 id="demo-title">Demostración interactiva</h2>
+        <div class="carousel card" aria-live="polite">
+          <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#ffd7cf,#ffeedd);display:grid;place-items:center">👩‍💻</div>
+          <div class="testimonial">
+            <p class="quote" id="carousel-text">"Despliegue sencillo y predecible en minutos."</p>
+            <small style="color:var(--muted)" id="carousel-author">— Equipo de Infra</small>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <button class="ghost" id="prev">◀</button>
+            <button class="ghost" id="next">▶</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" aria-labelledby="contact-title" style="margin-top:18px">
+        <h2 id="contact-title">Contacto</h2>
+        <div style="display:grid;grid-template-columns:1fr 360px;gap:16px">
+          <form id="contact-form" class="card" aria-label="Formulario de contacto" novalidate>
+            <label>
+              Nombre
+              <input type="text" name="name" id="name" placeholder="Tu nombre" required>
+            </label>
+            <label>
+              Correo
+              <input type="email" name="email" id="email" placeholder="tu@correo.com" required>
+            </label>
+            <label>
+              Asunto
+              <input type="text" name="subject" id="subject" placeholder="Asunto breve" required>
+            </label>
+            <label>
+              Mensaje
+              <textarea name="message" id="message" rows="5" placeholder="Escribe tu mensaje..." required></textarea>
+            </label>
+            <div style="display:flex;gap:10px;justify-content:flex-end">
+              <button type="reset" class="ghost">Limpiar</button>
+              <button type="submit" class="btn">Enviar</button>
+            </div>
+            <div id="form-feedback" role="status" aria-live="polite" style="margin-top:8px;color:var(--muted)"></div>
+          </form>
+
+          <aside class="card" aria-label="Información de contacto">
+            <h3>Detalles</h3>
+            <p style="color:var(--muted)">Estamos disponibles para consultas técnicas y despliegues. No enviamos datos a servicios externos — este formulario es local y simula el envío (cliente-side).</p>
+            <p><strong>Email:</strong> hello@da-tica.example</p>
+            <p><strong>Soporte:</strong> docs & guides en el repo</p>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <footer role="contentinfo">
+      <small style="color:var(--muted)">© <span id="year"></span> da-tica | Deploy-ready stacks • Cloudflare → Coolify → Contenedor</small>
+      <div style="display:flex;gap:8px;align-items:center">
+        <a href="#/about" class="navlink">Política</a>
+        <a href="#/about" class="navlink">Seguridad</a>
+      </div>
+    </footer>
+  </div>
+
+  <noscript>
+    <div style="padding:12px;background:#fff3cd;color:#856404;border-radius:8px;max-width:1100px;margin:12px auto;text-align:center">JavaScript es necesario para la mejor experiencia de esta demo.</div>
+  </noscript>
+
+  <script src="app.js" defer></script>
+  <script>
+    // Inline fallback JS: provides behavior if app.js is not available.
+    (function(){
+      try{
+        if(window.__APP_FALLBACK_LOADED) return;
+        // Basic client behavior: nav routing, theme toggle, carousel, form validation
+        const root = document.getElementById('app-root');
+        const navlinks = Array.from(document.querySelectorAll('.navlink'));
+        function setActive(hash){
+          navlinks.forEach(a=> a.classList.toggle('active', a.getAttribute('href')===hash));
+        }
+        function route(){
+          const h = location.hash || '#/';
+          setActive(h);
+          // Basic scroll to sections
+          if(h === '#/' || h === '#/home'){
+            window.scrollTo({top:0,behavior:'smooth'});
+          } else if(h.startsWith('#/services')){
+            document.getElementById('services').scrollIntoView({behavior:'smooth'});
+          } else if(h.startsWith('#/contact')){
+            document.getElementById('contact').scrollIntoView({behavior:'smooth'});
+          } else if(h.startsWith('#/about')){
+            window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
+          }
+        }
+        window.addEventListener('hashchange',route);
+        route();
+
+        // theme
+        const btnTheme = document.getElementById('theme-toggle');
+        btnTheme.addEventListener('click',()=>{
+          const t = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+          root.setAttribute('data-theme',t);
+          btnTheme.setAttribute('aria-pressed', t==='dark');
+          btnTheme.textContent = t==='dark' ? '☀️' : '🌙';
+          if(t==='dark'){
+            document.documentElement.style.setProperty('--bg','#071627');
+            document.documentElement.style.setProperty('--card','#071b24');
+            document.documentElement.style.setProperty('--text','#e6f1ff');
+            document.documentElement.style.setProperty('--muted','#9fb3c8');
+            document.documentElement.style.setProperty('--glass','rgba(255,255,255,0.04)');
+          } else {
+            document.documentElement.style.removeProperty('--bg');
+            document.documentElement.style.removeProperty('--card');
+            document.documentElement.style.removeProperty('--text');
+            document.documentElement.style.removeProperty('--muted');
+            document.documentElement.style.removeProperty('--glass');
+          }
+        });
+
+        // Carousel simple
+        const carouselText = document.getElementById('carousel-text');
+        const carouselAuthor = document.getElementById('carousel-author');
+        const reviews = [
+          {t:'"Despliegue sencillo y predecible en minutos."', a:'Equipo de Infra'},
+          {t:'"Healthchecks y volumes: ahora sí confiamos en nuestros despliegues."', a:'SRE'},
+          {t:'"Cloudflare + Coolify flow probado. Excelente documentación."', a:'DevOps Lead'}
+        ];
+        let idx=0;
+        function renderReview(i){
+          carouselText.textContent = reviews[i].t;
+          carouselAuthor.textContent = '— ' + reviews[i].a;
+        }
+        renderReview(0);
+        document.getElementById('next').addEventListener('click', ()=>{ idx=(idx+1)%reviews.length; renderReview(idx); });
+        document.getElementById('prev').addEventListener('click', ()=>{ idx=(idx-1+reviews.length)%reviews.length; renderReview(idx); });
+
+        // CTA scroll
+        document.getElementById('hero-cta').addEventListener('click', ()=> location.hash = '#/contact');
+        document.getElementById('cta-demo').addEventListener('click', ()=> alert('Demo request: copiar instrucciones de despliegue en README (simulado).'));
+
+        // Contact form (client-side only)
+        const form = document.getElementById('contact-form');
+        const feedback = document.getElementById('form-feedback');
+        form.addEventListener('submit', function(ev){
+          ev.preventDefault();
+          const data = {
+            name: form.name.value.trim(),
+            email: form.email.value.trim(),
+            subject: form.subject.value.trim(),
+            message: form.message.value.trim()
+          };
+          // simple validation
+          if(!data.name || !data.email || !data.message){
+            feedback.textContent = 'Por favor completa los campos requeridos.';
+            feedback.style.color = '#b02a37';
+            return;
+          }
+          // simulate async send
+          feedback.style.color = 'var(--muted)';
+          feedback.textContent = 'Enviando mensaje — simulación local...';
+          setTimeout(()=>{
+            feedback.style.color = 'green';
+            feedback.textContent = 'Gracias — recibimos tu mensaje (simulado).';
+            form.reset();
+          },900);
+        });
+
+        // footer year
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // accessibility: make nav links focus visible
+        document.addEventListener('keydown', function(e){
+          if(e.key === 'Tab') document.body.classList.add('show-focus');
+        });
+
+        window.__APP_FALLBACK_LOADED = true;
+      }catch(err){
+        console.error('fallback script error', err);
+      }
+    })();
+  </script>
+</body>
+</html>

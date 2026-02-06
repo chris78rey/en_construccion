@@ -1,25 +1,12 @@
 # Modo: 🧪 MODO LOCAL — Simulación de Coolify (Traefik local)
-# Archivo: docker-compose.coolify-local.yml
 # Objetivo: reproducir localmente el comportamiento que tendrá en Coolify/Traefik sin cambios estructurales.
-# - Plan breve:
-#   Servicios:
-#     1) traefik-local  -> proxy inverso local (Traefik v2), expone puertos 80/443/8080 en la máquina local para pruebas.
-#     2) web            -> aplicación estática JS (misma estructura que en producción). Escucha en 0.0.0.0:8080, solo `expose` (no `ports:`).
-#   Relaciones:
-#     - Traefik enruta tráfico al servicio `web` según labels (Host `portal.localhost`).
-#   Notas de diseño:
-#     - Mantener la misma estructura de servicio `web` que usarás en producción: mismo nombre, mismo puerto interno (8080), mismo volumen `web_static`.
-#     - No se hardcodean credenciales.
+# Modificación: permitir acceso usando http://localhost (puerto alternativo) sin necesidad de editar /etc/hosts.
 #
-# Entorno de prueba:
-#  - Añade la entrada a /etc/hosts: 127.0.0.1  portal.localhost
-#  - Acceso desde navegador: http://portal.localhost
-#
-# Deliverables:
-#  - Este docker-compose para local.
-#  - Archivo de ejemplo .env.local (ver abajo en comentarios). El compose referencia `.env.local` para simular variables.
-#
-# Formato: sigue las reglas del prompt unificado (sin `ports:` en el servicio `web`, restart policy, expose, healthcheck, volumes).
+# NOTA: Para evitar conflictos con servicios que ya usen el puerto 80/443 en el host,
+# este compose mapea Traefik a puertos alternativos locales: 8081 (HTTP) y 8443 (HTTPS).
+# Acceso recomendado desde el navegador:
+#  - http://localhost:8081  (se enruta al servicio `web` gracias a la regla HostRegexp)
+#  - Traefik dashboard: http://localhost:8080/dashboard/ (puerto dashboard mapeado)
 #
 version: "3.8"
 
@@ -29,35 +16,35 @@ services:
     container_name: traefik-local
     restart: unless-stopped
     command:
-      - --api.insecure=true                          # dashboard accesible en :8080 localmente (solo para desarrollo)
-      - --providers.docker=true
-      - --providers.docker.exposedbydefault=false    # habilitar solo servicios con label traefik.enable=true
+      - --api.insecure=true
+      - --providers.docker=false
+      - --providers.file.filename=/etc/traefik/dynamic/dynamic.yml
+      - --providers.file.watch=true
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
-      # (No ACME/Let’s Encrypt for local mode; Coolify gestionará TLS en producción)
     ports:
-      - "80:80"    # acceso HTTP local (portal.localhost)
-      - "443:443"  # opcional: para probar HTTPS si configuras certificados locales
-      - "8080:8080" # Traefik dashboard (inseguro) - solo para testing
+      - "8081:80"    # HTTP local (evita colisiones con puertos del host)
+      - "8443:443"   # HTTPS local (opcional)
+      - "8080:8080"  # Traefik dashboard (inseguro) - sólo para desarrollo
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - traefik_conf:/etc/traefik
+      - ./traefik/dynamic.yml:/etc/traefik/dynamic/dynamic.yml:ro
     networks:
       - traefik
     labels:
-      # Opcional: exponer dashboard por host (útil si quieres consultar panel)
-      - "traefik.http.routers.traefik.rule=Host(`traefik.localhost`)"
+      # Dashboard accesible en http://localhost:8080/dashboard/
+      - "traefik.http.routers.traefik.rule=Host(`traefik.localhost`) || HostRegexp(`{host:localhost(:[0-9]+)?}`)"
       - "traefik.http.routers.traefik.entrypoints=web"
       - "traefik.http.services.traefik.loadbalancer.server.port=8080"
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/dashboard/" ]
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/dashboard/"]
       interval: 30s
       timeout: 3s
       retries: 3
       start_period: 10s
 
   web:
-    # Mantener la misma estructura que el stack de producción:
     image: node:18.20.1-alpine3.18
     container_name: portal_web_local
     restart: unless-stopped
@@ -65,19 +52,20 @@ services:
     env_file:
       - .env.local
     environment:
-      # Valores por defecto (puede sobrescribirse en .env.local)
       - PORT=${PORT:-8080}
       - NODE_ENV=${NODE_ENV:-production}
     expose:
-      - "8080"   # Puerto interno (mismo que en producción)
+      - "8080"
     volumes:
-      - web_static:/home/node/app
+      - ./web:/home/node/app
     networks:
       - traefik
     labels:
-      # Labels Traefik (idénticos a los que usará Coolify en producción)
+      # Allow routing for:
+      #  - portal.localhost (if you added /etc/hosts)
+      #  - localhost (with optional port) so you can visit http://localhost:8081
       - "traefik.enable=true"
-      - "traefik.http.routers.portal.rule=Host(`portal.localhost`)"
+      - "traefik.http.routers.portal.rule=Host(`portal.localhost`) || HostRegexp(`{host:localhost(:[0-9]+)?}`)"
       - "traefik.http.routers.portal.entrypoints=web"
       - "traefik.http.services.portal.loadbalancer.server.port=8080"
     healthcheck:
@@ -86,18 +74,7 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
-    # Comportamiento de arranque: si el volumen está vacío, crear un index.html autocontenido (igual que en producción)
-    command: >
-      sh -c '
-        mkdir -p /home/node/app;
-        if [ ! -f /home/node/app/index.html ]; then
-          cat >/home/node/app/index.html <<'"'"'HTML'"'"';
-          <!doctype html><html lang="es"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Portal da-tica (local)</title></head><body><h1>Portal da-tica (local)</h1><p>Prueba local mediante Traefik. Hash-router y JS en el cliente.</p><script>(function(){document.body.appendChild(document.createElement('pre')).textContent='Ahora: '+new Date();})();</script></body></html>
-          HTML
-        fi;
-        chown -R node:node /home/node/app || true;
-        exec node -e "const http=require('http'), fs=require('fs'), path=require('path'), port=process.env.PORT||8080; http.createServer((req,res)=>{ const p=path.join('/home/node/app', req.url==='/'?'/index.html':req.url); fs.readFile(p,(e,d)=>{ if(e){ res.writeHead(404,{'Content-Type':'text/plain'}); res.end('Not Found') } else { const ctype = p.endsWith('.js') ? 'application/javascript' : p.endsWith('.html') ? 'text/html' : 'text/plain'; res.writeHead(200,{'Content-Type':ctype}); res.end(d) } }) }).listen(port,'0.0.0.0')"
-    # Nota: no se usan 'ports:' aquí para mantener paridad con producción
+    command: ["node","-e","const http=require('http'), fs=require('fs'), path=require('path'); const port=process.env.PORT||8080; http.createServer((req,res)=>{ const p=path.join('/home/node/app', req.url==='/'?'/index.html':req.url); fs.readFile(p,(e,d)=>{ if(e){ res.writeHead(404,{'Content-Type':'text/plain'}); res.end('Not Found'); } else { const ctype = p.endsWith('.js') ? 'application/javascript' : p.endsWith('.html') ? 'text/html' : 'text/plain'; res.writeHead(200,{'Content-Type':ctype}); res.end(d); } }); }).listen(port,'0.0.0.0');"]
 
 volumes:
   web_static:
@@ -107,37 +84,10 @@ networks:
   traefik:
     driver: bridge
 
-# ----------------------------
-# .env.local (ejemplo) - crea este archivo al lado del compose
-# ----------------------------
-# Contenido sugerido para `.env.local` (NO incluído automáticamente, créalo en la misma carpeta):
-#
-# PORT=8080
-# NODE_ENV=development
-#
-# Explicación:
-# - PORT: puerto interno en el contenedor (debe ser 8080 para mantener paridad con producción).
-# - NODE_ENV: development/production según quieras probar.
-#
-# ----------------------------
-# Instrucciones de prueba local (resumen)
-# ----------------------------
-# 1) Añade al /etc/hosts:
-#      127.0.0.1  portal.localhost traefik.localhost
-# 2) Crear `.env.local` en el mismo directorio con las variables sugeridas arriba.
-# 3) Levantar stack:
-#      docker compose -f docker-compose.coolify-local.yml up -d
-# 4) Verificar:
-#      - Traefik dashboard: http://traefik.localhost:8080/dashboard/
-#      - App: http://portal.localhost
-#      - Healthchecks: docker ps + docker inspect --format '{{.State.Health.Status}}' <container>
-#
-# ----------------------------
-# Notas post-despliegue y checklist de validación
-# ----------------------------
-# - ¿Funciona local con Traefik? -> Debes poder acceder a http://portal.localhost (sí si seguiste pasos).
-# - ¿No usa puertos públicos en el servicio `web`? -> Correcto (no hay `ports:` en `web`).
-# - ¿Funcionará igual en Coolify? -> Sí: mismo nombre de servicio `web`, mismo puerto interno (8080), mismas labels equivalentes que Coolify usará (en Coolify no se usan labels, pero la organización de puertos/volúmenes/healthchecks es idéntica).
-# - ¿Cumple Cloudflare → Coolify → contenedor? -> Sí: en producción Coolify/Traefik reemplazará el Traefik local y gestionará TLS/HTTP, sin cambios en el servicio `web`.
-#
-# Si quieres que además genere automáticamente un `docker-compose.override.yml` o un README con instrucciones paso-a-paso más detalladas, dímelo y lo agrego.
+# Instrucciones rápidas:
+# 1) Levantar:
+#      docker compose -f docker-compose.coolify-local.yml up -d --build
+# 2) Abrir en el navegador:
+#      http://localhost:8081
+#    (o si prefieres usar un Virtual Host: añadir 127.0.0.1 portal.localhost en /etc/hosts y abrir http://portal.localhost)
+# 3) Dashboard Traefik (dev): http://localhost:8080/dashboard/

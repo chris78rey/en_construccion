@@ -1,0 +1,12 @@
+http:
+  routers:
+    portal-router:
+      rule: "Host(`localhost`) || Host(`portal.localhost`)"
+      entryPoints:
+        - web
+      service: portal-service
+  services:
+    portal-service:
+      loadBalancer:
+        servers:
+          - url: "http://portal_web_local:8080"
