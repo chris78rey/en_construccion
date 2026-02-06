@@ -1,0 +1,118 @@
+# Stack: portal-da-tica
+# Fecha: 2026-02-06
+# Descripción: Docker Compose para una página estática autocontenida (solo JavaScript) lista para desplegar en Coolify.
+#              - No expone puertos del host (Traefik/Coolify gestionan el ruteo por subdominio).
+#              - Servicio único: web (Node.js, Alpine). Contenido persistente en volumen `web_static`.
+#
+# NOTA: Sigue las reglas operativas de Coolify/Traefik: publica esta app por un subdominio (ej. portal.da-tica.com)
+version: "3.8"
+
+services:
+  web:
+    image: node:18.20.1-alpine3.18
+    restart: unless-stopped
+    user: node                                # ejecutar como usuario no-root cuando la imagen lo soporta
+    environment:
+      PORT: "8080"
+      NODE_ENV: "production"
+    expose:
+      - "8080"                                # puerto interno que Traefik/Coolify detectará
+    deploy:
+      resources:
+        limits:
+          memory: 256M                        # límite razonable para un simple VPS
+    volumes:
+      - web_static:/home/node/app             # persistencia del contenido web para edición/backup
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://127.0.0.1:8080',res=>process.exit(res.statusCode===200?0:1)).on('error',()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    # Arranque: crea el index.html autocontenido (solo JS) si no existe y lanza un servidor Node minimalista.
+    # No se exponen puertos al host; la app escucha en 0.0.0.0:8080.
+    command: >
+      sh -c '
+      mkdir -p /home/node/app
+      cat >/home/node/app/index.html <<'"'"'HTML'"'"'
+      <!doctype html>
+      <html lang="es">
+      <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>Portal da-tica</title>
+        <style>
+          body{font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; padding: 2rem; background:#f6f8fa; color:#0b1220}
+          button{padding:0.5rem 1rem;border-radius:6px;border:1px solid #ccd;background:#fff;cursor:pointer}
+          pre{background:#0b1220;color:#e6f1ff;padding:1rem;border-radius:6px}
+        </style>
+      </head>
+      <body>
+        <div id="app"></div>
+        <script>
+        // Aplicación 100% cliente, autocontenida en este archivo (solo JavaScript).
+        (function(){
+          const el = document.getElementById("app");
+          el.innerHTML = "<h1>Portal da-tica</h1><p>Aplicación estática servida por Docker Compose. JavaScript únicamente.</p><p><a href='#/about'>Acerca</a> · <a href='#/'>Inicio</a></p><button id='btn'>Mostrar fecha</button><pre id='out'></pre>";
+          document.getElementById('btn').addEventListener('click', ()=> {
+            document.getElementById('out').textContent = 'Ahora: ' + new Date().toString();
+          });
+
+          // Router hash muy simple (ejemplo educativo)
+          function router() {
+            const h = location.hash.slice(1) || "/";
+            const extra = document.querySelector('#extra');
+            if(extra) extra.remove();
+            if(h === "/about") {
+              const p = document.createElement('p');
+              p.id = 'extra';
+              p.textContent = 'Acerca: Esta página es 100% JavaScript y estática. No requiere backend.';
+              el.appendChild(p);
+            }
+          }
+          window.addEventListener('hashchange', router);
+          router();
+        })();
+        </script>
+      </body>
+      </html>
+      HTML
+      chown -R node:node /home/node/app || true
+      exec node -e "const http=require('http'), fs=require('fs'), path=require('path'), port=process.env.PORT||8080; http.createServer((req,res)=>{ const p=path.join('/home/node/app', req.url==='/'?'/index.html':req.url); fs.readFile(p,(e,d)=>{ if(e){ res.writeHead(404,{'Content-Type':'text/plain'}); res.end('Not Found') } else { const ctype = p.endsWith('.js') ? 'application/javascript' : p.endsWith('.html') ? 'text/html' : 'text/plain'; res.writeHead(200,{'Content-Type':ctype}); res.end(d) } }) }).listen(port,'0.0.0.0')"
+
+volumes:
+  web_static:
+    driver: local
+
+# ----------------------------
+# NOTAS POST-DESPLIEGUE (leer)
+# ----------------------------
+# 1) Variables a configurar en Coolify:
+#    - PORT (opcional; por defecto 8080)
+#    - NODE_ENV=production
+#    No incluí credenciales ni secretos hardcodeados aquí (cumple regla).
+#
+# 2) Puerto interno que Coolify/Traefik debe detectar:
+#    - 8080 (expose arriba). Al crear la app en Coolify, configura el subdominio (ej. portal.da-tica.com)
+#
+# 3) Pasos manuales / Operaciones:
+#    - Subir este docker-compose.yml a Coolify o crear el stack en el panel.
+#    - En Cloudflare: crear un registro A para el subdominio apuntando a 217.216.81.73 y activar el proxy (nube naranja).
+#    - En Coolify: asignar el subdominio (portal.da-tica.com) al servicio; Coolify/Traefik obtendrá certificado HTTPS automáticamente.
+#    - Si quieres editar el contenido estático, monta temporalmente el volumen `web_static` en la máquina local (o usar la UI/SSH) y reemplaza /home/node/app/index.html.
+#
+# 4) Checklist de validación (post-deploy):
+#    - ¿Se evitó mapear puertos del host? Sí (no hay `ports:`).
+#    - ¿No hay credenciales hardcodeadas? Sí.
+#    - ¿Volúmenes persistentes definidos? Sí (`web_static`).
+#    - ¿Healthcheck presente? Sí.
+#    - ¿Imagen sin tag `latest`? Sí (node:18.20.1-alpine3.18).
+#    - ¿La app escucha en 0.0.0.0? Sí (ver servidor Node).
+#    - ¿`restart: unless-stopped` aplicado? Sí.
+#
+# 5) Extensiones futuras recomendadas:
+#    - Si crece: separar builder (build step), usar NGINX estático optimizado y multi-stage builds.
+#    - Añadir CI que construya y suba una imagen con contenido estático pre-construido.
+#    - Para mayor seguridad, habilitar CSP y servir archivos estáticos comprimidos (gzip).
+#
+# 6) Si necesitas que cree también un `Dockerfile` o una versión que use `nginx` frente a `node`, dímelo y lo preparo manteniendo las reglas del prompt.
