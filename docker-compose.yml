@@ -13,8 +13,6 @@
 # - Healthcheck incluido.
 # - Imagen con tag fijo (no `latest`).
 #
-version: "3.9"
-
 services:
   web:
     # Build desde el contexto `web/`. Asegurate de tener un `web/Dockerfile` que
@@ -33,10 +31,7 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
-    deploy:
-      resources:
-        limits:
-          memory: 256M
+
 
 # ---------------------------------------------------------
 # Notas post-despliegue (leer)
@@ -44,25 +39,25 @@ services:
 # Puerto interno que Coolify/Traefik debe detectar:
 # - 8080
 #
-# Pasos manuales recomendados antes de publicar:
-# 1) Añadir un `web/Dockerfile` que haga un build multi-stage:
-#    - Stage build: instalar dependencias, compilar assets (si usás bundlers).
-#    - Stage final: copiar contenido estático a un servidor ligero (nginx:alpine) o a la imagen node que sirva estáticos.
-# 2) Probar localmente la build:
-#    docker compose -f en_construccion/docker-compose.yml build
-#    docker compose -f en_construccion/docker-compose.yml up -d
-#    (Nota: en local probablemente necesites una configuración de testing distinta ya que no hay Traefik)
-# 3) Subir a repo y crear Stack en Coolify apuntando a este `docker-compose.yml`.
+# Pasos recomendados antes de publicar:
+# 1) Verificar `web/Dockerfile` (ya existe) y que el servidor escuche en `0.0.0.0:8080`.
+#    - Recomendado: imagen final ligera (nginx:1.26.3-alpine) sin dependencias de runtime.
+#    - Healthcheck: debe usar binarios presentes en la imagen (aquí: `wget`).
+# 2) Probar localmente la build/ejecución:
+#    docker compose -f docker-compose.yml build
+#    docker compose -f docker-compose.yml up -d
+# 3) En Coolify: crear Stack apuntando a este `docker-compose.yml`.
 #    - Branch: main (o el que uses)
 #    - Puerto interno: 8080
-#    - Variables en la UI: (ninguna requerida para este servicio)
-#    - Asignar subdominio (ej. portal.da-tica.com). Coolify/Traefik gestionará certificados TLS automáticamente.
+#    - Variables en la UI: ninguna requerida
+#    - Asignar subdominio (ej. portal.da-tica.com) para routing/TLS automático
 #
-# Checklist final:
-# - ¿No hay `ports:` públicos en este compose? Sí.
-# - ¿La app escucha en 0.0.0.0:8080? Asegurate en el Dockerfile / servidor.
-# - ¿Healthcheck presente? Sí.
-# - ¿Imagen sin tag `latest`? Sí.
+# Checklist final (reglas Coolify):
+# - ¿Sin `ports:` públicos en el servicio web? Sí (usa `expose`).
+# - ¿Sin `network_mode: host`? Sí.
+# - ¿`restart: unless-stopped`? Sí.
+# - ¿Healthcheck presente y ejecutable? Sí.
+# - ¿Sin tag `latest`? Sí.
 #
 # Notas operativas:
 # - NO incluir secrets en el compose. Usar las variables de Coolify.

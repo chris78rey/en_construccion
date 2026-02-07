@@ -5,7 +5,7 @@
 # - Adds caching headers for static assets and some basic security headers
 # - Healthcheck is included for container orchestration
 
-FROM nginx:stable-alpine
+FROM nginx:1.26.3-alpine
 
 LABEL maintainer="da-tica <ops@da-tica.example>"
 LABEL description="Static site served by nginx on port 8080 (production image for Coolify)"
