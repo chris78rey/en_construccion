@@ -118,7 +118,7 @@
       <nav role="navigation" aria-label="Principal">
         <a href="#/" class="navlink active">Inicio</a>
         <a href="#/services" class="navlink">Servicios</a>
-        <a href="#/about" class="navlink">Acerca</a>
+        <a href="#/pricing" class="navlink">Planes</a>
         <a href="#/contact" class="navlink">Contacto</a>
       </nav>
 
@@ -131,8 +131,8 @@
     <main role="main">
       <section class="hero" aria-labelledby="hero-title">
         <div class="hero-card" id="hero-left">
-          <h1 id="hero-title">Soluciones y servicios para tu infraestructura</h1>
-          <p class="lead">Deploys reproducibles, buenas prácticas en contenedores y despliegue con Coolify. Lista para producción con Cloudflare.</p>
+          <h1 id="hero-title">Infraestructura, Datos y ML para tu negocio</h1>
+          <p class="lead">Desde despliegues en Coolify hasta analítica y pipelines de Machine Learning. Convertimos tu tecnología en una ventaja competitiva escalable.</p>
 
           <div class="stat-grid" aria-hidden="true">
             <div class="stat"><strong>99.9%</strong><small style="color:var(--muted)">Uptime objetivo</small></div>
@@ -148,7 +148,7 @@
 
         <aside class="card" id="hero-right" aria-label="Resumen">
           <h3>Resumen rápido</h3>
-          <p style="color:var(--muted)">Stack listo para Coolify: no mapea puertos host, healthchecks, volúmenes persistentes y configuración lista para Cloudflare & Traefik.</p>
+          <p style="color:var(--muted)">Operación de extremo a extremo: despliegue en Coolify, buenas prácticas de seguridad, datos/analítica y documentación que tu equipo puede mantener.</p>
           <ul style="margin:8px 0 0 16px;color:var(--muted)">
             <li>Exposición interna: 8080</li>
             <li>Restart: unless-stopped</li>
@@ -183,10 +183,81 @@
             </div>
             <p style="color:var(--muted)">Optimización de imágenes, límites de recursos y recomendaciones para VPS con recursos limitados.</p>
           </article>
+
+          <article class="card" role="listitem">
+            <div style="display:flex;gap:12px;align-items:center">
+              <div class="icon" style="background:linear-gradient(135deg,#f3e8ff,#e0c3fc);color:#7928ca" aria-hidden="true">🤖</div>
+              <h3>Machine Learning &amp; MLOps</h3>
+            </div>
+            <p style="color:var(--muted)">MVPs de IA, despliegue de modelos y pipelines de entrenamiento/inferencia para mantener predicciones al día.</p>
+          </article>
+
+          <article class="card" role="listitem">
+            <div style="display:flex;gap:12px;align-items:center">
+              <div class="icon" style="background:linear-gradient(135deg,#e0f7fa,#b2ebf2);color:#006064" aria-hidden="true">🛠️</div>
+              <h3>Ingeniería de Datos</h3>
+            </div>
+            <p style="color:var(--muted)">Pipelines confiables con dbt/Airflow, modelado y calidad de datos para habilitar BI y analítica avanzada.</p>
+          </article>
+
+          <article class="card" role="listitem">
+            <div style="display:flex;gap:12px;align-items:center">
+              <div class="icon" style="background:linear-gradient(135deg,#ffebee,#ffcdd2);color:#b71c1c" aria-hidden="true">📈</div>
+              <h3>Analítica &amp; BI</h3>
+            </div>
+            <p style="color:var(--muted)">Dashboards (Power BI, Metabase) y métricas accionables: del dato crudo a decisiones en tiempo real.</p>
+          </article>
+
+          <article class="card" role="listitem">
+            <div style="display:flex;gap:12px;align-items:center">
+              <div class="icon" style="background:linear-gradient(135deg,#fffde7,#fff9c4);color:#f57f17" aria-hidden="true">📚</div>
+              <h3>DocOps &amp; Gestión de Conocimiento</h3>
+            </div>
+            <p style="color:var(--muted)">Estrategia y tooling para documentación viva, bases de conocimiento y estándares para equipos técnicos.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="pricing" aria-labelledby="pricing-title" style="margin-top:40px">
+        <h2 id="pricing-title">Modelos de colaboración</h2>
+        <div class="services" role="list">
+          <article class="card" style="border-top:4px solid var(--muted)">
+            <h3>Auditoría &amp; Setup</h3>
+            <p style="color:var(--muted);font-size:0.9em;margin-bottom:16px">Para resolver bloqueos específicos.</p>
+            <ul style="padding-left:20px;margin-bottom:20px;color:var(--text);font-size:0.95em">
+              <li>Revisión de arquitectura y seguridad</li>
+              <li>Optimización de Dockerfiles y healthchecks</li>
+              <li>Setup de Coolify/Traefik y diagnóstico</li>
+            </ul>
+            <button class="ghost" style="width:100%" onclick="location.hash='#/contact'">Consultar</button>
+          </article>
+
+          <article class="card" style="border-top:4px solid var(--accent);transform:scale(1.02)">
+            <h3>Proyecto / MVP</h3>
+            <p style="color:var(--muted);font-size:0.9em;margin-bottom:16px">De 0 a 1 en semanas.</p>
+            <ul style="padding-left:20px;margin-bottom:20px;color:var(--text);font-size:0.95em">
+              <li>Infra completa (deploy, observabilidad básica)</li>
+              <li>Pipelines de datos y/o ML listos para producción</li>
+              <li>Documentación entregable y handover</li>
+            </ul>
+            <button class="btn" style="width:100%" onclick="location.hash='#/contact'">Cotizar proyecto</button>
+          </article>
+
+          <article class="card" style="border-top:4px solid var(--accent-2)">
+            <h3>Socio tecnológico</h3>
+            <p style="color:var(--muted);font-size:0.9em;margin-bottom:16px">Acompañamiento continuo.</p>
+            <ul style="padding-left:20px;margin-bottom:20px;color:var(--text);font-size:0.95em">
+              <li>Mantenimiento MLOps y mejora continua</li>
+              <li>Gestión de base de conocimiento y estándares</li>
+              <li>Capacitaciones y mentoring del equipo</li>
+            </ul>
+            <button class="ghost" style="width:100%" onclick="location.hash='#/contact'">Hablemos</button>
+          </article>
         </div>
       </section>
 
       <section aria-labelledby="demo-title" style="margin-top:20px;display:grid;gap:12px">
+
         <h2 id="demo-title">Demostración interactiva</h2>
         <div class="carousel card" aria-live="polite">
           <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#ffd7cf,#ffeedd);display:grid;place-items:center">👩‍💻</div>
@@ -230,7 +301,7 @@
 
           <aside class="card" aria-label="Información de contacto">
             <h3>Detalles</h3>
-            <p style="color:var(--muted)">Estamos disponibles para consultas técnicas y despliegues. No enviamos datos a servicios externos — este formulario es local y simula el envío (cliente-side).</p>
+            <p style="color:var(--muted)">Ayudamos con despliegues, analítica de datos, Machine Learning y gestión de documentación. No enviamos datos a servicios externos — este formulario es local y simula el envío (cliente-side).</p>
             <p><strong>Email:</strong> hello@da-tica.example</p>
             <p><strong>Soporte:</strong> docs & guides en el repo</p>
           </aside>
@@ -271,6 +342,8 @@
             window.scrollTo({top:0,behavior:'smooth'});
           } else if(h.startsWith('#/services')){
             document.getElementById('services').scrollIntoView({behavior:'smooth'});
+          } else if(h.startsWith('#/pricing')){
+            document.getElementById('pricing').scrollIntoView({behavior:'smooth'});
           } else if(h.startsWith('#/contact')){
             document.getElementById('contact').scrollIntoView({behavior:'smooth'});
           } else if(h.startsWith('#/about')){
@@ -307,8 +380,8 @@
         const carouselAuthor = document.getElementById('carousel-author');
         const reviews = [
           {t:'"Despliegue sencillo y predecible en minutos."', a:'Equipo de Infra'},
-          {t:'"Healthchecks y volumes: ahora sí confiamos en nuestros despliegues."', a:'SRE'},
-          {t:'"Cloudflare + Coolify flow probado. Excelente documentación."', a:'DevOps Lead'}
+          {t:'"Pipelines de datos confiables: por fin métricas consistentes."', a:'Data Lead'},
+          {t:'"MLOps y documentación: modelos reproducibles y operación estable."', a:'CTO'}
         ];
         let idx=0;
         function renderReview(i){
