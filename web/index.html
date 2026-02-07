@@ -2,647 +2,968 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Portal da-tica — Servicios</title>
-  <meta name="description" content="Portal de presentación - página estática autocontenida usando solo HTML, CSS y JavaScript.">
-  <link rel="stylesheet" href="styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>da-tica — Ingeniería de datos de misión crítica</title>
+  <meta name="description" content="Consultora boutique de alta ingeniería. Soberanía del dato, ultra-baja latencia y Zero Trust para infraestructuras de misión crítica." />
+  <meta name="color-scheme" content="dark" />
   <style>
-    /* Inline fallback styles: if styles.css not present, this guarantees basic readability */
     :root{
-      --bg:#f6f8fa;
-      --card:#ffffff;
-      --muted:#6b7280;
-      --accent:#ff6b35;
-      --accent-2:#0066cc;
-      --text:#0b1220;
-      --glass: rgba(255,255,255,0.6);
-      --radius:12px;
+      --bg: #050505;
+      --panel: rgba(255,255,255,0.04);
+      --panel-2: rgba(255,255,255,0.06);
+      --text: #e6e6e6;
+      --muted: #a6a6a6;
+      --dim: #444444;
+      --ok: #00ff41;
+      --warn: #ff4d00;
+      --radius: 14px;
+      --shadow: 0 24px 90px rgba(0,0,0,0.6);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      --max: 1120px;
     }
-    html,body{height:100%}
+
+    *{ box-sizing: border-box; }
+    html,body{ height: 100%; }
     body{
       margin:0;
-      font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;
-      background:linear-gradient(180deg,var(--bg),#eef2f7 120%);
-      color:var(--text);
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-      line-height:1.45;
+      background:
+        radial-gradient(1200px 600px at 20% 0%, rgba(0,255,65,0.08), transparent 65%),
+        radial-gradient(1000px 500px at 90% 10%, rgba(255,77,0,0.10), transparent 70%),
+        var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      line-height: 1.45;
+      letter-spacing: 0.2px;
     }
-    .site{
-      max-width:1100px;
-      margin:0 auto;
-      padding:28px;
+
+    a{ color: inherit; }
+    a:focus-visible, button:focus-visible, summary:focus-visible{
+      outline: 2px solid var(--ok);
+      outline-offset: 3px;
+      border-radius: 10px;
     }
-    header{
+
+    .skip{
+      position:absolute;
+      top:-40px;
+      left: 12px;
+      padding: 10px 12px;
+      background: var(--panel-2);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      text-decoration:none;
+      font-family: var(--mono);
+    }
+    .skip:focus{ top: 12px; }
+
+    .wrap{
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 22px 18px 48px;
+    }
+
+    .topbar{
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(14px);
+      background: rgba(5,5,5,0.6);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .topbar-inner{
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 14px 18px;
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:16px;
-      margin-bottom:24px;
+      gap: 14px;
     }
+
     .brand{
       display:flex;
-      gap:12px;
       align-items:center;
+      gap: 12px;
       text-decoration:none;
-      color:inherit;
+      min-width: 220px;
     }
-    .logo{
-      width:48px;height:48px;border-radius:10px;display:inline-grid;place-items:center;
-      background:linear-gradient(135deg,var(--accent),var(--accent-2));
-      color:white;font-weight:700;font-size:18px;
-      box-shadow: 0 6px 18px rgba(3,10,22,0.08);
-    }
-    nav{display:flex;gap:12px;align-items:center}
-    nav a{
-      color:var(--muted);text-decoration:none;padding:8px 12px;border-radius:8px;font-weight:600;font-size:14px;
-    }
-    nav a.active, nav a:hover{color:var(--text);background:var(--glass)}
-    .controls{display:flex;gap:10px;align-items:center}
-    .btn{
-      background:var(--accent);color:white;padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:700;
-      box-shadow: 0 6px 18px rgba(255,107,53,0.12);
-    }
-    .ghost{background:transparent;color:var(--accent-2);border:1px solid rgba(0,0,0,0.06);padding:8px 12px;border-radius:10px}
-    /* Hero */
-    .hero{
+
+    .mark{
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(0,255,65,0.18), rgba(255,77,0,0.20));
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 10px 36px rgba(0,0,0,0.45);
       display:grid;
-      grid-template-columns:1fr 380px;
-      gap:24px;
+      place-items:center;
+      font-family: var(--mono);
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    .brand strong{
+      display:block;
+      font-family: var(--mono);
+      font-size: 14px;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+    .brand small{
+      display:block;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    nav{
+      display:flex;
+      gap: 4px;
       align-items:center;
-      margin-bottom:28px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
-    .hero-card{
-      background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.75));
-      border-radius:var(--radius);
-      padding:28px; box-shadow: 0 8px 30px rgba(11,18,32,0.06);
+
+    .navlink{
+      padding: 10px 10px;
+      border-radius: 12px;
+      text-decoration:none;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      border: 1px solid transparent;
     }
-    h1{margin:0 0 8px;font-size:28px}
-    p.lead{margin:0;color:var(--muted)}
-    .stat-grid{display:flex;gap:12px;margin-top:16px}
-    .stat{background:rgba(6,34,44,0.02);padding:10px;border-radius:10px;flex:1;text-align:center}
-    .stat strong{display:block;font-size:18px}
-    /* Services */
-    .services{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:28px 0}
-    .card{background:var(--card);border-radius:12px;padding:18px;box-shadow: 0 6px 16px rgba(8,15,30,0.04)}
-    .card h3{margin:8px 0;font-size:18px}
-    .icon{width:44px;height:44px;border-radius:10px;display:inline-grid;place-items:center;background:linear-gradient(135deg,#e6f4ff,#dff3ff);color:#0366d6}
-    /* Testimonials / carousel */
-    .carousel{margin:20px 0;padding:18px;border-radius:12px;background:linear-gradient(180deg,#fff,#fbfdff);display:flex;gap:12px;align-items:center}
-    .testimonial{flex:1}
-    .quote{font-style:italic;color:var(--muted)}
-    /* Contact form */
-    form{display:grid;gap:10px}
-    input,textarea,select{
-      padding:10px;border-radius:8px;border:1px solid rgba(11,18,32,0.06);font-size:14px;
+
+    .navlink:hover{
+      color: var(--text);
+      background: rgba(255,255,255,0.04);
     }
-    .row{display:flex;gap:10px}
-    footer{margin-top:40px;padding-top:20px;border-top:1px solid rgba(11,18,32,0.04);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
-    @media (max-width:900px){
-      .hero{grid-template-columns:1fr; }
-      .services{grid-template-columns:repeat(1,1fr)}
+
+    .navlink[aria-current="page"]{
+      color: var(--text);
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(255,255,255,0.08);
+    }
+
+    .cta{
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      border: 1px solid rgba(0,255,65,0.25);
+      background: rgba(0,255,65,0.08);
+      color: var(--text);
+      cursor:pointer;
+    }
+    .cta:hover{ background: rgba(0,255,65,0.12); }
+
+    .section{
+      padding: 26px 0;
+      scroll-margin-top: 86px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .panel{
+      background: var(--panel);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .kernel{
+      padding-top: 18px;
+    }
+
+    .kernel-left{
+      grid-column: span 7;
+      padding: 22px;
+    }
+
+    .kernel-right{
+      grid-column: span 5;
+      padding: 22px;
+      display:grid;
+      gap: 10px;
+    }
+
+    .kicker{
+      color: var(--ok);
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      margin: 0 0 10px;
+    }
+
+    h1{
+      margin: 0 0 12px;
+      font-family: var(--mono);
+      font-weight: 800;
+      font-size: clamp(30px, 4vw, 44px);
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+    }
+
+    .cursor{
+      display:inline-block;
+      width: 10px;
+      margin-left: 4px;
+      color: var(--ok);
+      animation: blink 1s steps(1, end) infinite;
+    }
+
+    @keyframes blink { 50% { opacity: 0; } }
+
+    .lead{
+      margin: 0 0 18px;
+      color: var(--muted);
+      max-width: 62ch;
+      font-size: 15px;
+    }
+
+    .hero-dynamic{
+      display:flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items:center;
+    }
+
+    .chip{
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.03);
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      color: var(--text);
+    }
+
+    .chip strong{ color: var(--ok); }
+
+    .kernel-right .mini{
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+      font-family: var(--mono);
+    }
+
+    .mini .label{
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+    }
+
+    .mini .value{
+      margin-top: 6px;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+    }
+
+    h2{
+      margin: 0 0 10px;
+      font-family: var(--mono);
+      letter-spacing: 0.7px;
+      text-transform: uppercase;
+      font-size: 16px;
+    }
+
+    .muted{ color: var(--muted); }
+
+    .telemetry-grid{
+      grid-column: span 12;
+      padding: 18px;
+    }
+
+    .metrics{
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .metric{
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+    }
+
+    .metric .num{
+      font-family: var(--mono);
+      font-weight: 800;
+      font-size: 20px;
+      letter-spacing: 0.4px;
+    }
+    .metric .num .unit{ color: var(--muted); font-weight: 700; font-size: 12px; }
+    .metric .desc{ margin-top: 8px; color: var(--muted); font-size: 13px; }
+
+    .arch{
+      grid-column: span 12;
+      padding: 18px;
+    }
+
+    .pillars{
+      display:grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    details.pillar{
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+      overflow: hidden;
+    }
+
+    details.pillar[open]{
+      background: rgba(255,255,255,0.045);
+      border-color: rgba(0,255,65,0.22);
+    }
+
+    details.pillar summary{
+      list-style: none;
+      cursor: pointer;
+      padding: 16px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 12px;
+    }
+
+    details.pillar summary::-webkit-details-marker{ display:none; }
+
+    .p-title{
+      font-family: var(--mono);
+      letter-spacing: 0.7px;
+      text-transform: uppercase;
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .p-sub{ color: var(--muted); font-size: 13px; margin-top: 6px; }
+
+    .p-badge{
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      border-radius: 999px;
+      padding: 8px 10px;
+      border: 1px solid rgba(255,255,255,0.10);
+      color: var(--muted);
+      background: rgba(255,255,255,0.02);
+      white-space: nowrap;
+    }
+
+    .p-body{
+      padding: 0 16px 16px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .p-body ul{ margin: 10px 0 0 18px; padding: 0; }
+    .p-body li{ margin: 6px 0; }
+
+    .terminal{
+      grid-column: span 12;
+      padding: 18px;
+    }
+
+    .cli{
+      margin-top: 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(0,0,0,0.35);
+      overflow:hidden;
+    }
+
+    .cli-header{
+      padding: 12px 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      font-family: var(--mono);
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+    }
+
+    .cli-body{
+      padding: 14px;
+      display:grid;
+      gap: 12px;
+    }
+
+    .alerts{
+      display:flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .alert-btn{
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      border-radius: 12px;
+      padding: 10px 12px;
+      cursor:pointer;
+    }
+
+    .alert-btn[data-level="warn"]{ border-color: rgba(255,77,0,0.25); }
+    .alert-btn:hover{ background: rgba(255,255,255,0.05); }
+
+    .log{
+      min-height: 170px;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(5,5,5,0.55);
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+      overflow:auto;
+    }
+
+    .log .line{ margin: 0 0 8px; }
+    .log .ok{ color: var(--ok); }
+    .log .warn{ color: var(--warn); }
+
+    footer{
+      margin-top: 30px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display:flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items:flex-start;
+      justify-content:space-between;
+    }
+
+    footer .meta{
+      color: var(--muted);
+      font-size: 12px;
+      font-family: var(--mono);
+      letter-spacing: 0.4px;
+    }
+
+    .links{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .links a{
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.4px;
+      color: var(--muted);
+      text-decoration:none;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.02);
+      padding: 9px 10px;
+      border-radius: 12px;
+    }
+
+    .links a:hover{ color: var(--text); background: rgba(255,255,255,0.04); }
+
+    @media (max-width: 980px){
+      .kernel-left{ grid-column: span 12; }
+      .kernel-right{ grid-column: span 12; }
+      .metrics{ grid-template-columns: repeat(2, 1fr); }
+      .pillars{ grid-template-columns: 1fr; }
+      .brand{ min-width: auto; }
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .cursor{ animation: none; }
     }
   </style>
 </head>
 <body>
-  <div class="site" id="app-root" data-theme="light">
-    <header role="banner">
-      <a class="brand" href="#" id="home-link" aria-label="Ir al inicio">
-        <div class="logo" aria-hidden="true">DT</div>
+  <a class="skip" href="#kernel">Saltar al contenido</a>
+
+  <header class="topbar" role="banner">
+    <div class="topbar-inner">
+      <a class="brand" href="#kernel" aria-label="Ir a inicio">
+        <div class="mark" aria-hidden="true">DT</div>
         <div>
-          <div style="font-weight:800">da-tica</div>
-          <small style="color:var(--muted)">Portal de Servicios</small>
+          <strong>da-tica</strong>
+          <small>Alta ingeniería • Soberanía del dato</small>
         </div>
       </a>
 
-      <nav role="navigation" aria-label="Principal">
-        <a href="#/" class="navlink active">Inicio</a>
-        <a href="#/services" class="navlink">Servicios</a>
-        <a href="#/pricing" class="navlink">Planes</a>
-        <a href="#/contact" class="navlink">Contacto</a>
+      <nav aria-label="Secciones">
+        <a class="navlink" href="#kernel" data-spy="kernel">Kernel</a>
+        <a class="navlink" href="#telemetry" data-spy="telemetry">Telemetría</a>
+        <a class="navlink" href="#architecture" data-spy="architecture">Arquitectura</a>
+        <a class="navlink" href="#diagnostics" data-spy="diagnostics">Diagnóstico</a>
+        <button class="cta" type="button" id="cta-uplink">Uplink</button>
       </nav>
+    </div>
+  </header>
 
-      <div class="controls" role="group" aria-label="Controles">
-        <button class="ghost" id="theme-toggle" aria-pressed="false" title="Cambiar tema">🌙</button>
-        <button class="btn" id="cta-demo">Solicitar demo</button>
-      </div>
-    </header>
+  <main class="wrap" id="main" role="main">
+    <section class="section kernel" id="kernel" aria-labelledby="kernel-title">
+      <div class="grid">
+        <div class="panel kernel-left">
+          <p class="kicker">Resonant Stark / 2026</p>
+          <h1 id="kernel-title">LATENCY IS A CHOICE<span class="cursor" aria-hidden="true">█</span></h1>
+          <p class="lead">
+            Somos una consultora boutique de alta ingeniería para infraestructuras de misión crítica.
+            Eliminamos latencia técnica y recuperamos la soberanía del dato con un enfoque determinístico:
+            disponibilidad, integridad y rendimiento medible.
+          </p>
 
-    <main role="main">
-      <section class="hero" aria-labelledby="hero-title">
-        <div class="hero-card" id="hero-left">
-          <h1 id="hero-title">Infraestructura, Datos y ML para tu negocio</h1>
-          <p class="lead">Desde despliegues en Coolify hasta analítica y pipelines de Machine Learning. Convertimos tu tecnología en una ventaja competitiva escalable.</p>
-
-          <div class="stat-grid" aria-hidden="true">
-            <div class="stat"><strong>99.9%</strong><small style="color:var(--muted)">Uptime objetivo</small></div>
-            <div class="stat"><strong>3 min</strong><small style="color:var(--muted)">Deploy promedio</small></div>
-            <div class="stat"><strong>1 stack</strong><small style="color:var(--muted)">Zero surprises</small></div>
-          </div>
-
-          <div style="margin-top:18px;display:flex;gap:10px">
-            <button class="btn" id="hero-cta">Empieza ahora</button>
-            <button class="ghost" id="hero-learn">Ver la guía</button>
+          <div class="hero-dynamic" aria-label="Capacidades clave">
+            <span class="chip"><strong id="hero-dynamic">SOBERANÍA</strong> DEL DATO</span>
+            <span class="chip">ULTRA-BAJA LATENCIA</span>
+            <span class="chip">ZERO TRUST</span>
+            <span class="chip">ORACLE RAC / ADG</span>
+            <span class="chip">RUST NATIVE</span>
           </div>
         </div>
 
-        <aside class="card" id="hero-right" aria-label="Resumen">
-          <h3>Resumen rápido</h3>
-          <p style="color:var(--muted)">Operación de extremo a extremo: despliegue en Coolify, buenas prácticas de seguridad, datos/analítica y documentación que tu equipo puede mantener.</p>
-          <ul style="margin:8px 0 0 16px;color:var(--muted)">
-            <li>Exposición interna: 8080</li>
-            <li>Restart: unless-stopped</li>
-            <li>Usuario no-root</li>
-          </ul>
+        <aside class="panel kernel-right" aria-label="Estado operativo">
+          <div class="mini">
+            <div class="label">Objetivo disponibilidad</div>
+            <div class="value"><span class="ok">99.9%</span></div>
+          </div>
+          <div class="mini">
+            <div class="label">Latencia objetivo</div>
+            <div class="value">&lt; <span class="ok">50ms</span></div>
+          </div>
+          <div class="mini">
+            <div class="label">Modelo</div>
+            <div class="value">Boutique premium</div>
+          </div>
+          <div class="mini">
+            <div class="label">Superficie de ataque</div>
+            <div class="value">Sitio estático</div>
+          </div>
         </aside>
-      </section>
+      </div>
+    </section>
 
-      <section id="services" aria-labelledby="services-title">
-        <h2 id="services-title">Servicios</h2>
-        <div class="services" role="list">
-          <article class="card" role="listitem">
-            <div style="display:flex;gap:12px;align-items:center">
-              <div class="icon" aria-hidden="true">⚙️</div>
-              <h3>Despliegues (Coolify)</h3>
+    <section class="section" id="telemetry" aria-labelledby="telemetry-title">
+      <div class="grid">
+        <div class="panel telemetry-grid">
+          <h2 id="telemetry-title">Telemetría (prueba social)</h2>
+          <p class="muted">Métricas como evidencia. Sin adjetivos. Solo señales.</p>
+
+          <div class="metrics" role="list">
+            <div class="metric" role="listitem">
+              <div class="num"><span data-counter="325000" data-format="int">0</span> <span class="unit">tx / 40s</span></div>
+              <div class="desc">PL/SQL optimizado en cargas masivas</div>
             </div>
-            <p style="color:var(--muted)">Preparación de docker-compose, healthchecks, y guías para publicar en Coolify con TLS gestionado.</p>
-          </article>
-
-          <article class="card" role="listitem">
-            <div style="display:flex;gap:12px;align-items:center">
-              <div class="icon" style="background:linear-gradient(135deg,#fff2e6,#fff6f0)" aria-hidden="true">🔒</div>
-              <h3>Seguridad & secretos</h3>
+            <div class="metric" role="listitem">
+              <div class="num"><span data-counter="1200000" data-format="int">0</span> <span class="unit">usuarios simultáneos</span></div>
+              <div class="desc">Escalabilidad nacional en plataformas críticas</div>
             </div>
-            <p style="color:var(--muted)">Mejores prácticas: variables, no hardcode, roles y acceso mínimo en contenedores.</p>
-          </article>
-
-          <article class="card" role="listitem">
-            <div style="display:flex;gap:12px;align-items:center">
-              <div class="icon" style="background:linear-gradient(135deg,#e8fff2,#e8fff8)" aria-hidden="true">⚡</div>
-              <h3>Rendimiento</h3>
+            <div class="metric" role="listitem">
+              <div class="num"><span data-counter="99.9" data-format="dec1">0</span> <span class="unit">% continuidad</span></div>
+              <div class="desc">Resiliencia con RAC + Active Data Guard</div>
             </div>
-            <p style="color:var(--muted)">Optimización de imágenes, límites de recursos y recomendaciones para VPS con recursos limitados.</p>
-          </article>
-
-          <article class="card" role="listitem">
-            <div style="display:flex;gap:12px;align-items:center">
-              <div class="icon" style="background:linear-gradient(135deg,#f3e8ff,#e0c3fc);color:#7928ca" aria-hidden="true">🤖</div>
-              <h3>Machine Learning &amp; MLOps</h3>
+            <div class="metric" role="listitem">
+              <div class="num"><span data-counter="20" data-format="int">0</span><span class="unit">+ años</span></div>
+              <div class="desc">Defensa, banca y salud pública</div>
             </div>
-            <p style="color:var(--muted)">MVPs de IA, despliegue de modelos y pipelines de entrenamiento/inferencia para mantener predicciones al día.</p>
-          </article>
-
-          <article class="card" role="listitem">
-            <div style="display:flex;gap:12px;align-items:center">
-              <div class="icon" style="background:linear-gradient(135deg,#e0f7fa,#b2ebf2);color:#006064" aria-hidden="true">🛠️</div>
-              <h3>Ingeniería de Datos</h3>
-            </div>
-            <p style="color:var(--muted)">Pipelines confiables con dbt/Airflow, modelado y calidad de datos para habilitar BI y analítica avanzada.</p>
-          </article>
-
-          <article class="card" role="listitem">
-            <div style="display:flex;gap:12px;align-items:center">
-              <div class="icon" style="background:linear-gradient(135deg,#ffebee,#ffcdd2);color:#b71c1c" aria-hidden="true">📈</div>
-              <h3>Analítica &amp; BI</h3>
-            </div>
-            <p style="color:var(--muted)">Dashboards (Power BI, Metabase) y métricas accionables: del dato crudo a decisiones en tiempo real.</p>
-          </article>
-
-          <article class="card" role="listitem">
-            <div style="display:flex;gap:12px;align-items:center">
-              <div class="icon" style="background:linear-gradient(135deg,#fffde7,#fff9c4);color:#f57f17" aria-hidden="true">📚</div>
-              <h3>DocOps &amp; Gestión de Conocimiento</h3>
-            </div>
-            <p style="color:var(--muted)">Estrategia y tooling para documentación viva, bases de conocimiento y estándares para equipos técnicos.</p>
-          </article>
-        </div>
-      </section>
-
-      <section id="pricing" aria-labelledby="pricing-title" style="margin-top:40px">
-        <h2 id="pricing-title">Modelos de colaboración</h2>
-        <div class="services" role="list">
-          <article class="card" style="border-top:4px solid var(--muted)">
-            <h3>Auditoría &amp; Setup</h3>
-            <p style="color:var(--muted);font-size:0.9em;margin-bottom:16px">Para resolver bloqueos específicos.</p>
-            <ul style="padding-left:20px;margin-bottom:20px;color:var(--text);font-size:0.95em">
-              <li>Revisión de arquitectura y seguridad</li>
-              <li>Optimización de Dockerfiles y healthchecks</li>
-              <li>Setup de Coolify/Traefik y diagnóstico</li>
-            </ul>
-            <button class="ghost" style="width:100%" onclick="location.hash='#/contact'">Consultar</button>
-          </article>
-
-          <article class="card" style="border-top:4px solid var(--accent);transform:scale(1.02)">
-            <h3>Proyecto / MVP</h3>
-            <p style="color:var(--muted);font-size:0.9em;margin-bottom:16px">De 0 a 1 en semanas.</p>
-            <ul style="padding-left:20px;margin-bottom:20px;color:var(--text);font-size:0.95em">
-              <li>Infra completa (deploy, observabilidad básica)</li>
-              <li>Pipelines de datos y/o ML listos para producción</li>
-              <li>Documentación entregable y handover</li>
-            </ul>
-            <button class="btn" style="width:100%" onclick="location.hash='#/contact'">Cotizar proyecto</button>
-          </article>
-
-          <article class="card" style="border-top:4px solid var(--accent-2)">
-            <h3>Socio tecnológico</h3>
-            <p style="color:var(--muted);font-size:0.9em;margin-bottom:16px">Acompañamiento continuo.</p>
-            <ul style="padding-left:20px;margin-bottom:20px;color:var(--text);font-size:0.95em">
-              <li>Mantenimiento MLOps y mejora continua</li>
-              <li>Gestión de base de conocimiento y estándares</li>
-              <li>Capacitaciones y mentoring del equipo</li>
-            </ul>
-            <button class="ghost" style="width:100%" onclick="location.hash='#/contact'">Hablemos</button>
-          </article>
-        </div>
-      </section>
-
-      <section aria-labelledby="demo-title" style="margin-top:20px;display:grid;gap:12px">
-
-        <h2 id="demo-title">Demostración interactiva</h2>
-        <div class="carousel card" aria-live="polite">
-          <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#ffd7cf,#ffeedd);display:grid;place-items:center">👩‍💻</div>
-          <div class="testimonial">
-            <p class="quote" id="carousel-text">"Despliegue sencillo y predecible en minutos."</p>
-            <small style="color:var(--muted)" id="carousel-author">— Equipo de Infra</small>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:6px">
-            <button class="ghost" id="prev">◀</button>
-            <button class="ghost" id="next">▶</button>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <section id="contact" aria-labelledby="contact-title" style="margin-top:18px">
-        <h2 id="contact-title">Contacto</h2>
-        <div style="display:grid;grid-template-columns:1fr 360px;gap:16px">
-          <form id="contact-form" class="card" aria-label="Formulario de contacto" novalidate>
-            <label>
-              Nombre
-              <input type="text" name="name" id="name" placeholder="Tu nombre" required>
-            </label>
-            <label>
-              Correo
-              <input type="email" name="email" id="email" placeholder="tu@correo.com" required>
-            </label>
-            <label>
-              Asunto
-              <input type="text" name="subject" id="subject" placeholder="Asunto breve" required>
-            </label>
-            <label>
-              Tema
-              <select name="topic" id="topic" required>
-                <option value="" selected disabled>Selecciona un tema</option>
-                <option value="machine-learning">Machine Learning / MLOps</option>
-                <option value="ingenieria-datos">Ingeniería de Datos</option>
-                <option value="analitica-bi">Analítica / BI</option>
-                <option value="documentacion">Documentación / DocOps</option>
-                <option value="infra-coolify">Infra / Coolify</option>
-                <option value="capacitacion">Capacitación</option>
-                <option value="otro">Otro</option>
-              </select>
-            </label>
-            <label>
-              Mensaje
-              <textarea name="message" id="message" rows="5" placeholder="Escribe tu mensaje..." required></textarea>
-            </label>
+    <section class="section" id="architecture" aria-labelledby="architecture-title">
+      <div class="grid">
+        <div class="panel arch">
+          <h2 id="architecture-title">Arquitectura de servicios</h2>
+          <p class="muted">Cuatro pilares productizados para eliminar incertidumbre operativa.</p>
 
-            <div style="display:flex;gap:10px;justify-content:flex-end">
-              <button type="reset" class="ghost">Limpiar</button>
-              <button type="submit" class="btn">Enviar</button>
+          <div class="pillars">
+            <details class="pillar">
+              <summary>
+                <div>
+                  <div class="p-title">Legacy Mutation</div>
+                  <div class="p-sub">Monolito → alta disponibilidad (Oracle RAC)</div>
+                </div>
+                <span class="p-badge">ACID + vector</span>
+              </summary>
+              <div class="p-body">
+                Evolución hacia arquitecturas de alta disponibilidad. Búsqueda vectorial dentro del perímetro ACID para evitar silos.
+                <ul>
+                  <li>RAC / ADG para continuidad operativa</li>
+                  <li>Controles por roles para soberanía</li>
+                  <li>Plan de modernización sin downtime innecesario</li>
+                </ul>
+              </div>
+            </details>
+
+            <details class="pillar">
+              <summary>
+                <div>
+                  <div class="p-title">Rust Precision</div>
+                  <div class="p-sub">Ultra-baja latencia, eficiencia determinística</div>
+                </div>
+                <span class="p-badge">&lt;50ms</span>
+              </summary>
+              <div class="p-body">
+                Reescritura selectiva de microservicios críticos en Rust para eliminar pausas del GC y reducir RAM/CPU.
+                <ul>
+                  <li>Hasta 4x reducción de consumo de RAM</li>
+                  <li>Latencias predecibles (SLOs reales)</li>
+                  <li>Seguridad de memoria como baseline</li>
+                </ul>
+              </div>
+            </details>
+
+            <details class="pillar">
+              <summary>
+                <div>
+                  <div class="p-title">Sovereign AI (RAG)</div>
+                  <div class="p-sub">IA explicable, auditada y bajo control</div>
+                </div>
+                <span class="p-badge">RAG 3 niveles</span>
+              </summary>
+              <div class="p-body">
+                Arquitectura RAG con pre-filtrado, in-filtrado y post-filtrado. El dato no sale de tu perímetro.
+                <ul>
+                  <li>Pre-filtrado por roles (control de acceso)</li>
+                  <li>In-filtrado por similitud (índices HNSW/IVF)</li>
+                  <li>Post-filtrado por reglas de negocio</li>
+                </ul>
+              </div>
+            </details>
+
+            <details class="pillar">
+              <summary>
+                <div>
+                  <div class="p-title">C-Suite Governance</div>
+                  <div class="p-sub">Auditoría proactiva y monitoreo continuo</div>
+                </div>
+                <span class="p-badge">CCM</span>
+              </summary>
+              <div class="p-body">
+                Gobernanza y auditoría automatizada para reducir riesgo legal y costo de cumplimiento.
+                <ul>
+                  <li>KNIME para monitoreo continuo (CCM)</li>
+                  <li>Ley de Benford para anomalías a escala</li>
+                  <li>Anonimización y trazabilidad (privacy by design)</li>
+                </ul>
+              </div>
+            </details>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="diagnostics" aria-labelledby="diagnostics-title">
+      <div class="grid">
+        <div class="panel terminal">
+          <h2 id="diagnostics-title">Terminal de diagnóstico (demo)</h2>
+          <p class="muted">Simulación local: no envía datos, no usa APIs.</p>
+
+          <div class="cli" role="region" aria-label="Consola de diagnóstico">
+            <div class="cli-header">
+              <span>da-tica@ops — run: diagnostics</span>
+              <span id="cli-status">idle</span>
             </div>
-            <div id="form-feedback" role="status" aria-live="polite" style="margin-top:8px;color:var(--muted)"></div>
-          </form>
+            <div class="cli-body">
+              <div class="alerts" aria-label="Alertas">
+                <button class="alert-btn" type="button" data-alert="HIGH_LATENCY" data-level="warn">[WARN] HIGH_LATENCY</button>
+                <button class="alert-btn" type="button" data-alert="CLOUD_OPEX" data-level="warn">[WARN] CLOUD_OPEX</button>
+                <button class="alert-btn" type="button" data-alert="COMPLIANCE_RISK" data-level="warn">[WARN] COMPLIANCE_RISK</button>
+                <button class="alert-btn" type="button" data-alert="LEGACY_MONOLITH">[INFO] LEGACY_MONOLITH</button>
+                <button class="alert-btn" type="button" data-alert="RAG_SILO">[INFO] RAG_SILO</button>
+                <button class="alert-btn" type="button" id="cli-clear">CLEAR</button>
+              </div>
 
-          <aside class="card" aria-label="Información de contacto">
-            <h3>Detalles</h3>
-            <p style="color:var(--muted)">Ayudamos con despliegues, analítica de datos, Machine Learning y gestión de documentación. No enviamos datos a servicios externos — este formulario es local y simula el envío (cliente-side).</p>
-            <p><strong>Email:</strong> hello@da-tica.example</p>
-            <p><strong>Soporte:</strong> docs & guides en el repo</p>
-          </aside>
-        </div>
-      </section>
-
-      <section id="admin" aria-labelledby="admin-title" style="margin-top:18px">
-        <h2 id="admin-title">Administración</h2>
-        <div class="card" style="display:grid;gap:12px">
-          <p style="color:var(--muted)">Acceso restringido (usuario y contraseña). Esta vista consulta <code>/api/admin/contacts</code>.</p>
-
-          <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end">
-            <label>
-              Usuario
-              <input type="text" id="admin-user" placeholder="admin">
-            </label>
-            <label>
-              Contraseña
-              <input type="password" id="admin-pass" placeholder="********">
-            </label>
-            <button class="btn" id="admin-login">Ingresar</button>
-          </div>
-
-          <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end">
-            <label>
-              Filtrar por tema
-              <select id="admin-topic">
-                <option value="" selected>Todos</option>
-                <option value="machine-learning">Machine Learning / MLOps</option>
-                <option value="ingenieria-datos">Ingeniería de Datos</option>
-                <option value="analitica-bi">Analítica / BI</option>
-                <option value="documentacion">Documentación / DocOps</option>
-                <option value="infra-coolify">Infra / Coolify</option>
-                <option value="capacitacion">Capacitación</option>
-                <option value="otro">Otro</option>
-              </select>
-            </label>
-            <label>
-              Filtrar por email
-              <input type="email" id="admin-email" placeholder="cliente@empresa.com">
-            </label>
-            <button class="ghost" id="admin-refresh">Cargar</button>
-          </div>
-
-          <div id="admin-feedback" role="status" aria-live="polite" style="color:var(--muted)"></div>
-
-          <div style="overflow:auto">
-            <table style="width:100%;border-collapse:collapse">
-              <thead>
-                <tr>
-                  <th style="text-align:left;padding:10px;border-bottom:1px solid rgba(255,255,255,0.08)">Fecha</th>
-                  <th style="text-align:left;padding:10px;border-bottom:1px solid rgba(255,255,255,0.08)">Tema</th>
-                  <th style="text-align:left;padding:10px;border-bottom:1px solid rgba(255,255,255,0.08)">Nombre</th>
-                  <th style="text-align:left;padding:10px;border-bottom:1px solid rgba(255,255,255,0.08)">Email</th>
-                  <th style="text-align:left;padding:10px;border-bottom:1px solid rgba(255,255,255,0.08)">Asunto</th>
-                </tr>
-              </thead>
-              <tbody id="admin-rows"></tbody>
-            </table>
+              <div class="log" id="cli-log" aria-live="polite" aria-relevant="additions" aria-label="Salida">
+                <p class="line"><span class="ok">$</span> Selecciona una alerta para ver un diagnóstico.</p>
+              </div>
+            </div>
           </div>
         </div>
-      </section>
-    </main>
+      </div>
+    </section>
 
-
-    <footer role="contentinfo">
-      <small style="color:var(--muted)">© <span id="year"></span> da-tica | Deploy-ready stacks • Cloudflare → Coolify → Contenedor</small>
-      <div style="display:flex;gap:8px;align-items:center">
-        <a href="#/about" class="navlink">Política</a>
-        <a href="#/about" class="navlink">Seguridad</a>
+    <footer id="uplink" role="contentinfo">
+      <div class="meta">
+        © <span id="year"></span> da-tica — continuidad operativa • integridad absoluta • eficiencia determinística
+      </div>
+      <div class="links" aria-label="Enlaces">
+        <a href="mailto:hello@da-tica.example">EMAIL: hello@da-tica.example</a>
+        <a href="#kernel">UPLINK: /kernel</a>
+        <a href="#architecture">DOC: /architecture</a>
       </div>
     </footer>
-  </div>
+  </main>
 
   <noscript>
-    <div style="padding:12px;background:#fff3cd;color:#856404;border-radius:8px;max-width:1100px;margin:12px auto;text-align:center">JavaScript es necesario para la mejor experiencia de esta demo.</div>
+    <div class="wrap" style="padding-top: 0;">
+      <div class="panel" style="padding: 14px; font-family: var(--mono); color: var(--muted);">
+        JavaScript está deshabilitado. El sitio sigue siendo legible, pero sin animaciones/diagnóstico.
+      </div>
+    </div>
   </noscript>
 
-  <script src="app.js" defer></script>
   <script>
-    // Inline fallback JS: provides behavior if app.js is not available.
     (function(){
-      try{
-        if(window.__APP_FALLBACK_LOADED) return;
-        // Basic client behavior: nav routing, theme toggle, carousel, form validation
-        const root = document.getElementById('app-root');
-        const navlinks = Array.from(document.querySelectorAll('.navlink'));
-        function setActive(hash){
-          navlinks.forEach(a=> a.classList.toggle('active', a.getAttribute('href')===hash));
-        }
-        function route(){
-          const h = location.hash || '#/';
-          setActive(h);
-          // Basic scroll to sections
-          if(h === '#/' || h === '#/home'){
-            window.scrollTo({top:0,behavior:'smooth'});
-          } else if(h.startsWith('#/services')){
-            document.getElementById('services').scrollIntoView({behavior:'smooth'});
-          } else if(h.startsWith('#/pricing')){
-            document.getElementById('pricing').scrollIntoView({behavior:'smooth'});
-          } else if(h.startsWith('#/contact')){
-            document.getElementById('contact').scrollIntoView({behavior:'smooth'});
-          } else if(h.startsWith('#/admin')){
-            document.getElementById('admin').scrollIntoView({behavior:'smooth'});
-          } else if(h.startsWith('#/about')){
-            window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
-          }
-        }
+      const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const year = document.getElementById('year');
+      if(year) year.textContent = String(new Date().getFullYear());
 
-        window.addEventListener('hashchange',route);
-        route();
-
-        // theme
-        const btnTheme = document.getElementById('theme-toggle');
-        btnTheme.addEventListener('click',()=>{
-          const t = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-          root.setAttribute('data-theme',t);
-          btnTheme.setAttribute('aria-pressed', t==='dark');
-          btnTheme.textContent = t==='dark' ? '☀️' : '🌙';
-          if(t==='dark'){
-            document.documentElement.style.setProperty('--bg','#071627');
-            document.documentElement.style.setProperty('--card','#071b24');
-            document.documentElement.style.setProperty('--text','#e6f1ff');
-            document.documentElement.style.setProperty('--muted','#9fb3c8');
-            document.documentElement.style.setProperty('--glass','rgba(255,255,255,0.04)');
-          } else {
-            document.documentElement.style.removeProperty('--bg');
-            document.documentElement.style.removeProperty('--card');
-            document.documentElement.style.removeProperty('--text');
-            document.documentElement.style.removeProperty('--muted');
-            document.documentElement.style.removeProperty('--glass');
-          }
+      // CTA
+      const ctaUplink = document.getElementById('cta-uplink');
+      if(ctaUplink){
+        ctaUplink.addEventListener('click', () => {
+          const el = document.getElementById('uplink');
+          if(el) el.scrollIntoView({behavior: reduceMotion ? 'auto' : 'smooth'});
         });
-
-        // Carousel simple
-        const carouselText = document.getElementById('carousel-text');
-        const carouselAuthor = document.getElementById('carousel-author');
-        const reviews = [
-          {t:'"Despliegue sencillo y predecible en minutos."', a:'Equipo de Infra'},
-          {t:'"Pipelines de datos confiables: por fin métricas consistentes."', a:'Data Lead'},
-          {t:'"MLOps y documentación: modelos reproducibles y operación estable."', a:'CTO'}
-        ];
-        let idx=0;
-        function renderReview(i){
-          carouselText.textContent = reviews[i].t;
-          carouselAuthor.textContent = '— ' + reviews[i].a;
-        }
-        renderReview(0);
-        document.getElementById('next').addEventListener('click', ()=>{ idx=(idx+1)%reviews.length; renderReview(idx); });
-        document.getElementById('prev').addEventListener('click', ()=>{ idx=(idx-1+reviews.length)%reviews.length; renderReview(idx); });
-
-        // CTA scroll
-        document.getElementById('hero-cta').addEventListener('click', ()=> location.hash = '#/contact');
-        document.getElementById('cta-demo').addEventListener('click', ()=> alert('Demo request: copiar instrucciones de despliegue en README (simulado).'));
-
-        // Contact form
-        const form = document.getElementById('contact-form');
-        const feedback = document.getElementById('form-feedback');
-        form.addEventListener('submit', function(ev){
-          ev.preventDefault();
-          const data = {
-            name: form.name.value.trim(),
-            email: form.email.value.trim(),
-            subject: form.subject.value.trim(),
-            topic: (form.topic && form.topic.value) ? String(form.topic.value) : '',
-            message: form.message.value.trim()
-          };
-          if(!data.name || !data.email || !data.subject || !data.topic || !data.message){
-            feedback.textContent = 'Por favor completa los campos requeridos.';
-            feedback.style.color = '#b02a37';
-            return;
-          }
-
-          feedback.style.color = 'var(--muted)';
-          feedback.textContent = 'Enviando mensaje...';
-
-          fetch('/api/contacts', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-          }).then(async (res)=>{
-            if(!res.ok){
-              const text = await res.text().catch(()=> '');
-              throw new Error(text || ('HTTP ' + res.status));
-            }
-
-            const ct = String(res.headers.get('content-type') || '');
-            if(!ct.includes('application/json')){
-              throw new Error('invalid_content_type');
-            }
-
-            const body = await res.json();
-            if(!body || typeof body.id !== 'number'){
-              throw new Error('invalid_response');
-            }
-
-            return body;
-          }).then(()=>{
-            feedback.style.color = 'green';
-            feedback.textContent = 'Gracias — recibimos tu mensaje.';
-            form.reset();
-          }).catch(()=>{
-            feedback.style.color = '#b02a37';
-            feedback.textContent = 'No se pudo enviar. Intenta de nuevo en unos minutos.';
-          });
-        });
-
-        // Admin viewer (Basic Auth)
-        const adminUser = document.getElementById('admin-user');
-        const adminPass = document.getElementById('admin-pass');
-        const adminLogin = document.getElementById('admin-login');
-        const adminRefresh = document.getElementById('admin-refresh');
-        const adminTopic = document.getElementById('admin-topic');
-        const adminEmail = document.getElementById('admin-email');
-        const adminRows = document.getElementById('admin-rows');
-        const adminFeedback = document.getElementById('admin-feedback');
-
-        function getAdminAuthHeader(){
-          const raw = sessionStorage.getItem('admin_basic_auth');
-          return raw ? ('Basic ' + raw) : '';
-        }
-
-        function setAdminAuthHeader(u,p){
-          const token = btoa(String(u) + ':' + String(p));
-          sessionStorage.setItem('admin_basic_auth', token);
-        }
-
-        function clearAdminTable(){
-          adminRows.innerHTML = '';
-        }
-
-        function esc(s){
-          return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-        }
-
-        async function loadContacts(){
-          adminFeedback.style.color = 'var(--muted)';
-          adminFeedback.textContent = 'Cargando solicitudes...';
-          clearAdminTable();
-
-          const params = new URLSearchParams({ limit: '100', offset: '0' });
-          if(adminTopic && adminTopic.value) params.set('topic', adminTopic.value);
-          if(adminEmail && adminEmail.value.trim()) params.set('email', adminEmail.value.trim());
-
-          const res = await fetch('/api/admin/contacts?' + params.toString(), {
-            headers: { 'Authorization': getAdminAuthHeader() }
-          });
-
-          if(res.status === 401){
-            adminFeedback.style.color = '#b02a37';
-            adminFeedback.textContent = 'No autorizado. Revisa usuario/contraseña.';
-            return;
-          }
-
-          if(res.status === 503){
-            adminFeedback.style.color = '#b02a37';
-            adminFeedback.textContent = 'Admin no configurado en el servidor.';
-            return;
-          }
-
-          if(!res.ok){
-            adminFeedback.style.color = '#b02a37';
-            adminFeedback.textContent = 'Error cargando solicitudes.';
-            return;
-          }
-
-          let data;
-          try{
-            data = await res.json();
-          }catch(_err){
-            adminFeedback.style.color = '#b02a37';
-            adminFeedback.textContent = 'Respuesta inválida del servidor.';
-            return;
-          }
-
-          const items = (data && data.items) ? data.items : [];
-
-          adminFeedback.style.color = 'green';
-          adminFeedback.textContent = 'Cargadas: ' + items.length;
-
-          const rowsHtml = items.map((it)=>{
-            return '<tr>'
-              + '<td style="padding:10px;border-bottom:1px solid rgba(255,255,255,0.06)">' + esc(it.created_at) + '</td>'
-              + '<td style="padding:10px;border-bottom:1px solid rgba(255,255,255,0.06)">' + esc(it.topic) + '</td>'
-              + '<td style="padding:10px;border-bottom:1px solid rgba(255,255,255,0.06)">' + esc(it.name) + '</td>'
-              + '<td style="padding:10px;border-bottom:1px solid rgba(255,255,255,0.06)">' + esc(it.email) + '</td>'
-              + '<td style="padding:10px;border-bottom:1px solid rgba(255,255,255,0.06)">' + esc(it.subject) + '</td>'
-              + '</tr>';
-          }).join('');
-
-          adminRows.innerHTML = rowsHtml;
-        }
-
-        adminLogin.addEventListener('click', ()=>{
-          if(!adminUser.value || !adminPass.value){
-            adminFeedback.style.color = '#b02a37';
-            adminFeedback.textContent = 'Ingresa usuario y contraseña.';
-            return;
-          }
-          setAdminAuthHeader(adminUser.value, adminPass.value);
-          adminPass.value = '';
-          loadContacts().catch(()=>{
-            adminFeedback.style.color = '#b02a37';
-            adminFeedback.textContent = 'No se pudo conectar al servidor.';
-          });
-        });
-
-        adminRefresh.addEventListener('click', ()=>{
-          loadContacts().catch(()=>{
-            adminFeedback.style.color = '#b02a37';
-            adminFeedback.textContent = 'No se pudo conectar al servidor.';
-          });
-        });
-
-        // footer year
-
-        document.getElementById('year').textContent = new Date().getFullYear();
-
-        // accessibility: make nav links focus visible
-        document.addEventListener('keydown', function(e){
-          if(e.key === 'Tab') document.body.classList.add('show-focus');
-        });
-
-        window.__APP_FALLBACK_LOADED = true;
-      }catch(err){
-        console.error('fallback script error', err);
       }
+
+      // Scroll-spy nav
+      const navLinks = Array.from(document.querySelectorAll('a.navlink[data-spy]'));
+      const sections = navLinks
+        .map(a => document.getElementById(String(a.getAttribute('data-spy'))))
+        .filter(Boolean);
+
+      function setCurrent(id){
+        navLinks.forEach(a => {
+          const active = a.getAttribute('data-spy') === id;
+          if(active){
+            a.setAttribute('aria-current','page');
+          } else {
+            a.removeAttribute('aria-current');
+          }
+        });
+      }
+
+      if('IntersectionObserver' in window && sections.length){
+        const spy = new IntersectionObserver((entries) => {
+          const visible = entries
+            .filter(e => e.isIntersecting)
+            .sort((a,b) => (b.intersectionRatio - a.intersectionRatio));
+          if(visible[0] && visible[0].target && visible[0].target.id){
+            setCurrent(visible[0].target.id);
+          }
+        }, { root: null, threshold: [0.2, 0.35, 0.5, 0.65] });
+
+        sections.forEach(s => spy.observe(s));
+      }
+
+      // Hero typewriter loop: rotate the key word
+      const heroDynamic = document.getElementById('hero-dynamic');
+      const heroWords = ['SOBERANÍA', 'VELOCIDAD', 'ZERO TRUST', 'INTEGRIDAD', 'DETERMINISMO'];
+
+      function typewriter(el, words){
+        if(!el || !words.length) return;
+        let wordIndex = 0;
+        let charIndex = 0;
+        let deleting = false;
+
+        function tick(){
+          const current = words[wordIndex];
+          if(!deleting){
+            charIndex = Math.min(charIndex + 1, current.length);
+          } else {
+            charIndex = Math.max(charIndex - 1, 0);
+          }
+
+          el.textContent = current.slice(0, charIndex);
+
+          const doneTyping = (!deleting && charIndex === current.length);
+          const doneDeleting = (deleting && charIndex === 0);
+
+          let delay = deleting ? 34 : 46;
+          if(doneTyping) delay = 980;
+          if(doneDeleting) delay = 320;
+
+          if(doneTyping) deleting = true;
+          if(doneDeleting){
+            deleting = false;
+            wordIndex = (wordIndex + 1) % words.length;
+          }
+
+          window.setTimeout(tick, delay);
+        }
+
+        tick();
+      }
+
+      if(!reduceMotion){
+        typewriter(heroDynamic, heroWords);
+      }
+
+      // Metric roller
+      function formatCounter(value, format){
+        if(format === 'dec1'){
+          return new Intl.NumberFormat('es-ES', {minimumFractionDigits: 1, maximumFractionDigits: 1}).format(value);
+        }
+        return new Intl.NumberFormat('es-ES').format(Math.round(value));
+      }
+
+      function animateCounters(){
+        const nodes = Array.from(document.querySelectorAll('[data-counter]'));
+        nodes.forEach((n) => {
+          const raw = String(n.getAttribute('data-counter') || '0');
+          const format = String(n.getAttribute('data-format') || 'int');
+          const target = Number(raw);
+          if(!Number.isFinite(target)) return;
+
+          const start = performance.now();
+          const duration = 1200;
+
+          function step(now){
+            const t = Math.min(1, (now - start) / duration);
+            const eased = 1 - Math.pow(1 - t, 3);
+            const current = (target * eased);
+            n.textContent = formatCounter(current, format);
+            if(t < 1) requestAnimationFrame(step);
+          }
+
+          requestAnimationFrame(step);
+        });
+      }
+
+      const telemetry = document.getElementById('telemetry');
+      if(telemetry && 'IntersectionObserver' in window){
+        let ran = false;
+        const obs = new IntersectionObserver((entries) => {
+          if(ran) return;
+          if(entries.some(e => e.isIntersecting)){
+            ran = true;
+            if(reduceMotion){
+              // Set final values immediately
+              document.querySelectorAll('[data-counter]').forEach((n) => {
+                const raw = String(n.getAttribute('data-counter') || '0');
+                const format = String(n.getAttribute('data-format') || 'int');
+                const target = Number(raw);
+                if(!Number.isFinite(target)) return;
+                n.textContent = formatCounter(target, format);
+              });
+            } else {
+              animateCounters();
+            }
+          }
+        }, { threshold: 0.25 });
+
+        obs.observe(telemetry);
+      } else {
+        // Fallback: show final values
+        document.querySelectorAll('[data-counter]').forEach((n) => {
+          const raw = String(n.getAttribute('data-counter') || '0');
+          const format = String(n.getAttribute('data-format') || 'int');
+          const target = Number(raw);
+          if(!Number.isFinite(target)) return;
+          n.textContent = formatCounter(target, format);
+        });
+      }
+
+      // Diagnostic terminal
+      const logEl = document.getElementById('cli-log');
+      const statusEl = document.getElementById('cli-status');
+      const clearBtn = document.getElementById('cli-clear');
+
+      function appendLine(text, level){
+        if(!logEl) return;
+        const p = document.createElement('p');
+        p.className = 'line' + (level ? (' ' + level) : '');
+        p.textContent = text;
+        logEl.appendChild(p);
+        logEl.scrollTop = logEl.scrollHeight;
+      }
+
+      function setStatus(s){
+        if(statusEl) statusEl.textContent = s;
+      }
+
+      const playbooks = {
+        HIGH_LATENCY: [
+          {t: '$ ANALYZING… DETECTED: tail latency + GC pauses', level: 'warn'},
+          {t: '> RECOMMENDATION: Rust rewrite (hot path) + SLO budget', level: 'ok'},
+          {t: '> EXPECTED: <50ms p95, CPU/RAM reduction', level: 'ok'}
+        ],
+        CLOUD_OPEX: [
+          {t: '$ ANALYZING… DETECTED: low density / inefficient runtime', level: 'warn'},
+          {t: '> RECOMMENDATION: Rust services + right-sizing + caching policy', level: 'ok'},
+          {t: '> OUTCOME: OPEX down, predictable scaling', level: 'ok'}
+        ],
+        COMPLIANCE_RISK: [
+          {t: '$ ANALYZING… DETECTED: audit gaps / sensitive data exposure', level: 'warn'},
+          {t: '> RECOMMENDATION: CCM (KNIME) + anonymization + Zero Trust data layer', level: 'ok'},
+          {t: '> OUTCOME: faster audits, reduced legal risk', level: 'ok'}
+        ],
+        LEGACY_MONOLITH: [
+          {t: '$ ANALYZING… DETECTED: Oracle core + legacy monolith', level: ''},
+          {t: '> RECOMMENDATION: RAC / ADG path + vector search inside ACID boundary', level: 'ok'},
+          {t: '> OUTCOME: continuity + future-proof AI', level: 'ok'}
+        ],
+        RAG_SILO: [
+          {t: '$ ANALYZING… DETECTED: fragmented vector DB / policy drift', level: ''},
+          {t: '> RECOMMENDATION: Sovereign RAG (pre/in/post filtration)', level: 'ok'},
+          {t: '> OUTCOME: explainable AI, governance preserved', level: 'ok'}
+        ]
+      };
+
+      function runAlert(key){
+        const plan = playbooks[key];
+        if(!plan) return;
+
+        setStatus('running');
+        appendLine('$ RUN ' + key, '');
+
+        let i = 0;
+        function next(){
+          const step = plan[i];
+          if(!step){
+            setStatus('idle');
+            appendLine('> DONE', 'ok');
+            return;
+          }
+          appendLine(step.t, step.level);
+          i += 1;
+          window.setTimeout(next, reduceMotion ? 0 : 420);
+        }
+        next();
+      }
+
+      document.querySelectorAll('button.alert-btn[data-alert]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const key = String(btn.getAttribute('data-alert') || '');
+          runAlert(key);
+        });
+      });
+
+      if(clearBtn){
+        clearBtn.addEventListener('click', () => {
+          if(!logEl) return;
+          logEl.innerHTML = '';
+          appendLine('$ READY', 'ok');
+          setStatus('idle');
+        });
+      }
+
+      setCurrent('kernel');
     })();
   </script>
 </body>
