@@ -501,7 +501,18 @@
               const text = await res.text().catch(()=> '');
               throw new Error(text || ('HTTP ' + res.status));
             }
-            return res.json().catch(()=> ({}));
+
+            const ct = String(res.headers.get('content-type') || '');
+            if(!ct.includes('application/json')){
+              throw new Error('invalid_content_type');
+            }
+
+            const body = await res.json();
+            if(!body || typeof body.id !== 'number'){
+              throw new Error('invalid_response');
+            }
+
+            return body;
           }).then(()=>{
             feedback.style.color = 'green';
             feedback.textContent = 'Gracias — recibimos tu mensaje.';
@@ -571,7 +582,15 @@
             return;
           }
 
-          const data = await res.json();
+          let data;
+          try{
+            data = await res.json();
+          }catch(_err){
+            adminFeedback.style.color = '#b02a37';
+            adminFeedback.textContent = 'Respuesta inválida del servidor.';
+            return;
+          }
+
           const items = (data && data.items) ? data.items : [];
 
           adminFeedback.style.color = 'green';
