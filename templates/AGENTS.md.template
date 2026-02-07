@@ -1,0 +1,274 @@
+# PROJECT KNOWLEDGE BASE (PLANTILLA AGNÓSTICA)
+
+**Generated:** {FECHA}
+**Branch:** main  
+**Commit:** {COMMIT_HASH}
+
+---
+
+## OVERVIEW
+
+Portal/Aplicación desplegable en **entorno de producción con proxy inverso gestionado** (Coolify + Traefik, Kubernetes, Docker Swarm, etc.) usando `docker-compose.yml` como fuente única de verdad para orquestación y enrutamiento.
+
+**Punto clave:** En este proyecto, `docker-compose.yml` **no es solo contenedores**, es también **configuración de routing**. Los labels de proxy inverso son obligatorios.
+
+---
+
+## STRUCTURE
+
+```
+./
+├── docker-compose.yml                 # ⚠️ CRÍTICO: Orquestación + routing via labels
+├── .env.example                       # Variables de entorno (no commitear .env)
+├── .gitignore                         # Ignorar credenciales, volúmenes, .env local
+├── .opencode/
+│   └── skills/
+│       └── docker-compose-production/ # Skill: plantilla y validación
+│           └── SKILL.md
+├── {servicio1}/
+│   ├── Dockerfile
+│   ├── {config-files}
+│   └── {source-code}
+├── {servicio2}/
+│   └── (similar a servicio1)
+├── docs/
+│   ├── DEPLOYMENT.md                 # Guía de despliegue
+│   ├── TROUBLESHOOTING.md            # Debugging común
+│   └── ARCHITECTURE.md               # Diagrama y explicación
+├── instr.md                          # Instrucciones consolidadas para agentes IA
+└── README.md                         # Documentación usuario
+```
+
+---
+
+## WHERE TO LOOK
+
+| Task | Location | Notes |
+|------|----------|-------|
+| **Despliegue en producción** | `docker-compose.yml` | Labels obligatorios para proxy; sin `ports:` |
+| **Definición de servicios** | `docker-compose.yml` (servicios) | Imágenes con versión fija; `restart: unless-stopped` |
+| **Variables de entorno** | `.env.example` → copiar a `.env` (no commitar) | No hardcodear credenciales |
+| **Configuración de routing** | `docker-compose.yml` (labels) | Traefik/proxy lee labels; define HOST/PATH/TLS |
+| **Validación antes de deploy** | Skill: `docker-compose-production` | Checklist de seguridad, sintaxis, routing |
+| **Debugging de conectividad** | Skill: `docker-compose-production` (sección 7) | Si "502 Bad Gateway", probablemente labels |
+| **Arquitectura y decisiones** | `docs/ARCHITECTURE.md` | Por qué se hizo así |
+
+---
+
+## CONVENTIONS & RULES (OBLIGATORIAS)
+
+### ✅ REGLAS POSITIVAS (QUÉ HACER)
+
+1. **Labels para Proxy Inverso:**
+   - Cada servicio publicado en internet requiere labels de Traefik/proxy.
+   - Estructura obligatoria:
+     - `traefik.enable=true`
+     - `traefik.docker.network={red}`
+     - Router: `traefik.http.routers.{nombre}.rule=Host(\`...\`)`
+     - Servicio: `traefik.http.services.{nombre}.loadbalancer.server.port=...`
+     - TLS: `traefik.http.routers.{nombre}.tls=true`
+     - Redirección HTTP→HTTPS: middleware + router http
+
+2. **Versionado de Imágenes:**
+   - Usar versiones fijas: `nginx:1.26-alpine`, `postgres:16-alpine`
+   - NUNCA usar `latest`
+
+3. **Puertos:**
+   - Usar `expose:` (solo documentación para proxy)
+   - NUNCA usar `ports:` en servicios web
+   - Comunicación interna por nombre de servicio: `http://api:8000`
+
+4. **Persistencia:**
+   - Volúmenes nombrados para DBs, uploads, logs
+   - No commitear datos en la imagen
+   - `volumes:` section al final del compose
+
+5. **Healthchecks:**
+   - Obligatorio en servicios críticos (DB, API)
+   - Usar binarios presentes en la imagen (ej. `wget` en Alpine)
+   - `depends_on` con `condition: service_healthy`
+
+6. **Variables de Entorno:**
+   - Definir en `.env.example` (commitar)
+   - Variables en `environment:` como `${VAR}`
+   - Nunca en el compose ni en labels
+
+7. **Redes:**
+   - Red interna nombrada (ej. `backend`, `app`)
+   - `external: true/false` según orquestador
+   - Todos los servicios en la misma red
+
+8. **Reinicio Automático:**
+   - `restart: unless-stopped` en producción
+   - Permite recuperación sin intervención manual
+
+---
+
+### 🚫 PROHIBICIONES ABSOLUTAS
+
+1. **NUNCA** mapear puertos del host en servicios web → Proxy lo gestiona
+2. **NUNCA** usar `latest` tag → Cambios inesperados
+3. **NUNCA** hardcodear credenciales → Riesgo de seguridad
+4. **NUNCA** usar `network_mode: host` → Impide service discovery
+5. **NUNCA** exponer bases de datos al host → Solo acceso interno
+6. **NUNCA** omitir labels en servicios públicos → Proxy no sabe rutear
+7. **NUNCA** configurar Traefik manualmente en producción → Lo gestiona el orquestador
+
+---
+
+## ANTI-PATTERNS (APRENDIZAJES)
+
+### El Fallo Silencioso: Labels Ausentes o Malformados
+
+**Síntoma:** "Mi contenedor corre pero dice `502 Bad Gateway`"
+
+**Causa:** El proxy inverso no tiene instrucciones (labels) sobre cómo rutear al contenedor.
+
+**Solución:** Verificar:
+```bash
+docker inspect {container} | grep -A 20 '"Labels"'
+```
+
+Los labels deben incluir:
+- `traefik.enable=true`
+- Router con regla de host/path
+- Servicio con puerto correcto
+- TLS configurado
+
+---
+
+## DEPLOYMENT CHECKLIST
+
+Antes de desplegar (producción o staging):
+
+- ✅ `docker compose config` sin errores
+- ✅ Todas las imágenes tienen versión fija (no `latest`)
+- ✅ Credenciales en `.env`, no en compose
+- ✅ Servicios públicos tienen labels completos
+- ✅ Bases de datos SIN labels
+- ✅ Healthchecks presentes
+- ✅ Volúmenes nombrados para persistencia
+- ✅ `restart: unless-stopped` en servicios críticos
+- ✅ Redes correctamente configuradas
+- ✅ `.env.local` y credenciales están en `.gitignore`
+- ✅ DNS/Cloudflare apunta al proxy
+- ✅ TLS/HTTPS configurado en labels
+
+---
+
+## COMMON ISSUES & SOLUTIONS
+
+### "502 Bad Gateway"
+
+**Orden de verificación:**
+1. Labels presentes y correctamente formateados → `docker inspect`
+2. Puerto interno coincide con `expose:` → Config del servicio
+3. `traefik.docker.network` coincide con `networks:` → Mismo nombre
+4. Contenedor responde localmente → `docker exec ... curl http://127.0.0.1:PUERTO`
+
+### "Connection Refused"
+
+**Posibles causas:**
+- Puerto interno es 0.0.0.0 en la app (no solo localhost)
+- Puerto en `expose:` no coincide con donde escucha la app
+- App aún iniciando (comprobar healthcheck)
+
+### "DNS not resolving"
+
+- Verificar registros en DNS (Cloudflare, Route53, etc.)
+- Proxy debe estar escuchando en la IP correcta
+- Dominio debe apuntar al proxy, no al container directamente
+
+### "Logs son densos / No entiendo qué pasó"
+
+- Revisar logs del proxy: `docker logs {proxy-container}`
+- Revisar logs del servicio: `docker logs {service-container}`
+- Activar debug en variables de entorno si existe
+
+---
+
+## SKILLS AVAILABLE
+
+Este proyecto usa **Skills en OMO** para operaciones comunes:
+
+1. **`docker-compose-production`**
+   - Plantilla agnóstica para docker-compose
+   - Validación de labels
+   - Checklist pre-deploy
+   - Ejemplos de escenarios reales
+   - Debugging de routing
+
+   **Invocar:** Cuando trabajes con docker-compose o tengas problemas de conectividad.
+
+---
+
+## ENVIRONMENT VARIABLES
+
+**Archivo:** `.env` (copiar de `.env.example`, no commitar)
+
+Categorías principales:
+
+### Infraestructura
+- `PROXY_NETWORK=app` — Nombre de red para proxy
+- `DOCKER_REGISTRY=registry.ejemplo.com` — Si usas registry privado
+
+### Base de Datos
+- `DB_NAME={nombre-db}`
+- `DB_USER={usuario}`
+- `DB_PASSWORD={contraseña-fuerte}` ⚠️ Cambiar en producción
+
+### Aplicación
+- `LOG_LEVEL=info` (info, debug, warn, error)
+- `SECRET_KEY={clave-aleatoria}` ⚠️ Cambiar en producción
+- `ADMIN_USER={admin-username}` ⚠️ Cambiar en producción
+- `ADMIN_PASSWORD={admin-password}` ⚠️ Cambiar en producción
+
+### Dominio y SSL
+- `DOMAIN_NAME=ejemplo.com`
+- `LE_EMAIL=admin@ejemplo.com` — Para Let's Encrypt
+
+---
+
+## NOTES FOR AI AGENTS
+
+Cuando trabajes en este proyecto:
+
+1. **Siempre revisa el Skill `docker-compose-production`** si vas a:
+   - Crear o modificar `docker-compose.yml`
+   - Añadir servicios públicos (con labels)
+   - Validar antes de deploy
+
+2. **Si hay problema de conectividad ("502 Bad Gateway"):**
+   - Primero piensa: "¿faltan labels o están malformados?"
+   - Valida con `docker inspect` y `docker compose config`
+
+3. **Labels son la puente entre contenedores y proxy:**
+   - Sin labels = proxy no sabe cómo rutear
+   - Es como una dirección sin número de casa
+
+4. **Desarrollo local vs. Producción:**
+   - Local: puedes usar `docker compose` simple
+   - Producción: labels son obligatorios
+
+5. **Cuando generes docker-compose:**
+   - Estructura: servicios → volúmenes → redes
+   - No olvides healthchecks en DBs
+   - No olvides labels en servicios públicos
+   - Documenta variables en `.env.example`
+
+---
+
+## REFERENCES
+
+- [Docker Compose Specification](https://github.com/compose-spec/compose-spec)
+- [Traefik Docker Provider](https://docs.traefik.io/providers/docker/)
+- [Docker Labels Best Practices](https://docs.docker.com/config/labels-custom-metadata/)
+- Skill Local: `.opencode/skills/docker-compose-production/SKILL.md`
+
+---
+
+## CHANGELOG
+
+| Versión | Fecha | Cambio |
+|---------|-------|--------|
+| 1.0 | {FECHA} | Versión agnóstica inicial; énfasis en labels obligatorios |

@@ -1,0 +1,77 @@
+services:
+  traefik:
+    image: traefik:v3.6
+    container_name: da-tica-traefik-dev
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+      - "8090:8080"
+    command:
+      - "--api.dashboard=true"
+      - "--api.insecure=true"
+      - "--entrypoints.http.address=:80"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.network=da-tica-dev"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    networks:
+      - da-tica-dev
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    image: da-tica_portal_web:dev
+    restart: unless-stopped
+    networks:
+      - da-tica-dev
+    expose:
+      - "8080"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.portal-web.rule=Host(`localhost`) || Host(`portal.localhost`)"
+      - "traefik.http.routers.portal-web.entrypoints=http"
+      - "traefik.http.services.portal-web.loadbalancer.server.port=8080"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    image: da-tica_portal_api:dev
+    restart: unless-stopped
+    networks:
+      - da-tica-dev
+    expose:
+      - "8000"
+    environment:
+      DB_PATH: /data/contacts.db
+      ADMIN_USER: ${ADMIN_USER:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-adminpass}
+    volumes:
+      - contacts_data_dev:/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.portal-api.rule=(Host(`localhost`) || Host(`portal.localhost`)) && PathPrefix(`/api`)"
+      - "traefik.http.routers.portal-api.entrypoints=http"
+      - "traefik.http.routers.portal-api.priority=100"
+      - "traefik.http.services.portal-api.loadbalancer.server.port=8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=3).read()"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  contacts_data_dev:
+
+networks:
+  da-tica-dev:
+    name: da-tica-dev
