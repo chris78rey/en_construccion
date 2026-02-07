@@ -321,7 +321,65 @@
           </aside>
         </div>
       </section>
+
+      <section id="admin" aria-labelledby="admin-title" style="margin-top:18px">
+        <h2 id="admin-title">Administración</h2>
+        <div class="card" style="display:grid;gap:12px">
+          <p style="color:var(--muted)">Acceso restringido (usuario y contraseña). Esta vista consulta <code>/api/admin/contacts</code>.</p>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end">
+            <label>
+              Usuario
+              <input type="text" id="admin-user" placeholder="admin">
+            </label>
+            <label>
+              Contraseña
+              <input type="password" id="admin-pass" placeholder="********">
+            </label>
+            <button class="btn" id="admin-login">Ingresar</button>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end">
+            <label>
+              Filtrar por tema
+              <select id="admin-topic">
+                <option value="" selected>Todos</option>
+                <option value="machine-learning">Machine Learning / MLOps</option>
+                <option value="ingenieria-datos">Ingeniería de Datos</option>
+                <option value="analitica-bi">Analítica / BI</option>
+                <option value="documentacion">Documentación / DocOps</option>
+                <option value="infra-coolify">Infra / Coolify</option>
+                <option value="capacitacion">Capacitación</option>
+                <option value="otro">Otro</option>
+              </select>
+            </label>
+            <label>
+              Filtrar por email
+              <input type="email" id="admin-email" placeholder="cliente@empresa.com">
+            </label>
+            <button class="ghost" id="admin-refresh">Cargar</button>
+          </div>
+
+          <div id="admin-feedback" role="status" aria-live="polite" style="color:var(--muted)"></div>
+
+          <div style="overflow:auto">
+            <table style="width:100%;border-collapse:collapse">
+              <thead>
+                <tr>
+                  <th style="text-align:left;padding:10px;border-bottom:1px solid rgba(255,255,255,0.08)">Fecha</th>
+                  <th style="text-align:left;padding:10px;border-bottom:1px solid rgba(255,255,255,0.08)">Tema</th>
+                  <th style="text-align:left;padding:10px;border-bottom:1px solid rgba(255,255,255,0.08)">Nombre</th>
+                  <th style="text-align:left;padding:10px;border-bottom:1px solid rgba(255,255,255,0.08)">Email</th>
+                  <th style="text-align:left;padding:10px;border-bottom:1px solid rgba(255,255,255,0.08)">Asunto</th>
+                </tr>
+              </thead>
+              <tbody id="admin-rows"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
     </main>
+
 
     <footer role="contentinfo">
       <small style="color:var(--muted)">© <span id="year"></span> da-tica | Deploy-ready stacks • Cloudflare → Coolify → Contenedor</small>
@@ -360,10 +418,13 @@
             document.getElementById('pricing').scrollIntoView({behavior:'smooth'});
           } else if(h.startsWith('#/contact')){
             document.getElementById('contact').scrollIntoView({behavior:'smooth'});
+          } else if(h.startsWith('#/admin')){
+            document.getElementById('admin').scrollIntoView({behavior:'smooth'});
           } else if(h.startsWith('#/about')){
             window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
           }
         }
+
         window.addEventListener('hashchange',route);
         route();
 
@@ -410,7 +471,7 @@
         document.getElementById('hero-cta').addEventListener('click', ()=> location.hash = '#/contact');
         document.getElementById('cta-demo').addEventListener('click', ()=> alert('Demo request: copiar instrucciones de despliegue en README (simulado).'));
 
-        // Contact form (client-side only)
+        // Contact form
         const form = document.getElementById('contact-form');
         const feedback = document.getElementById('form-feedback');
         form.addEventListener('submit', function(ev){
@@ -422,7 +483,6 @@
             topic: (form.topic && form.topic.value) ? String(form.topic.value) : '',
             message: form.message.value.trim()
           };
-          // simple validation
           if(!data.name || !data.email || !data.subject || !data.topic || !data.message){
             feedback.textContent = 'Por favor completa los campos requeridos.';
             feedback.style.color = '#b02a37';
@@ -450,6 +510,107 @@
             feedback.style.color = '#b02a37';
             feedback.textContent = 'No se pudo enviar. Intenta de nuevo en unos minutos.';
           });
+        });
+
+        // Admin viewer (Basic Auth)
+        const adminUser = document.getElementById('admin-user');
+        const adminPass = document.getElementById('admin-pass');
+        const adminLogin = document.getElementById('admin-login');
+        const adminRefresh = document.getElementById('admin-refresh');
+        const adminTopic = document.getElementById('admin-topic');
+        const adminEmail = document.getElementById('admin-email');
+        const adminRows = document.getElementById('admin-rows');
+        const adminFeedback = document.getElementById('admin-feedback');
+
+        function getAdminAuthHeader(){
+          const raw = sessionStorage.getItem('admin_basic_auth');
+          return raw ? ('Basic ' + raw) : '';
+        }
+
+        function setAdminAuthHeader(u,p){
+          const token = btoa(String(u) + ':' + String(p));
+          sessionStorage.setItem('admin_basic_auth', token);
+        }
+
+        function clearAdminTable(){
+          adminRows.innerHTML = '';
+        }
+
+        function esc(s){
+          return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        }
+
+        async function loadContacts(){
+          adminFeedback.style.color = 'var(--muted)';
+          adminFeedback.textContent = 'Cargando solicitudes...';
+          clearAdminTable();
+
+          const params = new URLSearchParams({ limit: '100', offset: '0' });
+          if(adminTopic && adminTopic.value) params.set('topic', adminTopic.value);
+          if(adminEmail && adminEmail.value.trim()) params.set('email', adminEmail.value.trim());
+
+          const res = await fetch('/api/admin/contacts?' + params.toString(), {
+            headers: { 'Authorization': getAdminAuthHeader() }
+          });
+
+          if(res.status === 401){
+            adminFeedback.style.color = '#b02a37';
+            adminFeedback.textContent = 'No autorizado. Revisa usuario/contraseña.';
+            return;
+          }
+
+          if(res.status === 503){
+            adminFeedback.style.color = '#b02a37';
+            adminFeedback.textContent = 'Admin no configurado en el servidor.';
+            return;
+          }
+
+          if(!res.ok){
+            adminFeedback.style.color = '#b02a37';
+            adminFeedback.textContent = 'Error cargando solicitudes.';
+            return;
+          }
+
+          const data = await res.json();
+          const items = (data && data.items) ? data.items : [];
+
+          adminFeedback.style.color = 'green';
+          adminFeedback.textContent = 'Cargadas: ' + items.length;
+
+          const rowsHtml = items.map((it)=>{
+            return '<tr>'
+              + '<td style="padding:10px;border-bottom:1px solid rgba(255,255,255,0.06)">' + esc(it.created_at) + '</td>'
+              + '<td style="padding:10px;border-bottom:1px solid rgba(255,255,255,0.06)">' + esc(it.topic) + '</td>'
+              + '<td style="padding:10px;border-bottom:1px solid rgba(255,255,255,0.06)">' + esc(it.name) + '</td>'
+              + '<td style="padding:10px;border-bottom:1px solid rgba(255,255,255,0.06)">' + esc(it.email) + '</td>'
+              + '<td style="padding:10px;border-bottom:1px solid rgba(255,255,255,0.06)">' + esc(it.subject) + '</td>'
+              + '</tr>';
+          }).join('');
+
+          adminRows.innerHTML = rowsHtml;
+        }
+
+        adminLogin.addEventListener('click', ()=>{
+          if(!adminUser.value || !adminPass.value){
+            adminFeedback.style.color = '#b02a37';
+            adminFeedback.textContent = 'Ingresa usuario y contraseña.';
+            return;
+          }
+          setAdminAuthHeader(adminUser.value, adminPass.value);
+          adminPass.value = '';
+          loadContacts().catch(()=>{
+            adminFeedback.style.color = '#b02a37';
+            adminFeedback.textContent = 'No se pudo conectar al servidor.';
+          });
+        });
+
+        adminRefresh.addEventListener('click', ()=>{
+          loadContacts().catch(()=>{
+            adminFeedback.style.color = '#b02a37';
+            adminFeedback.textContent = 'No se pudo conectar al servidor.';
+          });
+        });
+
 
         });
 

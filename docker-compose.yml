@@ -41,6 +41,8 @@ services:
       - "8000"
     environment:
       DB_PATH: /data/contacts.db
+      ADMIN_USER: ${ADMIN_USER}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
     volumes:
       - contacts_data:/data
     labels:
