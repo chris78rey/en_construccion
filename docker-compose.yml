@@ -29,34 +29,7 @@ services:
       - "traefik.http.middlewares.portal-da-tica-redirect.redirectscheme.scheme=https"
       - "traefik.http.middlewares.portal-da-tica-redirect.redirectscheme.permanent=true"
 
-  api:
-    build:
-      context: ./api
-      dockerfile: Dockerfile
-    image: da-tica_portal_api:1.0.0
-    restart: unless-stopped
-    networks:
-      - coolify
-    expose:
-      - "8000"
-    environment:
-      DB_PATH: /data/contacts.db
-      ADMIN_USER: ${ADMIN_USER}
-      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
-    volumes:
-      - contacts_data:/data
-    labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=coolify"
-      - "traefik.http.routers.portal-da-tica-api.rule=Host(`portal.da-tica.com`) && PathPrefix(`/api`)"
-      - "traefik.http.routers.portal-da-tica-api.entrypoints=https"
-      - "traefik.http.routers.portal-da-tica-api.tls=true"
-      - "traefik.http.routers.portal-da-tica-api.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.portal-da-tica-api.priority=100"
-      - "traefik.http.services.portal-da-tica-api.loadbalancer.server.port=8000"
 
-volumes:
-  contacts_data:
 
 networks:
   coolify:
