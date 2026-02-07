@@ -289,9 +289,23 @@
               <input type="text" name="subject" id="subject" placeholder="Asunto breve" required>
             </label>
             <label>
+              Tema
+              <select name="topic" id="topic" required>
+                <option value="" selected disabled>Selecciona un tema</option>
+                <option value="machine-learning">Machine Learning / MLOps</option>
+                <option value="ingenieria-datos">Ingeniería de Datos</option>
+                <option value="analitica-bi">Analítica / BI</option>
+                <option value="documentacion">Documentación / DocOps</option>
+                <option value="infra-coolify">Infra / Coolify</option>
+                <option value="capacitacion">Capacitación</option>
+                <option value="otro">Otro</option>
+              </select>
+            </label>
+            <label>
               Mensaje
               <textarea name="message" id="message" rows="5" placeholder="Escribe tu mensaje..." required></textarea>
             </label>
+
             <div style="display:flex;gap:10px;justify-content:flex-end">
               <button type="reset" class="ghost">Limpiar</button>
               <button type="submit" class="btn">Enviar</button>
@@ -405,22 +419,38 @@
             name: form.name.value.trim(),
             email: form.email.value.trim(),
             subject: form.subject.value.trim(),
+            topic: (form.topic && form.topic.value) ? String(form.topic.value) : '',
             message: form.message.value.trim()
           };
           // simple validation
-          if(!data.name || !data.email || !data.message){
+          if(!data.name || !data.email || !data.subject || !data.topic || !data.message){
             feedback.textContent = 'Por favor completa los campos requeridos.';
             feedback.style.color = '#b02a37';
             return;
           }
-          // simulate async send
+
           feedback.style.color = 'var(--muted)';
-          feedback.textContent = 'Enviando mensaje — simulación local...';
-          setTimeout(()=>{
+          feedback.textContent = 'Enviando mensaje...';
+
+          fetch('/api/contacts', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          }).then(async (res)=>{
+            if(!res.ok){
+              const text = await res.text().catch(()=> '');
+              throw new Error(text || ('HTTP ' + res.status));
+            }
+            return res.json().catch(()=> ({}));
+          }).then(()=>{
             feedback.style.color = 'green';
-            feedback.textContent = 'Gracias — recibimos tu mensaje (simulado).';
+            feedback.textContent = 'Gracias — recibimos tu mensaje.';
             form.reset();
-          },900);
+          }).catch(()=>{
+            feedback.style.color = '#b02a37';
+            feedback.textContent = 'No se pudo enviar. Intenta de nuevo en unos minutos.';
+          });
+
         });
 
         // footer year
