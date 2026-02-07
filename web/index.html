@@ -164,6 +164,54 @@
             letter-spacing: 0.05em;
         }
         .badge-accent { background-color: rgba(37, 99, 235, 0.1); color: var(--accent); }
+
+        .brand{
+            display: inline-flex;
+            align-items: baseline;
+            gap: 0.35rem;
+            line-height: 1;
+        }
+
+        .brand-primary{
+            font-family: var(--font-mono);
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            font-size: 1.35rem;
+        }
+
+        .brand-primary .dot{ color: var(--accent); }
+
+        .brand-sign{
+            font-family: var(--font-mono);
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .section-surface{
+            background: var(--bg-surface);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .arsenal-grid{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: var(--space-md);
+        }
+
+        .diagram{
+            height: 180px;
+            border-radius: 12px;
+            background: var(--bg-surface-2);
+            border: 1px solid var(--border);
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+        }
+
+        .diagram svg{ width: 100%; height: 100%; }
         
         /* --- SECTIONS --- */
 
@@ -289,10 +337,15 @@
     <!-- HEADER -->
     <header>
         <div class="container flex items-center justify-between">
-            <a href="#" class="text-xl font-mono font-bold">da-tica<span class="text-accent">.</span></a>
+            <a href="#" class="brand" aria-label="DATica - By CRRB">
+                <span class="brand-primary">DATica<span class="dot">.</span></span>
+                <span class="brand-sign">By CRRB</span>
+            </a>
             
             <nav class="nav-links flex items-center">
-                <a href="#servicios" class="nav-link">Servicios</a>
+                <a href="#servicios" class="nav-link">Productos</a>
+                <a href="#arsenal" class="nav-link">Habilidades</a>
+                <a href="#filosofia" class="nav-link">Método</a>
                 <a href="#autoridad" class="nav-link">Autoridad</a>
                 <a href="#blog" class="nav-link">Blog</a>
             </nav>
@@ -452,10 +505,17 @@
 
         <!-- SERVICES CATALOG -->
         <section id="servicios" class="container mt-xl">
-            <h2 class="text-4xl text-center mb-lg">Soluciones Productized</h2>
+            <h2 class="text-4xl text-center mb-lg">Productos y entregables</h2>
             
             <div class="services-grid">
-                <!-- Service 1 -->
+                <article class="card">
+                    <div class="service-icon">🧭</div>
+                    <h3 class="text-xl mb-xs">Portal de Servicios (B2B / atención al cliente)</h3>
+                    <p class="text-sm text-muted mb-md">Portal público/privado para contacto con clientes: solicitudes, seguimiento, base de conocimiento y trazabilidad.</p>
+                    <div class="badge badge-accent mb-md">Producto principal</div>
+                    <button class="btn btn-outline" style="width: 100%">Ver Detalles</button>
+                </article>
+
                 <article class="card">
                     <div class="service-icon">🏛️</div>
                     <h3 class="text-xl mb-xs">Modernización Legacy</h3>
@@ -493,6 +553,84 @@
             </div>
         </section>
 
+        <section id="filosofia" class="section-surface" aria-labelledby="philosophy-title">
+            <div class="container" style="padding: var(--space-lg) var(--space-sm);">
+                <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); align-items: start;">
+                    <div>
+                        <h2 id="philosophy-title" class="text-3xl mb-sm">Ingeniería radical. Cero burocracia.</h2>
+                        <p class="text-muted">No vendemos horas ni presentaciones. Entregamos arquitectura, código y datos que se pueden auditar, medir y operar.</p>
+                        <p class="text-muted mt-sm">Si no podemos demostrar impacto en 90 días (latencia, continuidad, OPEX o riesgo), no lo construimos.</p>
+                    </div>
+                    <div class="card" style="background: var(--bg-body);">
+                        <h3 class="text-xl mb-sm">Cómo trabajamos</h3>
+                        <ul class="text-muted" style="display: grid; gap: 0.75rem;">
+                            <li class="flex items-center"><span class="text-accent" style="width: 1.1rem;">→</span> Diagnóstico técnico con evidencia</li>
+                            <li class="flex items-center"><span class="text-accent" style="width: 1.1rem;">→</span> Entregables productizados (alcance claro)</li>
+                            <li class="flex items-center"><span class="text-accent" style="width: 1.1rem;">→</span> Métricas antes/después (SLO/ROI)</li>
+                            <li class="flex items-center"><span class="text-accent" style="width: 1.1rem;">→</span> Operación reproducible (deploy + healthcheck)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="arsenal" class="container mt-xl" aria-labelledby="arsenal-title">
+            <div class="text-center mb-lg">
+                <h2 id="arsenal-title" class="text-4xl mb-sm">Arsenal técnico</h2>
+                <p class="text-muted text-xl">Habilidades y productos donde la confiabilidad importa más que el hype.</p>
+            </div>
+
+            <div class="arsenal-grid">
+                <article class="card">
+                    <h3 class="text-xl mb-xs">Oracle 19c / RAC / ADG</h3>
+                    <p class="text-muted mb-md">Alta disponibilidad, continuidad operativa y tuning de cargas masivas con métricas reales.</p>
+                    <div class="badge badge-accent">ACID + HA</div>
+                </article>
+
+                <article class="card">
+                    <h3 class="text-xl mb-xs">PL/SQL y rendimiento</h3>
+                    <p class="text-muted mb-md">Optimización de SQL, reducción de tiempos batch, y control determinista de recursos.</p>
+                    <div class="badge badge-accent">Throughput</div>
+                </article>
+
+                <article class="card">
+                    <h3 class="text-xl mb-xs">Rust ultra-baja latencia</h3>
+                    <p class="text-muted mb-md">Servicios críticos sin pausas de GC, menor RAM/CPU, latencias previsibles.</p>
+                    <div class="badge badge-accent">&lt;50ms</div>
+                </article>
+
+                <article class="card">
+                    <h3 class="text-xl mb-xs">Python 3.12+ (tipado)</h3>
+                    <p class="text-muted mb-md">Automatización y data engineering con type hints estrictos y entrega reproducible.</p>
+                    <div class="badge badge-accent">Entrega</div>
+                </article>
+
+                <article class="card">
+                    <h3 class="text-xl mb-xs">IA soberana (RAG)</h3>
+                    <p class="text-muted mb-md">Arquitecturas de IA explicable con control de acceso, trazabilidad y auditoría.</p>
+                    <div class="badge badge-accent">Gobernanza</div>
+                </article>
+
+                <article class="card">
+                    <h3 class="text-xl mb-xs">KNIME y auditoría</h3>
+                    <p class="text-muted mb-md">Monitoreo continuo, detección de anomalías y reportes listos para cumplimiento.</p>
+                    <div class="badge badge-accent">CCM</div>
+                </article>
+
+                <article class="card">
+                    <h3 class="text-xl mb-xs">Coolify / Traefik</h3>
+                    <p class="text-muted mb-md">Despliegue reproducible con reverse proxy, TLS y healthchecks.</p>
+                    <div class="badge badge-accent">Ops</div>
+                </article>
+
+                <article class="card">
+                    <h3 class="text-xl mb-xs">Zero Trust</h3>
+                    <p class="text-muted mb-md">Controles por rol, minimización de superficie de ataque y auditoría de accesos.</p>
+                    <div class="badge badge-accent">Seguridad</div>
+                </article>
+            </div>
+        </section>
+
          <section class="container mt-xl" aria-labelledby="ops-title">
              <div class="card" style="background: var(--bg-surface-2); border: none;">
                  <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); align-items: center;">
@@ -518,25 +656,50 @@
             
             <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
                 <a href="#" class="card" style="border: none; background: transparent; padding: 0;">
-                    <div style="height: 200px; background: var(--bg-surface-2); border-radius: 12px; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; color: var(--text-muted);">
-                        [Diagrama Rust vs Java]
+                    <div class="diagram" aria-hidden="true">
+                        <svg viewBox="0 0 600 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Comparativo Rust vs Java">
+                            <rect x="0" y="0" width="600" height="360" fill="transparent"/>
+                            <rect x="60" y="220" width="180" height="90" rx="12" fill="rgba(37,99,235,0.18)" stroke="rgba(37,99,235,0.35)"/>
+                            <rect x="360" y="140" width="180" height="170" rx="12" fill="rgba(16,185,129,0.18)" stroke="rgba(16,185,129,0.35)"/>
+                            <text x="150" y="210" text-anchor="middle" fill="currentColor" opacity="0.75" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas" font-size="20">Java</text>
+                            <text x="450" y="130" text-anchor="middle" fill="currentColor" opacity="0.75" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas" font-size="20">Rust</text>
+                            <text x="150" y="270" text-anchor="middle" fill="currentColor" opacity="0.65" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas" font-size="16">GC pauses</text>
+                            <text x="450" y="240" text-anchor="middle" fill="currentColor" opacity="0.65" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas" font-size="16">latencia estable</text>
+                        </svg>
                     </div>
-                    <h3 class="text-xl mb-xs">Rust vs Java en Banca</h3>
-                    <p class="text-muted text-sm">Por qué la seguridad de memoria es la nueva prioridad financiera.</p>
+                    <h3 class="text-xl mb-xs">Rust vs Java en banca</h3>
+                    <p class="text-muted text-sm">Latencia predecible, menor RAM/CPU y seguridad de memoria como estándar.</p>
                 </a>
                 <a href="#" class="card" style="border: none; background: transparent; padding: 0;">
-                    <div style="height: 200px; background: var(--bg-surface-2); border-radius: 12px; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; color: var(--text-muted);">
-                        [Esquema Cumplimiento]
+                    <div class="diagram" aria-hidden="true">
+                        <svg viewBox="0 0 600 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Controles y auditoría">
+                            <rect x="0" y="0" width="600" height="360" fill="transparent"/>
+                            <circle cx="150" cy="180" r="80" fill="rgba(37,99,235,0.18)" stroke="rgba(37,99,235,0.35)"/>
+                            <circle cx="300" cy="180" r="80" fill="rgba(245,158,11,0.18)" stroke="rgba(245,158,11,0.35)"/>
+                            <circle cx="450" cy="180" r="80" fill="rgba(16,185,129,0.18)" stroke="rgba(16,185,129,0.35)"/>
+                            <text x="150" y="186" text-anchor="middle" fill="currentColor" opacity="0.7" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas" font-size="16">Acceso</text>
+                            <text x="300" y="186" text-anchor="middle" fill="currentColor" opacity="0.7" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas" font-size="16">Linaje</text>
+                            <text x="450" y="186" text-anchor="middle" fill="currentColor" opacity="0.7" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas" font-size="16">Auditoría</text>
+                        </svg>
                     </div>
-                    <h3 class="text-xl mb-xs">Cumplimiento & explicabilidad</h3>
-                    <p class="text-muted text-sm">Cómo diseñar controles de acceso, trazabilidad y auditoría para IA y datos sensibles.</p>
+                    <h3 class="text-xl mb-xs">Cumplimiento y explicabilidad</h3>
+                    <p class="text-muted text-sm">Acceso por rol, trazabilidad del dato y evidencia lista para auditoría.</p>
                 </a>
                 <a href="#" class="card" style="border: none; background: transparent; padding: 0;">
-                    <div style="height: 200px; background: var(--bg-surface-2); border-radius: 12px; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; color: var(--text-muted);">
-                        [Oracle Vector]
+                    <div class="diagram" aria-hidden="true">
+                        <svg viewBox="0 0 600 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="RAC y vectores">
+                            <rect x="0" y="0" width="600" height="360" fill="transparent"/>
+                            <rect x="120" y="110" width="140" height="140" rx="16" fill="rgba(37,99,235,0.18)" stroke="rgba(37,99,235,0.35)"/>
+                            <rect x="340" y="110" width="140" height="140" rx="16" fill="rgba(37,99,235,0.18)" stroke="rgba(37,99,235,0.35)"/>
+                            <path d="M260 180 H340" stroke="rgba(148,163,184,0.8)" stroke-width="10" stroke-linecap="round"/>
+                            <circle cx="300" cy="180" r="34" fill="rgba(16,185,129,0.18)" stroke="rgba(16,185,129,0.35)"/>
+                            <text x="190" y="190" text-anchor="middle" fill="currentColor" opacity="0.7" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas" font-size="14">Nodo A</text>
+                            <text x="410" y="190" text-anchor="middle" fill="currentColor" opacity="0.7" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas" font-size="14">Nodo B</text>
+                            <text x="300" y="186" text-anchor="middle" fill="currentColor" opacity="0.65" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas" font-size="12">Vector</text>
+                        </svg>
                     </div>
-                    <h3 class="text-xl mb-xs">Oracle RAC para GenAI</h3>
-                    <p class="text-muted text-sm">Preparando infraestructura core para búsqueda vectorial 26ai.</p>
+                    <h3 class="text-xl mb-xs">Oracle RAC + búsqueda vectorial</h3>
+                    <p class="text-muted text-sm">Convergencia: ACID, alta disponibilidad y capacidades de IA sin romper gobernanza.</p>
                 </a>
             </div>
         </section>
@@ -546,12 +709,16 @@
             <div class="container">
                 <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-lg);">
                     <div>
-                        <h4 class="text-xl font-bold mb-sm">da-tica<span class="text-accent">.</span></h4>
+                        <div class="brand" aria-label="DATica - By CRRB" style="margin-bottom: 0.75rem;">
+                            <span class="brand-primary">DATica<span class="dot">.</span></span>
+                            <span class="brand-sign">By CRRB</span>
+                        </div>
                         <p class="text-muted text-sm">Ingeniería de misión crítica con experiencia comprobada. Optimizamos el núcleo de su negocio.</p>
                     </div>
                     <div>
                         <h5 class="font-bold mb-sm">Servicios</h5>
                         <ul class="text-sm text-muted" style="display: grid; gap: 0.5rem;">
+                            <li><a href="#">Portal de Servicios</a></li>
                             <li><a href="#">Modernización Legacy</a></li>
                             <li><a href="#">Ultra-Baja Latencia</a></li>
                             <li><a href="#">IA Soberana</a></li>
