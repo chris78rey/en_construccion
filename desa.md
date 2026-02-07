@@ -46,9 +46,10 @@ Prohibido:
 
 Deliverables en este modo:
 
-- `docker-compose.coolify-local.yml`    
+- (opcional) `docker-compose.dev.yml` con Traefik local    
 - `.env.local` de ejemplo    
 - Instrucciones de prueba (`curl`, navegador)    
+
 
 ---
 

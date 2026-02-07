@@ -5,13 +5,12 @@
 **Commit:** 7db9a25
 
 ## OVERVIEW
-Portal estático “da-tica” desplegable en Coolify (Traefik gestionado por Coolify) con `docker-compose.yml` para producción y `docker-compose.coolify-local.yml` para simular Traefik en local.
+Portal estático “da-tica” desplegable en Coolify (Traefik gestionado por Coolify) usando un único `docker-compose.yml` para producción.
 
 ## STRUCTURE
 ```
 ./
 ├── docker-compose.yml                 # Producción (Coolify): 1 servicio `web`
-├── docker-compose.coolify-local.yml   # Local: Traefik + `web` (servidor Node inline)
 ├── web/                               # Sitio estático + imagen nginx (puerto interno 8080)
 │   ├── Dockerfile
 │   ├── default.conf
@@ -28,9 +27,8 @@ Portal estático “da-tica” desplegable en Coolify (Traefik gestionado por Co
 | Task | Location | Notes |
 |------|----------|-------|
 | Despliegue producción en Coolify | `docker-compose.yml` | Sin `ports:`; usa `expose: 8080` + `healthcheck` |
-| Simular Traefik/Coolify en local | `docker-compose.coolify-local.yml` | Traefik en `8081/8443`; dashboard `8080` |
-| Imagen producción del sitio | `web/Dockerfile` | `nginx:stable-alpine`, escucha en `8080` |
-| Routing Traefik local | `traefik/dynamic.yml` | Apunta a `portal_web_local:8080` |
+| Imagen producción del sitio | `web/Dockerfile` | `nginx:1.26.3-alpine`, escucha en `8080` |
+| Routing Traefik local (opcional) | `traefik/dynamic.yml` | Solo si montas Traefik por tu cuenta en dev |
 | Reglas “no negociables” | `instr.md` / `desa.md` | “vía negativa” (prohibiciones) |
 
 ## CONVENTIONS (DEVIATIONS)
@@ -41,7 +39,7 @@ Portal estático “da-tica” desplegable en Coolify (Traefik gestionado por Co
 - `healthcheck` obligatorio; debe usar binarios presentes en la imagen (`wget` en `nginx:stable-alpine`).
 
 ## ANTI-PATTERNS (THIS PROJECT)
-- No configurar Traefik manualmente en producción (solo aplica a `docker-compose.coolify-local.yml`).
+- No configurar Traefik manualmente en producción (Coolify lo gestiona).
 - No añadir `network_mode: host`.
 - No hardcodear credenciales en compose; usar variables/Coolify UI.
 - No commitear `.env.local` ni llaves (`.ssh_deploy_key*`): están ignoradas por `.gitignore`.
@@ -52,11 +50,8 @@ Portal estático “da-tica” desplegable en Coolify (Traefik gestionado por Co
 docker compose -f docker-compose.yml build
 
 docker compose -f docker-compose.yml up -d
-
-# Local (Traefik simulado; entrada por http://localhost:8081)
-docker compose -f docker-compose.coolify-local.yml up -d --build
 ```
 
 ## NOTES
 - `web/Dockerfile` genera su propia config nginx inline; `web/default.conf` existe pero no se usa actualmente (solo referencia).
-- `docker-compose.coolify-local.yml` usa un servidor Node inline para servir archivos desde `./web` (bind mount), no la imagen nginx de producción.
+- `traefik/dynamic.yml` queda como referencia opcional para dev local; no se usa en producción.
