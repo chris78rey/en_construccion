@@ -1,28 +1,12 @@
-# Stack: portal-da-tica
-# Fecha: 2026-02-06
-# Descripción: Docker Compose de PRODUCCIÓN para la página estática autocontenida.
-# - Construye una imagen desde el contexto `web/` (multi-stage Dockerfile recomendado).
-# - No mapea puertos del host (Traefik/Coolify gestionan el enrutamiento por subdominio).
-# - Servicio único: `web`. Escucha internamente en 8080 y expone solo ese puerto.
-#
-# Reglas cumplidas:
-# - No `ports:` públicos.
-# - `restart: unless-stopped`
-# - `expose: "8080"` (puerto interno documentado).
-# - Sin volumenes persistentes (sitio estatico autocontenido en la imagen).
-# - Healthcheck incluido.
-# - Imagen con tag fijo (no `latest`).
-#
 services:
   web:
-    # Build desde el contexto `web/`. Asegurate de tener un `web/Dockerfile` que
-    # copie los assets y sirva estaticos con un servidor ligero (NGINX recomendado).
     build:
       context: ./web
       dockerfile: Dockerfile
     image: da-tica_portal_web:1.0.0
     restart: unless-stopped
-    # Puerto interno que Traefik/Coolify deben detectar
+    networks:
+      - coolify
     expose:
       - "8080"
     healthcheck:
@@ -31,35 +15,20 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=coolify"
+      - "traefik.http.routers.portal-da-tica-web.rule=Host(`portal.da-tica.com`)"
+      - "traefik.http.routers.portal-da-tica-web.entrypoints=https"
+      - "traefik.http.routers.portal-da-tica-web.tls=true"
+      - "traefik.http.routers.portal-da-tica-web.tls.certresolver=letsencrypt"
+      - "traefik.http.services.portal-da-tica-web.loadbalancer.server.port=8080"
+      - "traefik.http.routers.portal-da-tica-web-http.rule=Host(`portal.da-tica.com`)"
+      - "traefik.http.routers.portal-da-tica-web-http.entrypoints=http"
+      - "traefik.http.routers.portal-da-tica-web-http.middlewares=portal-da-tica-redirect"
+      - "traefik.http.middlewares.portal-da-tica-redirect.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.portal-da-tica-redirect.redirectscheme.permanent=true"
 
-
-# ---------------------------------------------------------
-# Notas post-despliegue (leer)
-# ---------------------------------------------------------
-# Puerto interno que Coolify/Traefik debe detectar:
-# - 8080
-#
-# Pasos recomendados antes de publicar:
-# 1) Verificar `web/Dockerfile` (ya existe) y que el servidor escuche en `0.0.0.0:8080`.
-#    - Recomendado: imagen final ligera (nginx:1.26.3-alpine) sin dependencias de runtime.
-#    - Healthcheck: debe usar binarios presentes en la imagen (aquí: `wget`).
-# 2) Probar localmente la build/ejecución:
-#    docker compose -f docker-compose.yml build
-#    docker compose -f docker-compose.yml up -d
-# 3) En Coolify: crear Stack apuntando a este `docker-compose.yml`.
-#    - Branch: main (o el que uses)
-#    - Puerto interno: 8080
-#    - Variables en la UI: ninguna requerida
-#    - Asignar subdominio (ej. portal.da-tica.com) para routing/TLS automático
-#
-# Checklist final (reglas Coolify):
-# - ¿Sin `ports:` públicos en el servicio web? Sí (usa `expose`).
-# - ¿Sin `network_mode: host`? Sí.
-# - ¿`restart: unless-stopped`? Sí.
-# - ¿Healthcheck presente y ejecutable? Sí.
-# - ¿Sin tag `latest`? Sí.
-#
-# Notas operativas:
-# - NO incluir secrets en el compose. Usar las variables de Coolify.
-# - Si en producción preferís servir estáticos con NGINX, modifica el Dockerfile para copiar el `dist/` a /usr/share/nginx/html y exponer internamente 8080.
-# ---------------------------------------------------------
+networks:
+  coolify:
+    external: true
