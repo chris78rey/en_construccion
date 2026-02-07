@@ -1,970 +1,598 @@
-<!doctype html>
-<html lang="es">
+<!DOCTYPE html>
+<html lang="es" class="no-js">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>da-tica — Ingeniería de datos de misión crítica</title>
-  <meta name="description" content="Consultora boutique de alta ingeniería. Soberanía del dato, ultra-baja latencia y Zero Trust para infraestructuras de misión crítica." />
-  <meta name="color-scheme" content="dark" />
-  <style>
-    :root{
-      --bg: #050505;
-      --panel: rgba(255,255,255,0.04);
-      --panel-2: rgba(255,255,255,0.06);
-      --text: #e6e6e6;
-      --muted: #a6a6a6;
-      --dim: #444444;
-      --ok: #00ff41;
-      --warn: #ff4d00;
-      --radius: 14px;
-      --shadow: 0 24px 90px rgba(0,0,0,0.6);
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      --max: 1120px;
-    }
-
-    *{ box-sizing: border-box; }
-    html,body{ height: 100%; }
-    body{
-      margin:0;
-      background:
-        radial-gradient(1200px 600px at 20% 0%, rgba(0,255,65,0.08), transparent 65%),
-        radial-gradient(1000px 500px at 90% 10%, rgba(255,77,0,0.10), transparent 70%),
-        var(--bg);
-      color: var(--text);
-      font-family: var(--sans);
-      line-height: 1.45;
-      letter-spacing: 0.2px;
-    }
-
-    a{ color: inherit; }
-    a:focus-visible, button:focus-visible, summary:focus-visible{
-      outline: 2px solid var(--ok);
-      outline-offset: 3px;
-      border-radius: 10px;
-    }
-
-    .skip{
-      position:absolute;
-      top:-40px;
-      left: 12px;
-      padding: 10px 12px;
-      background: var(--panel-2);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 12px;
-      text-decoration:none;
-      font-family: var(--mono);
-    }
-    .skip:focus{ top: 12px; }
-
-    .wrap{
-      max-width: var(--max);
-      margin: 0 auto;
-      padding: 22px 18px 48px;
-    }
-
-    .topbar{
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      backdrop-filter: blur(14px);
-      background: rgba(5,5,5,0.6);
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-    }
-
-    .topbar-inner{
-      max-width: var(--max);
-      margin: 0 auto;
-      padding: 14px 18px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap: 14px;
-    }
-
-    .brand{
-      display:flex;
-      align-items:center;
-      gap: 12px;
-      text-decoration:none;
-      min-width: 220px;
-    }
-
-    .mark{
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, rgba(0,255,65,0.18), rgba(255,77,0,0.20));
-      border: 1px solid rgba(255,255,255,0.08);
-      box-shadow: 0 10px 36px rgba(0,0,0,0.45);
-      display:grid;
-      place-items:center;
-      font-family: var(--mono);
-      font-weight: 800;
-      letter-spacing: 0.5px;
-    }
-
-    .brand strong{
-      display:block;
-      font-family: var(--mono);
-      font-size: 14px;
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
-    }
-    .brand small{
-      display:block;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    nav{
-      display:flex;
-      gap: 4px;
-      align-items:center;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-
-    .navlink{
-      padding: 10px 10px;
-      border-radius: 12px;
-      text-decoration:none;
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 12px;
-      letter-spacing: 0.6px;
-      text-transform: uppercase;
-      border: 1px solid transparent;
-    }
-
-    .navlink:hover{
-      color: var(--text);
-      background: rgba(255,255,255,0.04);
-    }
-
-    .navlink[aria-current="page"]{
-      color: var(--text);
-      background: rgba(255,255,255,0.06);
-      border-color: rgba(255,255,255,0.08);
-    }
-
-    .cta{
-      padding: 10px 12px;
-      border-radius: 12px;
-      font-family: var(--mono);
-      font-size: 12px;
-      letter-spacing: 0.6px;
-      text-transform: uppercase;
-      border: 1px solid rgba(0,255,65,0.25);
-      background: rgba(0,255,65,0.08);
-      color: var(--text);
-      cursor:pointer;
-    }
-    .cta:hover{ background: rgba(0,255,65,0.12); }
-
-    .section{
-      padding: 26px 0;
-      scroll-margin-top: 86px;
-    }
-
-    .grid{
-      display:grid;
-      grid-template-columns: repeat(12, 1fr);
-      gap: 14px;
-      align-items: stretch;
-    }
-
-    .panel{
-      background: var(--panel);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-    }
-
-    .kernel{
-      padding-top: 18px;
-    }
-
-    .kernel-left{
-      grid-column: span 7;
-      padding: 22px;
-    }
-
-    .kernel-right{
-      grid-column: span 5;
-      padding: 22px;
-      display:grid;
-      gap: 10px;
-    }
-
-    .kicker{
-      color: var(--ok);
-      font-family: var(--mono);
-      font-size: 12px;
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
-      margin: 0 0 10px;
-    }
-
-    h1{
-      margin: 0 0 12px;
-      font-family: var(--mono);
-      font-weight: 800;
-      font-size: clamp(30px, 4vw, 44px);
-      letter-spacing: 0.6px;
-      text-transform: uppercase;
-    }
-
-    .cursor{
-      display:inline-block;
-      width: 10px;
-      margin-left: 4px;
-      color: var(--ok);
-      animation: blink 1s steps(1, end) infinite;
-    }
-
-    @keyframes blink { 50% { opacity: 0; } }
-
-    .lead{
-      margin: 0 0 18px;
-      color: var(--muted);
-      max-width: 62ch;
-      font-size: 15px;
-    }
-
-    .hero-dynamic{
-      display:flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items:center;
-    }
-
-    .chip{
-      padding: 10px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.03);
-      font-family: var(--mono);
-      font-size: 12px;
-      letter-spacing: 0.5px;
-      color: var(--text);
-    }
-
-    .chip strong{ color: var(--ok); }
-
-    .kernel-right .mini{
-      padding: 14px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.03);
-      font-family: var(--mono);
-    }
-
-    .mini .label{
-      color: var(--muted);
-      font-size: 12px;
-      letter-spacing: 0.6px;
-      text-transform: uppercase;
-    }
-
-    .mini .value{
-      margin-top: 6px;
-      font-size: 18px;
-      font-weight: 800;
-      letter-spacing: 0.4px;
-    }
-
-    h2{
-      margin: 0 0 10px;
-      font-family: var(--mono);
-      letter-spacing: 0.7px;
-      text-transform: uppercase;
-      font-size: 16px;
-    }
-
-    .muted{ color: var(--muted); }
-
-    .telemetry-grid{
-      grid-column: span 12;
-      padding: 18px;
-    }
-
-    .metrics{
-      display:grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin-top: 12px;
-    }
-
-    .metric{
-      padding: 14px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.03);
-    }
-
-    .metric .num{
-      font-family: var(--mono);
-      font-weight: 800;
-      font-size: 20px;
-      letter-spacing: 0.4px;
-    }
-    .metric .num .unit{ color: var(--muted); font-weight: 700; font-size: 12px; }
-    .metric .desc{ margin-top: 8px; color: var(--muted); font-size: 13px; }
-
-    .arch{
-      grid-column: span 12;
-      padding: 18px;
-    }
-
-    .pillars{
-      display:grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-top: 12px;
-    }
-
-    details.pillar{
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.03);
-      overflow: hidden;
-    }
-
-    details.pillar[open]{
-      background: rgba(255,255,255,0.045);
-      border-color: rgba(0,255,65,0.22);
-    }
-
-    details.pillar summary{
-      list-style: none;
-      cursor: pointer;
-      padding: 16px;
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap: 12px;
-    }
-
-    details.pillar summary::-webkit-details-marker{ display:none; }
-
-    .p-title{
-      font-family: var(--mono);
-      letter-spacing: 0.7px;
-      text-transform: uppercase;
-      font-weight: 800;
-      font-size: 13px;
-    }
-
-    .p-sub{ color: var(--muted); font-size: 13px; margin-top: 6px; }
-
-    .p-badge{
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.6px;
-      text-transform: uppercase;
-      border-radius: 999px;
-      padding: 8px 10px;
-      border: 1px solid rgba(255,255,255,0.10);
-      color: var(--muted);
-      background: rgba(255,255,255,0.02);
-      white-space: nowrap;
-    }
-
-    .p-body{
-      padding: 0 16px 16px;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .p-body ul{ margin: 10px 0 0 18px; padding: 0; }
-    .p-body li{ margin: 6px 0; }
-
-    .terminal{
-      grid-column: span 12;
-      padding: 18px;
-    }
-
-    .cli{
-      margin-top: 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(0,0,0,0.35);
-      overflow:hidden;
-    }
-
-    .cli-header{
-      padding: 12px 14px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      font-family: var(--mono);
-      color: var(--muted);
-      font-size: 12px;
-      letter-spacing: 0.6px;
-      text-transform: uppercase;
-    }
-
-    .cli-body{
-      padding: 14px;
-      display:grid;
-      gap: 12px;
-    }
-
-    .alerts{
-      display:flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .alert-btn{
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.03);
-      color: var(--text);
-      font-family: var(--mono);
-      font-size: 12px;
-      letter-spacing: 0.5px;
-      border-radius: 12px;
-      padding: 10px 12px;
-      cursor:pointer;
-    }
-
-    .alert-btn[data-level="warn"]{ border-color: rgba(255,77,0,0.25); }
-    .alert-btn:hover{ background: rgba(255,255,255,0.05); }
-
-    .log{
-      min-height: 170px;
-      padding: 12px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(5,5,5,0.55);
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--muted);
-      overflow:auto;
-    }
-
-    .log .line{ margin: 0 0 8px; }
-    .log .ok{ color: var(--ok); }
-    .log .warn{ color: var(--warn); }
-
-    footer{
-      margin-top: 30px;
-      padding-top: 18px;
-      border-top: 1px solid rgba(255,255,255,0.08);
-      display:flex;
-      flex-wrap: wrap;
-      gap: 14px;
-      align-items:flex-start;
-      justify-content:space-between;
-    }
-
-    footer .meta{
-      color: var(--muted);
-      font-size: 12px;
-      font-family: var(--mono);
-      letter-spacing: 0.4px;
-    }
-
-    .links{
-      display:flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .links a{
-      font-family: var(--mono);
-      font-size: 12px;
-      letter-spacing: 0.4px;
-      color: var(--muted);
-      text-decoration:none;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.02);
-      padding: 9px 10px;
-      border-radius: 12px;
-    }
-
-    .links a:hover{ color: var(--text); background: rgba(255,255,255,0.04); }
-
-    @media (max-width: 980px){
-      .kernel-left{ grid-column: span 12; }
-      .kernel-right{ grid-column: span 12; }
-      .metrics{ grid-template-columns: repeat(2, 1fr); }
-      .pillars{ grid-template-columns: 1fr; }
-      .brand{ min-width: auto; }
-    }
-
-    @media (prefers-reduced-motion: reduce){
-      .cursor{ animation: none; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>da-tica | Ingeniería de Misión Crítica</title>
+    <meta name="description" content="Modernización legacy, Rust ultra-baja latencia, IA soberana y auditoría KNIME. 20+ años protegiendo infraestructuras críticas.">
+    
+    <style>
+        /* --- CSS VARIABLES & THEME --- */
+        :root {
+            /* Light Theme (Default) */
+            --bg-body: #ffffff;
+            --bg-surface: #f8fafc;
+            --bg-surface-2: #f1f5f9;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --text-light: #94a3b8;
+            
+            --primary: #0f172a;      /* Navy Blue */
+            --primary-hover: #1e293b;
+            --accent: #2563eb;       /* Bright Blue */
+            --accent-hover: #1d4ed8;
+            
+            --border: #e2e8f0;
+            --border-hover: #cbd5e1;
+            
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+
+            /* Spacing */
+            --space-xs: 0.5rem;
+            --space-sm: 1rem;
+            --space-md: 2rem;
+            --space-lg: 4rem;
+            --space-xl: 8rem;
+
+            /* Typography */
+            --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #020617;      /* Slate 950 */
+            --bg-surface: #0f172a;   /* Slate 900 */
+            --bg-surface-2: #1e293b; /* Slate 800 */
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-light: #64748b;
+            
+            --primary: #f8fafc;
+            --primary-hover: #e2e8f0;
+            --accent: #38bdf8;       /* Sky 400 */
+            --accent-hover: #0ea5e9;
+            
+            --border: #1e293b;
+            --border-hover: #334155;
+        }
+
+        /* --- RESET & BASE --- */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html { scroll-behavior: smooth; }
+        
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        img, svg { display: block; max-width: 100%; }
+        a { text-decoration: none; color: inherit; transition: color 0.2s; }
+        ul { list-style: none; }
+        button { cursor: pointer; border: none; background: none; font-family: inherit; }
+
+        /* --- UTILITIES --- */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-sm);
+        }
+
+        .grid { display: grid; gap: var(--space-md); }
+        .flex { display: flex; gap: var(--space-sm); }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .justify-center { justify-content: center; }
+        .text-center { text-align: center; }
+        
+        .mt-sm { margin-top: var(--space-sm); }
+        .mt-md { margin-top: var(--space-md); }
+        .mt-lg { margin-top: var(--space-lg); }
+        .mb-sm { margin-bottom: var(--space-sm); }
+        
+        .text-xl { font-size: 1.25rem; font-weight: 600; }
+        .text-2xl { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; }
+        .text-3xl { font-size: 2rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1.2; }
+        .text-4xl { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; }
+        .text-hero { font-size: clamp(2.5rem, 5vw, 4.5rem); font-weight: 900; letter-spacing: -0.04em; line-height: 1.1; }
+        
+        .text-muted { color: var(--text-muted); }
+        .text-accent { color: var(--accent); }
+        .font-mono { font-family: var(--font-mono); }
+
+        /* --- COMPONENTS --- */
+        
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--accent);
+            color: white; /* Always white for contrast on blue */
+        }
+        .btn-primary:hover { background-color: var(--accent-hover); transform: translateY(-1px); }
+        
+        .btn-outline {
+            border: 2px solid var(--border);
+            color: var(--text-main);
+        }
+        .btn-outline:hover { border-color: var(--text-main); background-color: var(--bg-surface); }
+
+        .btn-ghost { color: var(--text-muted); }
+        .btn-ghost:hover { color: var(--text-main); background-color: var(--bg-surface-2); }
+
+        /* Cards */
+        .card {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: var(--space-md);
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .badge-accent { background-color: rgba(37, 99, 235, 0.1); color: var(--accent); }
+        
+        /* --- SECTIONS --- */
+
+        /* Header */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: rgba(var(--bg-body), 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 0;
+        }
+        .nav-link { font-weight: 500; font-size: 0.95rem; }
+        .nav-link:hover { color: var(--accent); }
+
+        /* Hero */
+        .hero {
+            padding: var(--space-xl) 0 var(--space-lg);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 80%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(37, 99, 235, 0.05) 0%, transparent 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Authority Metrics */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            padding: var(--space-md) 0;
+            margin: var(--space-lg) 0;
+        }
+        .metric-item strong { display: block; font-size: 2.5rem; font-weight: 800; line-height: 1; color: var(--text-main); }
+        .metric-item span { font-size: 0.875rem; color: var(--text-muted); font-weight: 500; }
+
+        /* Pain Points */
+        .pain-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-md);
+        }
+        .pain-card { border-left: 4px solid var(--error); }
+        .pain-card.warning { border-left-color: var(--warning); }
+        .pain-card.info { border-left-color: var(--accent); }
+
+        /* Services */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-md);
+        }
+        .service-icon { font-size: 2rem; margin-bottom: 1rem; }
+
+        /* ICP Tabs */
+        .icp-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .tab-btn {
+            padding: 0.75rem 2rem;
+            border-radius: 99px;
+            font-weight: 600;
+            border: 1px solid var(--border);
+            background: var(--bg-surface);
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+        .tab-btn.active {
+            background: var(--text-main);
+            color: var(--bg-body);
+            border-color: var(--text-main);
+        }
+        .icp-content { display: none; animation: fadeIn 0.3s ease; }
+        .icp-content.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Footer */
+        footer {
+            background-color: var(--bg-surface);
+            padding: var(--space-lg) 0;
+            margin-top: var(--space-xl);
+            border-top: 1px solid var(--border);
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-main);
+            transition: background 0.2s;
+        }
+        .theme-toggle:hover { background-color: var(--bg-surface-2); }
+
+        /* Mobile Nav */
+        @media (max-width: 768px) {
+            .nav-links { display: none; } /* Simplified for this demo */
+            .text-hero { font-size: 2.5rem; }
+            .space-xl { margin-top: 4rem; }
+        }
+    </style>
 </head>
 <body>
-  <a class="skip" href="#kernel">Saltar al contenido</a>
 
-  <header class="topbar" role="banner">
-    <div class="topbar-inner">
-      <a class="brand" href="#kernel" aria-label="Ir a inicio">
-        <div class="mark" aria-hidden="true">DT</div>
-        <div>
-          <strong>da-tica</strong>
-          <small>Alta ingeniería • Soberanía del dato</small>
+    <!-- HEADER -->
+    <header>
+        <div class="container flex items-center justify-between">
+            <a href="#" class="text-xl font-mono font-bold">da-tica<span class="text-accent">.</span></a>
+            
+            <nav class="nav-links flex items-center">
+                <a href="#servicios" class="nav-link">Servicios</a>
+                <a href="#autoridad" class="nav-link">Autoridad</a>
+                <a href="#blog" class="nav-link">Blog</a>
+            </nav>
+
+            <div class="flex items-center">
+                <button id="theme-toggle" class="theme-toggle" aria-label="Cambiar tema">
+                    <!-- Sun Icon -->
+                    <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>
+                    <!-- Moon Icon -->
+                    <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                </button>
+                <a href="#contacto" class="btn btn-primary" style="margin-left: 1rem;">Diagnóstico</a>
+            </div>
         </div>
-      </a>
+    </header>
 
-      <nav aria-label="Secciones">
-        <a class="navlink" href="#kernel" data-spy="kernel">Kernel</a>
-        <a class="navlink" href="#telemetry" data-spy="telemetry">Telemetría</a>
-        <a class="navlink" href="#architecture" data-spy="architecture">Arquitectura</a>
-        <a class="navlink" href="#diagnostics" data-spy="diagnostics">Diagnóstico</a>
-        <button class="cta" type="button" id="cta-uplink">Uplink</button>
-      </nav>
-    </div>
-  </header>
-
-  <main class="wrap" id="main" role="main">
-    <section class="section kernel" id="kernel" aria-labelledby="kernel-title">
-      <div class="grid">
-        <div class="panel kernel-left">
-          <p class="kicker">Resonant Stark / 2026</p>
-          <h1 id="kernel-title">LATENCY IS A CHOICE<span class="cursor" aria-hidden="true">█</span></h1>
-          <p class="lead">
-            Somos una consultora boutique de alta ingeniería para infraestructuras de misión crítica.
-            Eliminamos latencia técnica y recuperamos la soberanía del dato con un enfoque determinístico:
-            disponibilidad, integridad y rendimiento medible.
-          </p>
-
-          <div class="hero-dynamic" aria-label="Capacidades clave">
-            <span class="chip"><strong id="hero-dynamic">SOBERANÍA</strong> DEL DATO</span>
-            <span class="chip">ULTRA-BAJA LATENCIA</span>
-            <span class="chip">ZERO TRUST</span>
-            <span class="chip">ORACLE RAC / ADG</span>
-            <span class="chip">RUST NATIVE</span>
-          </div>
-        </div>
-
-        <aside class="panel kernel-right" aria-label="Estado operativo">
-          <div class="mini">
-            <div class="label">Objetivo disponibilidad</div>
-            <div class="value"><span class="ok">99.9%</span></div>
-          </div>
-          <div class="mini">
-            <div class="label">Latencia objetivo</div>
-            <div class="value">&lt; <span class="ok">50ms</span></div>
-          </div>
-          <div class="mini">
-            <div class="label">Modelo</div>
-            <div class="value">Boutique premium</div>
-          </div>
-          <div class="mini">
-            <div class="label">Superficie de ataque</div>
-            <div class="value">Sitio estático</div>
-          </div>
-        </aside>
-      </div>
-    </section>
-
-    <section class="section" id="telemetry" aria-labelledby="telemetry-title">
-      <div class="grid">
-        <div class="panel telemetry-grid">
-          <h2 id="telemetry-title">Telemetría (prueba social)</h2>
-          <p class="muted">Métricas como evidencia. Sin adjetivos. Solo señales.</p>
-
-          <div class="metrics" role="list">
-            <div class="metric" role="listitem">
-              <div class="num"><span data-counter="325000" data-format="int">0</span> <span class="unit">tx / 40s</span></div>
-              <div class="desc">PL/SQL optimizado en cargas masivas</div>
-            </div>
-            <div class="metric" role="listitem">
-              <div class="num"><span data-counter="1200000" data-format="int">0</span> <span class="unit">usuarios simultáneos</span></div>
-              <div class="desc">Escalabilidad nacional en plataformas críticas</div>
-            </div>
-            <div class="metric" role="listitem">
-              <div class="num"><span data-counter="99.9" data-format="dec1">0</span> <span class="unit">% continuidad</span></div>
-              <div class="desc">Resiliencia con RAC + Active Data Guard</div>
-            </div>
-            <div class="metric" role="listitem">
-              <div class="num"><span data-counter="20" data-format="int">0</span><span class="unit">+ años</span></div>
-              <div class="desc">Defensa, banca y salud pública</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="architecture" aria-labelledby="architecture-title">
-      <div class="grid">
-        <div class="panel arch">
-          <h2 id="architecture-title">Arquitectura de servicios</h2>
-          <p class="muted">Cuatro pilares productizados para eliminar incertidumbre operativa.</p>
-
-          <div class="pillars">
-            <details class="pillar">
-              <summary>
-                <div>
-                  <div class="p-title">Legacy Mutation</div>
-                  <div class="p-sub">Monolito → alta disponibilidad (Oracle RAC)</div>
+    <main>
+        <!-- HERO SECTION -->
+        <section class="hero">
+            <div class="container text-center">
+                <span class="badge badge-accent mb-sm">Ingeniería de Misión Crítica</span>
+                <h1 class="text-hero mb-md">
+                    Recupere la Soberanía<br>
+                    <span class="text-muted">de sus Datos</span>
+                </h1>
+                <p class="text-xl text-muted mb-lg" style="max-width: 600px; margin-left: auto; margin-right: auto;">
+                    Eliminamos la latencia y garantizamos continuidad operativa del 99.9% en infraestructuras donde el fallo no es una opción.
+                </p>
+                <div class="flex justify-center" style="flex-wrap: wrap;">
+                    <a href="#servicios" class="btn btn-primary">Ver Arquitectura Técnica</a>
+                    <a href="#autoridad" class="btn btn-outline">Nuestras Métricas</a>
                 </div>
-                <span class="p-badge">ACID + vector</span>
-              </summary>
-              <div class="p-body">
-                Evolución hacia arquitecturas de alta disponibilidad. Búsqueda vectorial dentro del perímetro ACID para evitar silos.
-                <ul>
-                  <li>RAC / ADG para continuidad operativa</li>
-                  <li>Controles por roles para soberanía</li>
-                  <li>Plan de modernización sin downtime innecesario</li>
-                </ul>
-              </div>
-            </details>
-
-            <details class="pillar">
-              <summary>
-                <div>
-                  <div class="p-title">Rust Precision</div>
-                  <div class="p-sub">Ultra-baja latencia, eficiencia determinística</div>
-                </div>
-                <span class="p-badge">&lt;50ms</span>
-              </summary>
-              <div class="p-body">
-                Reescritura selectiva de microservicios críticos en Rust para eliminar pausas del GC y reducir RAM/CPU.
-                <ul>
-                  <li>Hasta 4x reducción de consumo de RAM</li>
-                  <li>Latencias predecibles (SLOs reales)</li>
-                  <li>Seguridad de memoria como baseline</li>
-                </ul>
-              </div>
-            </details>
-
-            <details class="pillar">
-              <summary>
-                <div>
-                  <div class="p-title">Sovereign AI (RAG)</div>
-                  <div class="p-sub">IA explicable, auditada y bajo control</div>
-                </div>
-                <span class="p-badge">RAG 3 niveles</span>
-              </summary>
-              <div class="p-body">
-                Arquitectura RAG con pre-filtrado, in-filtrado y post-filtrado. El dato no sale de tu perímetro.
-                <ul>
-                  <li>Pre-filtrado por roles (control de acceso)</li>
-                  <li>In-filtrado por similitud (índices HNSW/IVF)</li>
-                  <li>Post-filtrado por reglas de negocio</li>
-                </ul>
-              </div>
-            </details>
-
-            <details class="pillar">
-              <summary>
-                <div>
-                  <div class="p-title">C-Suite Governance</div>
-                  <div class="p-sub">Auditoría proactiva y monitoreo continuo</div>
-                </div>
-                <span class="p-badge">CCM</span>
-              </summary>
-              <div class="p-body">
-                Gobernanza y auditoría automatizada para reducir riesgo legal y costo de cumplimiento.
-                <ul>
-                  <li>KNIME para monitoreo continuo (CCM)</li>
-                  <li>Ley de Benford para anomalías a escala</li>
-                  <li>Anonimización y trazabilidad (privacy by design)</li>
-                </ul>
-              </div>
-            </details>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="diagnostics" aria-labelledby="diagnostics-title">
-      <div class="grid">
-        <div class="panel terminal">
-          <h2 id="diagnostics-title">Terminal de diagnóstico (demo)</h2>
-          <p class="muted">Simulación local: no envía datos, no usa APIs.</p>
-
-          <div class="cli" role="region" aria-label="Consola de diagnóstico">
-            <div class="cli-header">
-              <span>da-tica@ops — run: diagnostics</span>
-              <span id="cli-status">idle</span>
             </div>
-            <div class="cli-body">
-              <div class="alerts" aria-label="Alertas">
-                <button class="alert-btn" type="button" data-alert="HIGH_LATENCY" data-level="warn">[WARN] HIGH_LATENCY</button>
-                <button class="alert-btn" type="button" data-alert="CLOUD_OPEX" data-level="warn">[WARN] CLOUD_OPEX</button>
-                <button class="alert-btn" type="button" data-alert="COMPLIANCE_RISK" data-level="warn">[WARN] COMPLIANCE_RISK</button>
-                <button class="alert-btn" type="button" data-alert="LEGACY_MONOLITH">[INFO] LEGACY_MONOLITH</button>
-                <button class="alert-btn" type="button" data-alert="RAG_SILO">[INFO] RAG_SILO</button>
-                <button class="alert-btn" type="button" id="cli-clear">CLEAR</button>
-              </div>
+        </section>
 
-              <div class="log" id="cli-log" aria-live="polite" aria-relevant="additions" aria-label="Salida">
-                <p class="line"><span class="ok">$</span> Selecciona una alerta para ver un diagnóstico.</p>
-              </div>
+        <!-- AUTHORITY METRICS -->
+        <section id="autoridad" class="container">
+            <div class="metrics-grid">
+                <div class="metric-item text-center">
+                    <strong>325K</strong>
+                    <span>Transacciones / 40s</span>
+                </div>
+                <div class="metric-item text-center">
+                    <strong>1.2M</strong>
+                    <span>Usuarios Simultáneos</span>
+                </div>
+                <div class="metric-item text-center">
+                    <strong>&lt;50ms</strong>
+                    <span>Latencia Determinística</span>
+                </div>
+                <div class="metric-item text-center">
+                    <strong>20+</strong>
+                    <span>Años en Defensa/Banca</span>
+                </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </section>
+        </section>
 
-    <footer id="uplink" role="contentinfo">
-      <div class="meta">
-        © <span id="year"></span> da-tica — continuidad operativa • integridad absoluta • eficiencia determinística
-      </div>
-      <div class="links" aria-label="Enlaces">
-        <a href="mailto:hello@da-tica.example">EMAIL: hello@da-tica.example</a>
-        <a href="#kernel">UPLINK: /kernel</a>
-        <a href="#architecture">DOC: /architecture</a>
-      </div>
-    </footer>
-  </main>
+        <!-- PAIN POINTS -->
+        <section class="container mt-xl">
+            <div class="text-center mb-lg">
+                <h2 class="text-4xl mb-sm">El Triángulo de la Crisis 2026</h2>
+                <p class="text-muted text-xl">Tres presiones simultáneas amenazan su estabilidad operativa.</p>
+            </div>
+            
+            <div class="pain-grid">
+                <article class="card pain-card">
+                    <div class="text-3xl mb-sm">⚡</div>
+                    <h3 class="text-xl mb-sm">Fragmentación por IA</h3>
+                    <p class="text-muted mb-md">Silos de datos vectoriales debilitan su integridad ACID. Oracle 26ai integra búsqueda nativa.</p>
+                    <a href="#" class="text-accent font-bold text-sm">Diagnosticar fragmentación →</a>
+                </article>
 
-  <noscript>
-    <div class="wrap" style="padding-top: 0;">
-      <div class="panel" style="padding: 14px; font-family: var(--mono); color: var(--muted);">
-        JavaScript está deshabilitado. El sitio sigue siendo legible, pero sin animaciones/diagnóstico.
-      </div>
-    </div>
-  </noscript>
+                <article class="card pain-card warning">
+                    <div class="text-3xl mb-sm">💰</div>
+                    <h3 class="text-xl mb-sm">Costos Cloud Insostenibles</h3>
+                    <p class="text-muted mb-md">Java legacy + GC overhead dispara su OPEX. Rust reduce 4x la memoria y garantiza latencia.</p>
+                    <a href="#" class="text-accent font-bold text-sm">Calcular ahorro OPEX →</a>
+                </article>
 
-  <script>
-    (function(){
-      const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const year = document.getElementById('year');
-      if(year) year.textContent = String(new Date().getFullYear());
+                <article class="card pain-card info">
+                    <div class="text-3xl mb-sm">⚖️</div>
+                    <h3 class="text-xl mb-sm">Riesgos SPDP 2026</h3>
+                    <p class="text-muted mb-md">Resolución 2026-0005-R exige explicabilidad. Incumplimiento = multas de hasta 1% de ingresos.</p>
+                    <a href="#" class="text-accent font-bold text-sm">Evaluar exposición →</a>
+                </article>
+            </div>
+        </section>
 
-      // CTA
-      const ctaUplink = document.getElementById('cta-uplink');
-      if(ctaUplink){
-        ctaUplink.addEventListener('click', () => {
-          const el = document.getElementById('uplink');
-          if(el) el.scrollIntoView({behavior: reduceMotion ? 'auto' : 'smooth'});
-        });
-      }
+        <!-- ICP SELECTOR -->
+        <section class="container mt-xl">
+            <div class="text-center mb-md">
+                <h2 class="text-3xl mb-sm">Su Perspectiva</h2>
+                <p class="text-muted">Personalizamos la solución según su rol estratégico.</p>
+            </div>
 
-      // Scroll-spy nav
-      const navLinks = Array.from(document.querySelectorAll('a.navlink[data-spy]'));
-      const sections = navLinks
-        .map(a => document.getElementById(String(a.getAttribute('data-spy'))))
-        .filter(Boolean);
+            <div class="icp-tabs">
+                <button class="tab-btn active" onclick="switchTab('cto')">Soy CTO</button>
+                <button class="tab-btn" onclick="switchTab('cfo')">Soy CFO</button>
+            </div>
 
-      function setCurrent(id){
-        navLinks.forEach(a => {
-          const active = a.getAttribute('data-spy') === id;
-          if(active){
-            a.setAttribute('aria-current','page');
-          } else {
-            a.removeAttribute('aria-current');
-          }
-        });
-      }
+            <!-- CTO Content -->
+            <div id="cto-content" class="icp-content active">
+                <div class="card" style="background: var(--bg-surface-2); border: none;">
+                    <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); align-items: center;">
+                        <div>
+                            <h3 class="text-2xl mb-sm">Control Técnico Absoluto</h3>
+                            <ul style="display: grid; gap: 0.5rem;">
+                                <li class="flex items-center"><span class="text-success">✓</span> Elimine deuda técnica Java Legacy</li>
+                                <li class="flex items-center"><span class="text-success">✓</span> Arquitectura Convergente Oracle 26ai</li>
+                                <li class="flex items-center"><span class="text-success">✓</span> Rust para servicios I/O bound críticos</li>
+                            </ul>
+                            <button class="btn btn-primary mt-md">Ver Arquitectura Técnica</button>
+                        </div>
+                        <div class="font-mono text-sm p-md" style="background: var(--bg-body); border-radius: 8px; opacity: 0.8;">
+                            > benchmark --target=rust_service<br>
+                            > P99 Latency: 45ms<br>
+                            > Memory Footprint: 120MB<br>
+                            > GC Pauses: 0ms<br>
+                            <span class="text-success">Status: OPTIMIZED</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-      if('IntersectionObserver' in window && sections.length){
-        const spy = new IntersectionObserver((entries) => {
-          const visible = entries
-            .filter(e => e.isIntersecting)
-            .sort((a,b) => (b.intersectionRatio - a.intersectionRatio));
-          if(visible[0] && visible[0].target && visible[0].target.id){
-            setCurrent(visible[0].target.id);
-          }
-        }, { root: null, threshold: [0.2, 0.35, 0.5, 0.65] });
+            <!-- CFO Content -->
+            <div id="cfo-content" class="icp-content">
+                <div class="card" style="background: var(--bg-surface-2); border: none;">
+                    <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); align-items: center;">
+                        <div>
+                            <h3 class="text-2xl mb-sm">Eficiencia Financiera & Riesgo</h3>
+                            <ul style="display: grid; gap: 0.5rem;">
+                                <li class="flex items-center"><span class="text-success">✓</span> Reducción de OPEX Cloud (40-60%)</li>
+                                <li class="flex items-center"><span class="text-success">✓</span> Mitigación de multas SPDP ($5M+)</li>
+                                <li class="flex items-center"><span class="text-success">✓</span> Auditoría automática en 2 semanas</li>
+                            </ul>
+                            <button class="btn btn-primary mt-md">Descargar Calculadora ROI</button>
+                        </div>
+                        <div class="p-md" style="background: var(--bg-body); border-radius: 8px;">
+                            <div class="flex justify-between mb-xs">
+                                <span>Costo Cloud Actual</span>
+                                <span class="text-error">$2.5M/año</span>
+                            </div>
+                            <div class="flex justify-between mb-sm">
+                                <span>Con Optimización Rust</span>
+                                <span class="text-success">$1.5M/año</span>
+                            </div>
+                            <div style="height: 2px; background: var(--border); margin-bottom: 0.5rem;"></div>
+                            <div class="flex justify-between font-bold">
+                                <span>Ahorro Proyectado</span>
+                                <span>$1.0M/año</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        sections.forEach(s => spy.observe(s));
-      }
+        <!-- SERVICES CATALOG -->
+        <section id="servicios" class="container mt-xl">
+            <h2 class="text-4xl text-center mb-lg">Soluciones Productized</h2>
+            
+            <div class="services-grid">
+                <!-- Service 1 -->
+                <article class="card">
+                    <div class="service-icon">🏛️</div>
+                    <h3 class="text-xl mb-xs">Modernización Legacy</h3>
+                    <p class="text-sm text-muted mb-md">De Java monolítico a Oracle 26ai convergente en 6-12 meses.</p>
+                    <div class="badge badge-accent mb-md">ROI: 30% OPEX Año 1</div>
+                    <button class="btn btn-outline" style="width: 100%">Ver Detalles</button>
+                </article>
 
-      // Hero typewriter loop: rotate the key word
-      const heroDynamic = document.getElementById('hero-dynamic');
-      const heroWords = ['SOBERANÍA', 'VELOCIDAD', 'ZERO TRUST', 'INTEGRIDAD', 'DETERMINISMO'];
+                <!-- Service 2 -->
+                <article class="card">
+                    <div class="service-icon">⚡</div>
+                    <h3 class="text-xl mb-xs">Ultra-Baja Latencia</h3>
+                    <p class="text-sm text-muted mb-md">Reescritura selectiva en Rust. &lt;50ms garantizado. 4x menos RAM.</p>
+                    <div class="badge badge-accent mb-md">ROI: +15% Conversión</div>
+                    <button class="btn btn-outline" style="width: 100%">Ver Detalles</button>
+                </article>
 
-      function typewriter(el, words){
-        if(!el || !words.length) return;
-        let wordIndex = 0;
-        let charIndex = 0;
-        let deleting = false;
+                <!-- Service 3 -->
+                <article class="card">
+                    <div class="service-icon">🧠</div>
+                    <h3 class="text-xl mb-xs">IA Soberana & RAG</h3>
+                    <p class="text-sm text-muted mb-md">IA explicable y bajo control. Sin cajas negras. Auditoría integrada.</p>
+                    <div class="badge badge-accent mb-md">100% SPDP Ready</div>
+                    <button class="btn btn-outline" style="width: 100%">Ver Detalles</button>
+                </article>
 
-        function tick(){
-          const current = words[wordIndex];
-          if(!deleting){
-            charIndex = Math.min(charIndex + 1, current.length);
-          } else {
-            charIndex = Math.max(charIndex - 1, 0);
-          }
+                <!-- Service 4 -->
+                <article class="card">
+                    <div class="service-icon">📊</div>
+                    <h3 class="text-xl mb-xs">Auditoría Proactiva</h3>
+                    <p class="text-sm text-muted mb-md">KNIME + Benford. Auditoría completa en 2 semanas. 85% menos tiempo.</p>
+                    <div class="badge badge-accent mb-md">Evita Multas</div>
+                    <button class="btn btn-outline" style="width: 100%">Ver Detalles</button>
+                </article>
+            </div>
+        </section>
 
-          el.textContent = current.slice(0, charIndex);
+        <!-- THOUGHT LEADERSHIP -->
+        <section id="blog" class="container mt-xl">
+            <div class="flex justify-between items-center mb-md">
+                <h2 class="text-3xl">Liderazgo Técnico</h2>
+                <a href="#" class="text-accent font-bold">Ver todo →</a>
+            </div>
+            
+            <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+                <a href="#" class="card" style="border: none; background: transparent; padding: 0;">
+                    <div style="height: 200px; background: var(--bg-surface-2); border-radius: 12px; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; color: var(--text-muted);">
+                        [Diagrama Rust vs Java]
+                    </div>
+                    <h3 class="text-xl mb-xs">Rust vs Java en Banca</h3>
+                    <p class="text-muted text-sm">Por qué la seguridad de memoria es la nueva prioridad financiera.</p>
+                </a>
+                <a href="#" class="card" style="border: none; background: transparent; padding: 0;">
+                    <div style="height: 200px; background: var(--bg-surface-2); border-radius: 12px; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; color: var(--text-muted);">
+                        [Esquema SPDP]
+                    </div>
+                    <h3 class="text-xl mb-xs">Guía SPDP-2026-0005-R</h3>
+                    <p class="text-muted text-sm">Modelo técnico de gran escala para cumplimiento en Ecuador.</p>
+                </a>
+                <a href="#" class="card" style="border: none; background: transparent; padding: 0;">
+                    <div style="height: 200px; background: var(--bg-surface-2); border-radius: 12px; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; color: var(--text-muted);">
+                        [Oracle Vector]
+                    </div>
+                    <h3 class="text-xl mb-xs">Oracle RAC para GenAI</h3>
+                    <p class="text-muted text-sm">Preparando infraestructura core para búsqueda vectorial 26ai.</p>
+                </a>
+            </div>
+        </section>
 
-          const doneTyping = (!deleting && charIndex === current.length);
-          const doneDeleting = (deleting && charIndex === 0);
+        <!-- CONTACT / FOOTER -->
+        <footer id="contacto">
+            <div class="container">
+                <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-lg);">
+                    <div>
+                        <h4 class="text-xl font-bold mb-sm">da-tica<span class="text-accent">.</span></h4>
+                        <p class="text-muted text-sm">Ingeniería de misión crítica desde 2004. Optimizamos el núcleo de su negocio.</p>
+                    </div>
+                    <div>
+                        <h5 class="font-bold mb-sm">Servicios</h5>
+                        <ul class="text-sm text-muted" style="display: grid; gap: 0.5rem;">
+                            <li><a href="#">Modernización Legacy</a></li>
+                            <li><a href="#">Ultra-Baja Latencia</a></li>
+                            <li><a href="#">IA Soberana</a></li>
+                            <li><a href="#">Auditoría KNIME</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h5 class="font-bold mb-sm">Legal</h5>
+                        <ul class="text-sm text-muted" style="display: grid; gap: 0.5rem;">
+                            <li><a href="#">Privacidad</a></li>
+                            <li><a href="#">Términos</a></li>
+                            <li><a href="#">Compliance</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="text-center text-muted text-sm mt-lg pt-md" style="border-top: 1px solid var(--border);">
+                    &copy; 2026 da-tica.com. Todos los derechos reservados.
+                </div>
+            </div>
+        </footer>
+    </main>
 
-          let delay = deleting ? 34 : 46;
-          if(doneTyping) delay = 980;
-          if(doneDeleting) delay = 320;
-
-          if(doneTyping) deleting = true;
-          if(doneDeleting){
-            deleting = false;
-            wordIndex = (wordIndex + 1) % words.length;
-          }
-
-          window.setTimeout(tick, delay);
+    <script>
+        // --- THEME TOGGLE ---
+        const themeToggle = document.getElementById('theme-toggle');
+        const sunIcon = document.querySelector('.sun-icon');
+        const moonIcon = document.querySelector('.moon-icon');
+        
+        // Check system preference or saved theme
+        const savedTheme = localStorage.getItem('theme');
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        if (savedTheme === 'dark' || (!savedTheme && systemDark)) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            sunIcon.style.display = 'block';
+            moonIcon.style.display = 'none';
         }
 
-        tick();
-      }
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            sunIcon.style.display = newTheme === 'dark' ? 'block' : 'none';
+            moonIcon.style.display = newTheme === 'dark' ? 'none' : 'block';
+        });
 
-      if(!reduceMotion){
-        typewriter(heroDynamic, heroWords);
-      }
-
-      // Metric roller
-      function formatCounter(value, format){
-        if(format === 'dec1'){
-          return new Intl.NumberFormat('es-ES', {minimumFractionDigits: 1, maximumFractionDigits: 1}).format(value);
+        // --- ICP TABS ---
+        function switchTab(role) {
+            // Update buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update content
+            document.querySelectorAll('.icp-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(role + '-content').classList.add('active');
         }
-        return new Intl.NumberFormat('es-ES').format(Math.round(value));
-      }
-
-      function animateCounters(){
-        const nodes = Array.from(document.querySelectorAll('[data-counter]'));
-        nodes.forEach((n) => {
-          const raw = String(n.getAttribute('data-counter') || '0');
-          const format = String(n.getAttribute('data-format') || 'int');
-          const target = Number(raw);
-          if(!Number.isFinite(target)) return;
-
-          const start = performance.now();
-          const duration = 1200;
-
-          function step(now){
-            const t = Math.min(1, (now - start) / duration);
-            const eased = 1 - Math.pow(1 - t, 3);
-            const current = (target * eased);
-            n.textContent = formatCounter(current, format);
-            if(t < 1) requestAnimationFrame(step);
-          }
-
-          requestAnimationFrame(step);
-        });
-      }
-
-      const telemetry = document.getElementById('telemetry');
-      if(telemetry && 'IntersectionObserver' in window){
-        let ran = false;
-        const obs = new IntersectionObserver((entries) => {
-          if(ran) return;
-          if(entries.some(e => e.isIntersecting)){
-            ran = true;
-            if(reduceMotion){
-              // Set final values immediately
-              document.querySelectorAll('[data-counter]').forEach((n) => {
-                const raw = String(n.getAttribute('data-counter') || '0');
-                const format = String(n.getAttribute('data-format') || 'int');
-                const target = Number(raw);
-                if(!Number.isFinite(target)) return;
-                n.textContent = formatCounter(target, format);
-              });
-            } else {
-              animateCounters();
-            }
-          }
-        }, { threshold: 0.25 });
-
-        obs.observe(telemetry);
-      } else {
-        // Fallback: show final values
-        document.querySelectorAll('[data-counter]').forEach((n) => {
-          const raw = String(n.getAttribute('data-counter') || '0');
-          const format = String(n.getAttribute('data-format') || 'int');
-          const target = Number(raw);
-          if(!Number.isFinite(target)) return;
-          n.textContent = formatCounter(target, format);
-        });
-      }
-
-      // Diagnostic terminal
-      const logEl = document.getElementById('cli-log');
-      const statusEl = document.getElementById('cli-status');
-      const clearBtn = document.getElementById('cli-clear');
-
-      function appendLine(text, level){
-        if(!logEl) return;
-        const p = document.createElement('p');
-        p.className = 'line' + (level ? (' ' + level) : '');
-        p.textContent = text;
-        logEl.appendChild(p);
-        logEl.scrollTop = logEl.scrollHeight;
-      }
-
-      function setStatus(s){
-        if(statusEl) statusEl.textContent = s;
-      }
-
-      const playbooks = {
-        HIGH_LATENCY: [
-          {t: '$ ANALYZING… DETECTED: tail latency + GC pauses', level: 'warn'},
-          {t: '> RECOMMENDATION: Rust rewrite (hot path) + SLO budget', level: 'ok'},
-          {t: '> EXPECTED: <50ms p95, CPU/RAM reduction', level: 'ok'}
-        ],
-        CLOUD_OPEX: [
-          {t: '$ ANALYZING… DETECTED: low density / inefficient runtime', level: 'warn'},
-          {t: '> RECOMMENDATION: Rust services + right-sizing + caching policy', level: 'ok'},
-          {t: '> OUTCOME: OPEX down, predictable scaling', level: 'ok'}
-        ],
-        COMPLIANCE_RISK: [
-          {t: '$ ANALYZING… DETECTED: audit gaps / sensitive data exposure', level: 'warn'},
-          {t: '> RECOMMENDATION: CCM (KNIME) + anonymization + Zero Trust data layer', level: 'ok'},
-          {t: '> OUTCOME: faster audits, reduced legal risk', level: 'ok'}
-        ],
-        LEGACY_MONOLITH: [
-          {t: '$ ANALYZING… DETECTED: Oracle core + legacy monolith', level: ''},
-          {t: '> RECOMMENDATION: RAC / ADG path + vector search inside ACID boundary', level: 'ok'},
-          {t: '> OUTCOME: continuity + future-proof AI', level: 'ok'}
-        ],
-        RAG_SILO: [
-          {t: '$ ANALYZING… DETECTED: fragmented vector DB / policy drift', level: ''},
-          {t: '> RECOMMENDATION: Sovereign RAG (pre/in/post filtration)', level: 'ok'},
-          {t: '> OUTCOME: explainable AI, governance preserved', level: 'ok'}
-        ]
-      };
-
-      function runAlert(key){
-        const plan = playbooks[key];
-        if(!plan) return;
-
-        setStatus('running');
-        appendLine('$ RUN ' + key, '');
-
-        let i = 0;
-        function next(){
-          const step = plan[i];
-          if(!step){
-            setStatus('idle');
-            appendLine('> DONE', 'ok');
-            return;
-          }
-          appendLine(step.t, step.level);
-          i += 1;
-          window.setTimeout(next, reduceMotion ? 0 : 420);
-        }
-        next();
-      }
-
-      document.querySelectorAll('button.alert-btn[data-alert]').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const key = String(btn.getAttribute('data-alert') || '');
-          runAlert(key);
-        });
-      });
-
-      if(clearBtn){
-        clearBtn.addEventListener('click', () => {
-          if(!logEl) return;
-          logEl.innerHTML = '';
-          appendLine('$ READY', 'ok');
-          setStatus('idle');
-        });
-      }
-
-      setCurrent('kernel');
-    })();
-  </script>
+    </script>
 </body>
 </html>
