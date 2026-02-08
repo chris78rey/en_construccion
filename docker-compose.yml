@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   web:
     build:
@@ -5,22 +7,34 @@ services:
       dockerfile: Dockerfile
     image: da-tica_portal_web:1.0.0
     restart: unless-stopped
+
     networks:
       - coolify
+
     expose:
       - "8080"
+
+    # --- AQUÍ ESTÁN LAS VARIABLES ---
+    # Esto pasa las variables de Coolify hacia DENTRO del contenedor
+    environment:
+      - CLIENT_ID=${CLIENT_ID}
+      - DOMAIN=${DOMAIN}
+      # Si tu app necesita más variables (DB_HOST, SECRET_KEY, etc.),
+      # agrégalas aquí siguiendo este formato.
+
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/"]
       interval: 30s
       timeout: 5s
       retries: 3
       start_period: 10s
+
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=coolify"
 
-      # --- Routers HTTPS (Usando variables) ---
-      # El nombre del router ahora es dinámico: ${CLIENT_ID}-web
+      # --- Routers HTTPS ---
+      # Aquí se usa la variable para definir el nombre del router en Traefik
       - "traefik.http.routers.${CLIENT_ID}-web.rule=Host(`${DOMAIN}`)"
       - "traefik.http.routers.${CLIENT_ID}-web.entrypoints=https"
       - "traefik.http.routers.${CLIENT_ID}-web.tls=true"
