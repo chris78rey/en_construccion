@@ -10,7 +10,11 @@ services:
     expose:
       - '8080'
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/"]
+      test:
+        - CMD
+        - wget
+        - '-qO-'
+        - 'http://127.0.0.1:8080/'
       interval: 30s
       timeout: 5s
       retries: 3
@@ -18,12 +22,13 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=coolify
-      # ✅ HARDCODED - sin variables
+      # ✅ Corregido: Host() con paréntesis
       - traefik.http.routers.portal-da-tica-web.rule=Host(`portal.da-tica.com`)
       - traefik.http.routers.portal-da-tica-web.entrypoints=https
       - traefik.http.routers.portal-da-tica-web.tls=true
       - traefik.http.routers.portal-da-tica-web.tls.certresolver=letsencrypt
       - traefik.http.services.portal-da-tica-web.loadbalancer.server.port=8080
+      # ✅ Corregido: Host() con paréntesis
       - traefik.http.routers.portal-da-tica-web-http.rule=Host(`portal.da-tica.com`)
       - traefik.http.routers.portal-da-tica-web-http.entrypoints=http
       - traefik.http.routers.portal-da-tica-web-http.middlewares=portal-da-tica-redirect
