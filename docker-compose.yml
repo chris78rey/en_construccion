@@ -18,20 +18,26 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=coolify"
-      - "traefik.http.routers.portal-da-tica-web.rule=Host(`portal.da-tica.com`)"
-      - "traefik.http.routers.portal-da-tica-web.entrypoints=https"
-      - "traefik.http.routers.portal-da-tica-web.tls=true"
-      - "traefik.http.routers.portal-da-tica-web.tls.certresolver=letsencrypt"
-      - "traefik.http.services.portal-da-tica-web.loadbalancer.server.port=8080"
-      - "traefik.http.routers.portal-da-tica-web-http.rule=Host(`portal.da-tica.com`)"
-      - "traefik.http.routers.portal-da-tica-web-http.entrypoints=http"
-      - "traefik.http.routers.portal-da-tica-web-http.middlewares=portal-da-tica-redirect"
-      - "traefik.http.middlewares.portal-da-tica-redirect.redirectscheme.scheme=https"
-      - "traefik.http.middlewares.portal-da-tica-redirect.redirectscheme.permanent=true"
 
+      # --- Routers HTTPS (Usando variables) ---
+      # El nombre del router ahora es dinámico: ${CLIENT_ID}-web
+      - "traefik.http.routers.${CLIENT_ID}-web.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.${CLIENT_ID}-web.entrypoints=https"
+      - "traefik.http.routers.${CLIENT_ID}-web.tls=true"
+      - "traefik.http.routers.${CLIENT_ID}-web.tls.certresolver=letsencrypt"
 
+      # --- Servicio Interno ---
+      - "traefik.http.services.${CLIENT_ID}-web.loadbalancer.server.port=8080"
+
+      # --- Redirección HTTP -> HTTPS ---
+      - "traefik.http.routers.${CLIENT_ID}-web-http.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.${CLIENT_ID}-web-http.entrypoints=http"
+      - "traefik.http.routers.${CLIENT_ID}-web-http.middlewares=${CLIENT_ID}-redirect"
+
+      # --- Middleware ---
+      - "traefik.http.middlewares.${CLIENT_ID}-redirect.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.${CLIENT_ID}-redirect.redirectscheme.permanent=true"
 
 networks:
   coolify:
     external: true
-
