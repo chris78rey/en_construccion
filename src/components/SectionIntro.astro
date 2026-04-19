@@ -1,9 +1,0 @@
----
-const { eyebrow, title, text, center = false } = Astro.props;
----
-
-<div class:list={["section-intro", { center }]}>
-  {eyebrow && <span class="eyebrow">{eyebrow}</span>}
-  <h2>{title}</h2>
-  {text && <p>{text}</p>}
-</div>
