@@ -1,4 +1,9 @@
-version: '3.8'
+# ==============================================================================
+# Da-TIca - Docker Compose para Coolify
+# ==============================================================================
+# Configuración simple: Coolify maneja el proxy Traefik automáticamente.
+# En Coolify, configurar dominios: https://da-tica.com:8080, https://www.da-tica.com:8080
+# ==============================================================================
 
 services:
   web:
@@ -7,51 +12,15 @@ services:
       dockerfile: Dockerfile
     image: da-tica_portal_web:1.0.0
     restart: unless-stopped
-
-    networks:
-      - coolify
-
     expose:
-      - "8080"
-
-    # --- AQUÍ ESTÁN LAS VARIABLES ---
-    # Esto pasa las variables de Coolify hacia DENTRO del contenedor
-    environment:
-      - CLIENT_ID=${CLIENT_ID}
-      - DOMAIN=${DOMAIN}
-      # Si tu app necesita más variables (DB_HOST, SECRET_KEY, etc.),
-      # agrégalas aquí siguiendo este formato.
-
+      - '8080'
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/"]
+      test:
+        - CMD
+        - wget
+        - '-qO-'
+        - 'http://127.0.0.1:8080/'
       interval: 30s
       timeout: 5s
       retries: 3
-      start_period: 10s
-
-    labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=coolify"
-
-      # --- Routers HTTPS ---
-      # Aquí se usa la variable para definir el nombre del router en Traefik
-      - "traefik.http.routers.${CLIENT_ID}-web.rule=Host(`${DOMAIN}`)"
-      - "traefik.http.routers.${CLIENT_ID}-web.entrypoints=https"
-      - "traefik.http.routers.${CLIENT_ID}-web.tls=true"
-      - "traefik.http.routers.${CLIENT_ID}-web.tls.certresolver=letsencrypt"
-
-      # --- Servicio Interno ---
-      - "traefik.http.services.${CLIENT_ID}-web.loadbalancer.server.port=8080"
-
-      # --- Redirección HTTP -> HTTPS ---
-      - "traefik.http.routers.${CLIENT_ID}-web-http.rule=Host(`${DOMAIN}`)"
-      - "traefik.http.routers.${CLIENT_ID}-web-http.entrypoints=http"
-      - "traefik.http.routers.${CLIENT_ID}-web-http.middlewares=${CLIENT_ID}-redirect"
-
-      # --- Middleware ---
-      - "traefik.http.middlewares.${CLIENT_ID}-redirect.redirectscheme.scheme=https"
-      - "traefik.http.middlewares.${CLIENT_ID}-redirect.redirectscheme.permanent=true"
-
-networks:
-  coolify:
-    external: true
+      start_period: 20s
