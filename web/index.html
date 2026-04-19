@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CRRB | Consultor en Data Mining, IA y Automatización</title>
+  <meta
+    name="description"
+    content="Consultor independiente especializado en Data Mining, analítica, automatización, inteligencia artificial aplicada, dashboards, prompts y arquitectura de soluciones orientadas a resultados."
+  />
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --bg-elevated: rgba(255, 255, 255, 0.82);
+      --surface: #ffffff;
+      --surface-2: #f8fbff;
+      --text: #0f172a;
+      --muted: #5b6b83;
+      --line: rgba(15, 23, 42, 0.1);
+      --line-strong: rgba(37, 99, 235, 0.24);
+      --primary: #1d4ed8;
+      --primary-2: #2563eb;
+      --primary-soft: rgba(37, 99, 235, 0.1);
+      --success: #0f9f6e;
+      --shadow-lg: 0 24px 80px rgba(15, 23, 42, 0.12);
+      --shadow-md: 0 12px 30px rgba(15, 23, 42, 0.08);
+      --radius-xl: 28px;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --container: 1160px;
+    }
+
+    [data-theme="dark"] {
+      --bg: #08101f;
+      --bg-elevated: rgba(15, 23, 42, 0.76);
+      --surface: #0f172a;
+      --surface-2: #111c31;
+      --text: #eff6ff;
+      --muted: #9db0ca;
+      --line: rgba(148, 163, 184, 0.18);
+      --line-strong: rgba(56, 189, 248, 0.32);
+      --primary: #60a5fa;
+      --primary-2: #38bdf8;
+      --primary-soft: rgba(56, 189, 248, 0.12);
+      --success: #34d399;
+      --shadow-lg: 0 28px 80px rgba(2, 6, 23, 0.55);
+      --shadow-md: 0 16px 34px rgba(2, 6, 23, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 30%),
+        radial-gradient(circle at 85% 15%, rgba(56, 189, 248, 0.12), transparent 24%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    .container {
+      width: min(100% - 2rem, var(--container));
+      margin: 0 auto;
+    }
+
+    .section {
+      padding: 5.5rem 0;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.45rem 0.85rem;
+      border-radius: 999px;
+      border: 1px solid var(--line-strong);
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 0.86rem;
+      letter-spacing: 0.02em;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+
+    .section-head {
+      max-width: 760px;
+      margin-bottom: 2.2rem;
+    }
+
+    .section-head h2 {
+      font-size: clamp(1.9rem, 3.8vw, 2.8rem);
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+      margin: 0.95rem 0 1rem;
+    }
+
+    .section-head p {
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      backdrop-filter: blur(16px);
+      background: color-mix(in srgb, var(--bg) 72%, transparent);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .header-inner {
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand {
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .brand span {
+      color: var(--primary);
+    }
+
+    .nav-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+    }
+
+    .main-nav {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--bg-elevated);
+      box-shadow: var(--shadow-md);
+    }
+
+    .main-nav a {
+      padding: 0.6rem 0.95rem;
+      border-radius: 999px;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.94rem;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .main-nav a:hover {
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    .theme-toggle {
+      width: 46px;
+      height: 46px;
+      border: 1px solid var(--line);
+      background: var(--bg-elevated);
+      color: var(--text);
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: var(--shadow-md);
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .theme-toggle:hover {
+      transform: translateY(-1px);
+      border-color: var(--line-strong);
+    }
+
+    .hero {
+      padding: 4.6rem 0 5rem;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .hero-copy h1 {
+      margin: 1.2rem 0 1.2rem;
+      font-size: clamp(2.55rem, 5vw, 4.8rem);
+      line-height: 0.98;
+      letter-spacing: -0.05em;
+      max-width: 11ch;
+    }
+
+    .hero-copy h1 span {
+      color: var(--primary);
+    }
+
+    .hero-copy p {
+      max-width: 64ch;
+      color: var(--muted);
+      font-size: 1.12rem;
+      margin-bottom: 1.8rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.9rem;
+      margin-bottom: 2rem;
+    }
+
+    .btn,
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.55rem;
+      min-height: 52px;
+      padding: 0 1.25rem;
+      border-radius: 14px;
+      font-weight: 700;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: #ffffff;
+      box-shadow: 0 16px 30px rgba(37, 99, 235, 0.24);
+    }
+
+    .btn:hover,
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      border: 1px solid var(--line);
+      background: var(--bg-elevated);
+      color: var(--text);
+      box-shadow: var(--shadow-md);
+    }
+
+    .hero-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.9rem;
+      max-width: 760px;
+    }
+
+    .metric {
+      padding: 1rem 1rem 1rem 1.05rem;
+      border: 1px solid var(--line);
+      background: var(--bg-elevated);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 1.45rem;
+      letter-spacing: -0.04em;
+      margin-bottom: 0.2rem;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .hero-panel {
+      position: relative;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, var(--bg-elevated), color-mix(in srgb, var(--surface) 88%, transparent));
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+      padding: 1.4rem;
+      overflow: hidden;
+    }
+
+    .hero-panel::before {
+      content: "";
+      position: absolute;
+      inset: auto -80px -80px auto;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(37, 99, 235, 0.22), transparent 65%);
+      pointer-events: none;
+    }
+
+    .panel-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.45rem 0.75rem;
+      border-radius: 999px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-size: 0.82rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .hero-panel h3 {
+      font-size: 1.55rem;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.8rem;
+    }
+
+    .hero-panel > p {
+      color: var(--muted);
+      margin-bottom: 1.3rem;
+    }
+
+    .panel-list {
+      display: grid;
+      gap: 0.8rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .panel-item {
+      padding: 0.95rem 1rem;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: color-mix(in srgb, var(--surface) 84%, transparent);
+    }
+
+    .panel-item strong {
+      display: block;
+      margin-bottom: 0.25rem;
+      font-size: 0.98rem;
+    }
+
+    .panel-item span {
+      color: var(--muted);
+      font-size: 0.93rem;
+    }
+
+    .contact-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem 1.1rem;
+      border-radius: 18px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+    }
+
+    .contact-box small {
+      display: block;
+      color: var(--muted);
+      margin-bottom: 0.18rem;
+    }
+
+    .contact-box a {
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.25rem;
+    }
+
+    .card {
+      padding: 1.55rem;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--line);
+      background: var(--bg-elevated);
+      box-shadow: var(--shadow-md);
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+      gap: 1.4rem;
+      align-items: stretch;
+    }
+
+    .about-copy p {
+      color: var(--muted);
+      font-size: 1.05rem;
+      margin-bottom: 1rem;
+    }
+
+    .about-points {
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .point {
+      display: flex;
+      gap: 0.9rem;
+      align-items: flex-start;
+    }
+
+    .point-badge {
+      flex: 0 0 42px;
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-weight: 800;
+    }
+
+    .point h3 {
+      font-size: 1rem;
+      margin-bottom: 0.15rem;
+    }
+
+    .point p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .stack-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 1.1rem;
+    }
+
+    .stack-chip {
+      padding: 0.55rem 0.8rem;
+      border-radius: 999px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      font-size: 0.87rem;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.25rem;
+    }
+
+    .service-card {
+      padding: 1.6rem;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--line);
+      background: var(--bg-elevated);
+      box-shadow: var(--shadow-md);
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .service-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--line-strong);
+    }
+
+    .service-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .service-index {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .service-pill {
+      padding: 0.4rem 0.65rem;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .service-card h3 {
+      font-size: 1.24rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.65rem;
+    }
+
+    .service-card p {
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+
+    .service-card ul {
+      list-style: none;
+      display: grid;
+      gap: 0.55rem;
+    }
+
+    .service-card li {
+      color: var(--muted);
+      font-size: 0.95rem;
+      padding-left: 1.15rem;
+      position: relative;
+    }
+
+    .service-card li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.66rem;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+
+    .process-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.15rem;
+    }
+
+    .process-card {
+      padding: 1.5rem;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, var(--bg-elevated), color-mix(in srgb, var(--surface) 92%, transparent));
+      box-shadow: var(--shadow-md);
+    }
+
+    .process-step {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 58px;
+      height: 34px;
+      padding: 0 0.75rem;
+      border-radius: 999px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-weight: 800;
+      font-size: 0.86rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .process-card h3 {
+      font-size: 1.12rem;
+      margin-bottom: 0.55rem;
+      letter-spacing: -0.02em;
+    }
+
+    .process-card p {
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .audience-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.15rem;
+    }
+
+    .audience-card {
+      padding: 1.5rem;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--line);
+      background: var(--bg-elevated);
+      box-shadow: var(--shadow-md);
+    }
+
+    .audience-card h3 {
+      font-size: 1.12rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.65rem;
+    }
+
+    .audience-card p {
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .cta {
+      padding-bottom: 6rem;
+    }
+
+    .cta-panel {
+      padding: 2rem;
+      border-radius: calc(var(--radius-xl) + 4px);
+      background: linear-gradient(135deg, color-mix(in srgb, var(--surface) 88%, transparent), color-mix(in srgb, var(--surface-2) 92%, transparent));
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+
+    .cta-copy h2 {
+      font-size: clamp(1.9rem, 3vw, 2.6rem);
+      letter-spacing: -0.03em;
+      line-height: 1.08;
+      margin-bottom: 0.65rem;
+    }
+
+    .cta-copy p {
+      color: var(--muted);
+      max-width: 60ch;
+    }
+
+    .site-footer {
+      padding: 1.6rem 0 2.4rem;
+      border-top: 1px solid var(--line);
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .footer-inner strong {
+      color: var(--text);
+    }
+
+    @media (max-width: 1024px) {
+      .hero-grid,
+      .about-grid,
+      .cta-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .process-grid,
+      .audience-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 820px) {
+      .header-inner {
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 0.8rem 0;
+      }
+
+      .nav-wrap {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .main-nav {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .services-grid,
+      .grid-2,
+      .hero-metrics {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .hero {
+        padding-top: 3.2rem;
+      }
+
+      .section {
+        padding: 4.2rem 0;
+      }
+
+      .hero-copy h1 {
+        max-width: 100%;
+      }
+
+      .contact-box,
+      .footer-inner,
+      .cta-panel {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .btn,
+      .btn-secondary {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#inicio" class="brand">CRRB <span>· Data Mining & IA</span></a>
+
+      <div class="nav-wrap">
+        <nav class="main-nav" aria-label="Navegación principal">
+          <a href="#servicios">Servicios</a>
+          <a href="#proceso">Método</a>
+          <a href="#sobre-mi">Perfil</a>
+          <a href="#para-quien">Para quién</a>
+          <a href="#contacto">Contacto</a>
+        </nav>
+
+        <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">
+          <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none">
+            <circle cx="12" cy="12" r="5"></circle>
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
+          </svg>
+          <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="inicio">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <span class="eyebrow">Consultoría independiente orientada a resultados reales</span>
+          <h1>Data Mining, <span>IA aplicada</span> y automatización con enfoque de negocio.</h1>
+          <p>
+            CRRB ayuda a empresas, áreas operativas y equipos de dirección a convertir datos dispersos,
+            procesos lentos e información desordenada en decisiones más claras, flujos más ágiles y soluciones útiles.
+            Su trabajo integra analítica, dashboards, automatización, prompt engineering e inteligencia artificial aplicada
+            para resolver problemas concretos, no para vender humo tecnológico.
+          </p>
+
+          <div class="hero-actions">
+            <a href="mailto:crrb@da-tica.com" class="btn">Solicitar consultoría</a>
+            <a href="#servicios" class="btn-secondary">Explorar servicios</a>
+          </div>
+
+          <div class="hero-metrics" aria-label="Métricas de experiencia">
+            <div class="metric">
+              <strong>10+ años</strong>
+              <span>trabajando con datos, reporting, automatización y soluciones empresariales</span>
+            </div>
+            <div class="metric">
+              <strong>Data + IA</strong>
+              <span>desde explotación de datos y BI hasta prompts, asistentes y procesos inteligentes</span>
+            </div>
+            <div class="metric">
+              <strong>Python · SQL · BI</strong>
+              <span>implementación práctica con criterio técnico, foco operativo y visión de negocio</span>
+            </div>
+          </div>
+        </div>
+
+        <aside class="hero-panel" aria-label="Panel de propuesta de valor">
+          <span class="panel-label">Propuesta de valor</span>
+          <h3>Menos improvisación. Más estructura, análisis y capacidad de ejecución.</h3>
+          <p>
+            La consultoría está pensada para organizaciones que necesitan ordenar información, entender mejor sus datos,
+            automatizar tareas críticas e incorporar IA de forma útil, segura y rentable.
+          </p>
+
+          <div class="panel-list">
+            <div class="panel-item">
+              <strong>Data Mining y analítica accionable</strong>
+              <span>Descubrimiento de patrones, cruces, segmentación, hallazgos y apoyo a la toma de decisiones.</span>
+            </div>
+            <div class="panel-item">
+              <strong>Automatización e IA con propósito</strong>
+              <span>Prompts, asistentes, clasificación, análisis documental, extracción de conocimiento y reducción de carga manual.</span>
+            </div>
+            <div class="panel-item">
+              <strong>Arquitectura y enfoque consultivo</strong>
+              <span>Definición de estrategia, stack, roadmap, riesgos, prioridades y pasos claros de implementación.</span>
+            </div>
+          </div>
+
+          <div class="contact-box">
+            <div>
+              <small>Contacto directo</small>
+              <a href="mailto:crrb@da-tica.com">crrb@da-tica.com</a>
+            </div>
+            <a href="mailto:crrb@da-tica.com" class="btn-secondary">Escribir correo</a>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" id="sobre-mi">
+      <div class="container about-grid">
+        <div class="card about-copy">
+          <div class="section-head" style="margin-bottom: 1.2rem;">
+            <span class="eyebrow">Perfil profesional</span>
+            <h2>Consultor en datos, inteligencia artificial y diseño de soluciones que sí responden a necesidades del negocio.</h2>
+          </div>
+
+          <p>
+            CRRB se especializa en convertir necesidades complejas en soluciones entendibles, ejecutables y útiles para la operación.
+            Su perfil combina pensamiento analítico, experiencia técnica y visión consultiva para trabajar con datos, procesos, reportes,
+            automatización e inteligencia artificial desde una perspectiva práctica.
+          </p>
+
+          <p>
+            Su enfoque no se limita a construir tableros o generar modelos aislados. Trabaja sobre el problema completo:
+            calidad de datos, estructura de la información, automatización del flujo, generación de indicadores,
+            análisis profundo, diseño de prompts, asistentes especializados y arquitectura de soluciones alineadas con el objetivo del cliente.
+          </p>
+
+          <p>
+            Esto resulta especialmente valioso para organizaciones que manejan muchos registros, documentación, operaciones repetitivas,
+            decisiones basadas en evidencia o entornos donde una mala interpretación de los datos puede costar tiempo, dinero o capacidad operativa.
+          </p>
+
+          <div class="stack-list" aria-label="Tecnologías y enfoques">
+            <span class="stack-chip">Data Mining</span>
+            <span class="stack-chip">Business Intelligence</span>
+            <span class="stack-chip">Dashboards Ejecutivos</span>
+            <span class="stack-chip">Prompt Engineering</span>
+            <span class="stack-chip">Automatización</span>
+            <span class="stack-chip">Inteligencia Artificial Aplicada</span>
+            <span class="stack-chip">Python</span>
+            <span class="stack-chip">SQL</span>
+            <span class="stack-chip">Documentación Técnica</span>
+            <span class="stack-chip">Arquitectura de Soluciones</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="about-points">
+            <div class="point">
+              <div class="point-badge">01</div>
+              <div>
+                <h3>Lectura profunda del problema</h3>
+                <p>Antes de construir, se entiende el contexto, el dato, el proceso y el impacto real que tiene la solución en el negocio.</p>
+              </div>
+            </div>
+            <div class="point">
+              <div class="point-badge">02</div>
+              <div>
+                <h3>IA útil, no decorativa</h3>
+                <p>Prompts, asistentes y automatizaciones se diseñan para ahorrar tiempo, mejorar criterio y ampliar capacidad operativa.</p>
+              </div>
+            </div>
+            <div class="point">
+              <div class="point-badge">03</div>
+              <div>
+                <h3>Perfil técnico y consultivo</h3>
+                <p>Se combina análisis, implementación y comunicación clara para que la solución funcione tanto en lo técnico como en lo ejecutivo.</p>
+              </div>
+            </div>
+            <div class="point">
+              <div class="point-badge">04</div>
+              <div>
+                <h3>Orientación a compra inteligente</h3>
+                <p>La propuesta está pensada para clientes que buscan resolver un problema de verdad y obtener valor medible, no solo contratar horas.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="servicios">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Servicios</span>
+          <h2>Servicios diseñados para empresas que necesitan claridad analítica, automatización y soluciones basadas en IA.</h2>
+          <p>
+            Cada servicio se enfoca en necesidades reales del mercado: entender datos, acelerar operaciones,
+            reducir trabajo manual, mejorar la toma de decisiones y aprovechar la inteligencia artificial con criterio.
+          </p>
+        </div>
+
+        <div class="services-grid">
+          <article class="service-card">
+            <div class="service-top">
+              <div class="service-index">01</div>
+              <span class="service-pill">Data Mining</span>
+            </div>
+            <h3>Minería y análisis profundo de datos</h3>
+            <p>
+              Exploración, depuración, cruces, segmentación y análisis para encontrar patrones, riesgos, cuellos de botella y oportunidades de mejora.
+            </p>
+            <ul>
+              <li>Detección de inconsistencias y calidad de datos</li>
+              <li>Descubrimiento de patrones y hallazgos ocultos</li>
+              <li>Análisis orientado a decisiones y acciones concretas</li>
+            </ul>
+          </article>
+
+          <article class="service-card">
+            <div class="service-top">
+              <div class="service-index">02</div>
+              <span class="service-pill">Business Intelligence</span>
+            </div>
+            <h3>Dashboards y reportería ejecutiva</h3>
+            <p>
+              Construcción de tableros e indicadores para dirección, jefaturas y equipos operativos que necesitan visibilidad clara y seguimiento continuo.
+            </p>
+            <ul>
+              <li>KPI, tendencias, alertas y control de gestión</li>
+              <li>Visualización clara para lectura rápida</li>
+              <li>Información convertida en criterio gerencial</li>
+            </ul>
+          </article>
+
+          <article class="service-card">
+            <div class="service-top">
+              <div class="service-index">03</div>
+              <span class="service-pill">Prompt Engineering</span>
+            </div>
+            <h3>Diseño de prompts y asistentes inteligentes</h3>
+            <p>
+              Creación de prompts robustos, flujos conversacionales y asistentes especializados para análisis, soporte, documentación y productividad.
+            </p>
+            <ul>
+              <li>Prompts orientados a precisión y consistencia</li>
+              <li>Asistentes internos para equipos y procesos</li>
+              <li>Aplicación real de LLMs al trabajo diario</li>
+            </ul>
+          </article>
+
+          <article class="service-card">
+            <div class="service-top">
+              <div class="service-index">04</div>
+              <span class="service-pill">Automation</span>
+            </div>
+            <h3>Automatización de procesos y flujos de información</h3>
+            <p>
+              Optimización de tareas repetitivas, integraciones, extracción de datos, procesamiento documental y secuencias operativas.
+            </p>
+            <ul>
+              <li>Reducción de tiempos y carga manual</li>
+              <li>Flujos reproducibles y más ordenados</li>
+              <li>Automatización alineada a la operación real</li>
+            </ul>
+          </article>
+
+          <article class="service-card">
+            <div class="service-top">
+              <div class="service-index">05</div>
+              <span class="service-pill">AI Applied</span>
+            </div>
+            <h3>Inteligencia artificial aplicada al negocio</h3>
+            <p>
+              Implementación de casos de uso de IA que ayuden a clasificar, resumir, buscar, analizar y acelerar decisiones con datos y documentos.
+            </p>
+            <ul>
+              <li>Análisis documental y extracción de conocimiento</li>
+              <li>Resúmenes, clasificación y apoyo a decisiones</li>
+              <li>Uso de IA con foco en utilidad y retorno</li>
+            </ul>
+          </article>
+
+          <article class="service-card">
+            <div class="service-top">
+              <div class="service-index">06</div>
+              <span class="service-pill">Consulting</span>
+            </div>
+            <h3>Consultoría estratégica y arquitectura de soluciones</h3>
+            <p>
+              Definición de stack, enfoque técnico, roadmap y criterios de implementación para organizaciones que quieren avanzar con orden y menor riesgo.
+            </p>
+            <ul>
+              <li>Diseño de hoja de ruta por fases</li>
+              <li>Priorización basada en impacto</li>
+              <li>Visión técnica, operativa y comercial</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="proceso">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Método de trabajo</span>
+          <h2>Una consultoría sólida no solo entrega ideas: entrega criterio, estructura y ejecución.</h2>
+          <p>
+            El proceso se plantea para reducir improvisación, ordenar prioridades y llevar al cliente desde el problema hasta una solución aplicable.
+          </p>
+        </div>
+
+        <div class="process-grid">
+          <article class="process-card">
+            <span class="process-step">Paso 1</span>
+            <h3>Diagnóstico</h3>
+            <p>
+              Se analiza el contexto del negocio, las fuentes de datos, los dolores operativos, la calidad de la información y las oportunidades de mejora.
+            </p>
+          </article>
+          <article class="process-card">
+            <span class="process-step">Paso 2</span>
+            <h3>Diseño de solución</h3>
+            <p>
+              Se define la lógica de trabajo, la arquitectura, los entregables, los prompts, los indicadores y la estrategia de implementación.
+            </p>
+          </article>
+          <article class="process-card">
+            <span class="process-step">Paso 3</span>
+            <h3>Implementación y evolución</h3>
+            <p>
+              Se ejecuta la solución, se valida con el cliente y se deja una base escalable para seguir mejorando sin perder orden ni criterio.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="para-quien">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Para quién</span>
+          <h2>Ideal para organizaciones que sienten que tienen datos, pero todavía no tienen claridad.</h2>
+          <p>
+            Esta propuesta conecta especialmente con compradores que ya perciben fricción operativa, saturación manual o falta de criterio analítico.
+          </p>
+        </div>
+
+        <div class="audience-grid">
+          <article class="audience-card">
+            <h3>Empresas con mucha información y poco orden</h3>
+            <p>
+              Cuando existen múltiples archivos, reportes, bases, documentos o procesos sueltos, pero no una visión clara para decidir rápido y bien.
+            </p>
+          </article>
+
+          <article class="audience-card">
+            <h3>Equipos que pierden tiempo en tareas repetitivas</h3>
+            <p>
+              Cuando el personal invierte demasiadas horas en consolidar datos, revisar documentos, resumir contenido o generar reportes manuales.
+            </p>
+          </article>
+
+          <article class="audience-card">
+            <h3>Líderes que quieren aprovechar IA sin improvisar</h3>
+            <p>
+              Cuando existe interés por usar inteligencia artificial, prompts o automatización, pero se necesita un enfoque serio, práctico y alineado al negocio.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section cta" id="contacto">
+      <div class="container">
+        <div class="cta-panel">
+          <div class="cta-copy">
+            <h2>Cuando los datos, la automatización y la IA se conectan bien, el negocio gana velocidad, criterio y capacidad.</h2>
+            <p>
+              CRRB ofrece consultoría para transformar información dispersa en soluciones útiles, medibles y bien planteadas.
+              Si el problema actual es desorden, lentitud, exceso de trabajo manual o falta de claridad para decidir, esta puede ser una buena conversación para empezar.
+            </p>
+          </div>
+          <a href="mailto:crrb@da-tica.com" class="btn">Contactar ahora</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p><strong>© 2026 CRRB</strong> · Consultoría en Data Mining, IA, Prompt Engineering y Automatización</p>
+      <p><a href="mailto:crrb@da-tica.com">crrb@da-tica.com</a></p>
+    </div>
+  </footer>
+
+  <script>
+    const toggle = document.getElementById('themeToggle');
+    const sun = document.getElementById('sunIcon');
+    const moon = document.getElementById('moonIcon');
+    const root = document.documentElement;
+    const storageKey = 'theme-preference';
+
+    const applyTheme = (theme) => {
+      root.setAttribute('data-theme', theme);
+      sun.style.display = theme === 'dark' ? 'block' : 'none';
+      moon.style.display = theme === 'dark' ? 'none' : 'block';
+    };
+
+    const savedTheme = localStorage.getItem(storageKey);
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+    applyTheme(initialTheme);
+
+    toggle.addEventListener('click', () => {
+      const current = root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+      const next = current === 'dark' ? 'light' : 'dark';
+      localStorage.setItem(storageKey, next);
+      applyTheme(next);
+    });
+  </script>
+</body>
+</html>
