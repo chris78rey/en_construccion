@@ -1,0 +1,14 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Da-TIca | Página no encontrada" description="La página solicitada no existe." pathname={Astro.url.pathname}>
+  <section class="section">
+    <div class="container centered-block">
+      <span class="eyebrow">404</span>
+      <h1>Página no encontrada</h1>
+      <p>La ruta solicitada no existe o fue movida a otra sección.</p>
+      <a class="button" href="/">Volver al inicio</a>
+    </div>
+  </section>
+</BaseLayout>

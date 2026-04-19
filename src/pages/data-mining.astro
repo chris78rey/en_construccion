@@ -1,0 +1,97 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionIntro from '../components/SectionIntro.astro';
+import FaqAccordion from '../components/FaqAccordion.vue';
+import { faqData } from '../data/site';
+---
+
+<BaseLayout
+  title="Da-TIca | Data Mining"
+  description="Análisis de datos orientado a patrones, claridad operativa y decisiones más útiles."
+  pathname={Astro.url.pathname}
+>
+  <section class="hero page-hero">
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <span class="eyebrow">Data Mining</span>
+        <h1>Cuando los datos se entienden mejor, las decisiones dejan de depender solo de intuición.</h1>
+        <p>
+          Esta página presenta el servicio de análisis como una ayuda práctica para limpiar información,
+          detectar patrones, ubicar problemas y abrir camino a automatización e inteligencia artificial aplicada.
+        </p>
+        <div class="button-row">
+          <a class="button" href="mailto:crrb@da-tica.com?subject=Quiero%20informaci%C3%B3n%20sobre%20Data%20Mining">Solicitar información</a>
+          <a class="button button-secondary" href="/">Volver al inicio</a>
+        </div>
+      </div>
+
+      <div class="glow-card">
+        <p class="mini-label">Resultado esperado</p>
+        <h2>Menos ruido, más lectura útil del negocio</h2>
+        <div class="metric-grid single-column">
+          <article><strong>Limpieza</strong><span>Organización y depuración de información</span></article>
+          <article><strong>Patrones</strong><span>Hallazgos que no saltan a simple vista</span></article>
+          <article><strong>Prioridades</strong><span>Base para decidir qué atacar primero</span></article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <SectionIntro
+        eyebrow="Aplicaciones"
+        title="Dónde puede aportar valor"
+        text="No se presenta como un concepto abstracto, sino como una herramienta para entender mejor procesos, registros y comportamientos."
+      />
+      <div class="card-grid card-grid-3">
+        <article class="info-card">
+          <h3>Detección de inconsistencias</h3>
+          <p>Permite encontrar errores repetitivos, vacíos, duplicados o registros fuera de patrón.</p>
+        </article>
+        <article class="info-card">
+          <h3>Lectura operativa</h3>
+          <p>Ayuda a ver cuellos de botella, tiempos muertos, concentraciones y tendencias.</p>
+        </article>
+        <article class="info-card">
+          <h3>Preparación para IA</h3>
+          <p>Una base de datos mejor entendida facilita automatización, reportes y soluciones con IA aplicada.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-soft">
+    <div class="container two-col-grid">
+      <article class="info-card">
+        <SectionIntro
+          eyebrow="Flujo de trabajo"
+          title="Una ruta simple para convertir datos en señales útiles"
+          text="La narrativa del servicio debe sonar práctica y aterrizada."
+        />
+        <ul class="detail-list">
+          <li>Recepción y revisión de fuentes de datos.</li>
+          <li>Limpieza, estructura y lectura exploratoria.</li>
+          <li>Detección de patrones, inconsistencias y oportunidades.</li>
+          <li>Entrega de hallazgos accionables y siguiente ruta sugerida.</li>
+        </ul>
+      </article>
+
+      <article class="info-card accent-card">
+        <p class="mini-label">Enfoque</p>
+        <h3>Más entendimiento y menos jerga</h3>
+        <p>
+          El visitante debe percibir que el valor no está en mencionar técnicas complejas,
+          sino en traducir datos desordenados en información que ayude de verdad.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <SectionIntro eyebrow="Preguntas frecuentes" title="Dudas comunes sobre Data Mining" text="Estas respuestas refuerzan una propuesta más práctica y fácil de entender." />
+      <FaqAccordion items={faqData} client:visible />
+    </div>
+  </section>
+</BaseLayout>

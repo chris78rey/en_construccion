@@ -1,0 +1,64 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionIntro from '../components/SectionIntro.astro';
+---
+
+<BaseLayout
+  title="Da-TIca | Cursos en preparación"
+  description="Cursos prácticos sobre datos, automatización, prompts e inteligencia artificial aplicada."
+  pathname={Astro.url.pathname}
+>
+  <section class="hero page-hero">
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <span class="eyebrow">Cursos</span>
+        <h1>La línea de formación queda visible, pero con un mensaje más serio y mejor presentado.</h1>
+        <p>
+          Esta sección comunica que la línea existe y que se encuentra en preparación,
+          sin parecer una página vacía ni un texto interno para desarrollo.
+        </p>
+        <div class="button-row">
+          <a class="button" href="mailto:crrb@da-tica.com?subject=Quiero%20informaci%C3%B3n%20sobre%20cursos">Solicitar información</a>
+          <a class="button button-secondary" href="/">Volver al inicio</a>
+        </div>
+      </div>
+
+      <article class="glow-card">
+        <p class="mini-label">Próximamente</p>
+        <h2>Temáticas previstas</h2>
+        <ul class="detail-list compact">
+          <li>Prompts y uso práctico de IA</li>
+          <li>Automatización orientada a resultados</li>
+          <li>Fundamentos de datos aplicados</li>
+          <li>Herramientas útiles para proyectos reales</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container two-col-grid">
+      <article class="info-card">
+        <SectionIntro
+          eyebrow="Estado"
+          title="Página en preparación"
+          text="La redacción queda pensada para comunicar avance y expectativa, sin recargar ni vender algo que todavía no está publicado."
+        />
+        <ul class="detail-list">
+          <li>Contenido todavía en construcción.</li>
+          <li>Orientación práctica y aplicable.</li>
+          <li>Espacio listo para publicar nuevos cursos luego.</li>
+        </ul>
+      </article>
+
+      <article class="info-card accent-card">
+        <p class="mini-label">Objetivo</p>
+        <h3>Preparar una futura línea de formación con una imagen consistente</h3>
+        <p>
+          Esta sección queda lista para convertirse luego en catálogo, landing page o centro de contenidos
+          sin tener que rehacer la estructura visual del sitio.
+        </p>
+      </article>
+    </div>
+  </section>
+</BaseLayout>

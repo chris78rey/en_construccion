@@ -1,0 +1,29 @@
+---
+import { site } from '../data/site';
+---
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div>
+      <p class="footer-brand">{site.brand}</p>
+      <p class="footer-copy">{site.description}</p>
+    </div>
+
+    <div>
+      <p class="footer-title">Contacto</p>
+      <ul class="footer-list">
+        <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
+        <li><a href={site.youtube} target="_blank" rel="noreferrer noopener">YouTube @Da-Tica</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="footer-title">Líneas</p>
+      <ul class="footer-list">
+        <li><a href="/sitios-web/">Sitios web</a></li>
+        <li><a href="/data-mining/">Data Mining</a></li>
+        <li><a href="/cursos/">Cursos</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>

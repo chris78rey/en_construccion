@@ -1,0 +1,59 @@
+# ==============================================================================
+# Da-TIca VPS Deployment - Docker Compose with Caddy (HTTPS automatico)
+# ==============================================================================
+# Uso: docker compose -f docker-compose.vps.yml up -d --build
+# Requiere: Puertos 80 y 443 abiertos, dominio apuntando al VPS
+# ==============================================================================
+
+services:
+  # ---------------------------------------------------------------------------
+  # Servicio Web - Nginx sirviendo sitio estático en puerto 8080
+  # ---------------------------------------------------------------------------
+  web:
+    container_name: datica-web
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    image: datica-portal-web:1.0.0
+    restart: unless-stopped
+    expose:
+      - '8080'
+    networks:
+      - datica-web
+    healthcheck:
+      test: ['CMD', 'wget', '-qO-', 'http://127.0.0.1:8080/']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  # ---------------------------------------------------------------------------
+  # Proxy Caddy - HTTPS automático, certificados, redirección HTTP->HTTPS
+  # ---------------------------------------------------------------------------
+  caddy:
+    image: caddy:2-alpine
+    container_name: datica-caddy
+    restart: unless-stopped
+    depends_on:
+      - web
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp'
+    environment:
+      - DOMAIN=${DOMAIN:-da-tica.com}
+      - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL:-admin@da-tica.com}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - datica-web
+
+networks:
+  datica-web:
+    driver: bridge
+
+volumes:
+  caddy_data:
+  caddy_config:
