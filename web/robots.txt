@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://da-tica.com/sitemap.xml
+
+# Archivos estáticos permitidos
+Allow: /styles.css
+Allow: /img/
+
+# Archivos no esenciales
+Disallow: /default.conf
+Disallow: /Dockerfile
