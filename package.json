@@ -9,8 +9,8 @@
     "preview": "astro preview --host 0.0.0.0 --port 4321"
   },
   "dependencies": {
-    "astro": "latest",
-    "@astrojs/vue": "latest",
-    "vue": "latest"
+    "astro": "6.1.8",
+    "@astrojs/vue": "6.0.1",
+    "vue": "3.5.32"
   }
 }
