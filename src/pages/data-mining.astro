@@ -1,4 +1,5 @@
 ---
+// --- INICIO CAMBIO NUEVO ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionIntro from '../components/SectionIntro.astro';
 import FaqAccordion from '../components/FaqAccordion.vue';
@@ -6,92 +7,93 @@ import { faqData } from '../data/site';
 ---
 
 <BaseLayout
-  title="Da-TIca | Data Mining"
-  description="Análisis de datos orientado a patrones, claridad operativa y decisiones más útiles."
+  title={`Da-TIca | Data Mining`}
+  description={`Análisis de datos orientado a patrones, claridad operativa y decisiones más útiles.`}
   pathname={Astro.url.pathname}
 >
-  <section class="hero page-hero">
-    <div class="container hero-grid">
-      <div class="hero-copy">
-        <span class="eyebrow">Data Mining</span>
-        <h1>Datos mejor entendidos para tomar mejores decisiones.</h1>
+  <section class={`hero page-hero`}>
+    <div class={`container hero-grid`}>
+      <div class={`hero-copy`}>
+        <span class={`eyebrow`}>Data Mining</span>
+        <h1>Datos mejor entendidos para decidir con más seguridad.</h1>
         <p>
-          Esta línea se enfoca en ordenar, analizar y aprovechar la información para detectar patrones,
-          inconsistencias, riesgos, oportunidades y caminos de mejora.
+          Esta línea ayuda a ordenar, revisar y analizar información para encontrar patrones,
+          errores, oportunidades y señales útiles que muchas veces pasan desapercibidas.
         </p>
-        <div class="button-row">
-          <a class="button" href="mailto:crrb@da-tica.com?subject=Quiero%20informaci%C3%B3n%20sobre%20Data%20Mining">Solicitar información</a>
-          <a class="button button-secondary" href="/">Volver al inicio</a>
+        <div class={`button-row`}>
+          <a class={`button`} href={`mailto:crrb@da-tica.com?subject=Quiero%20informaci%C3%B3n%20sobre%20Data%20Mining`}>Solicitar información</a>
+          <a class={`button button-secondary`} href={`/`}>Volver al inicio</a>
         </div>
       </div>
 
-      <div class="glow-card">
-        <p class="mini-label">Resultado esperado</p>
-        <h2>Menos ruido, más lectura útil del negocio</h2>
-        <div class="metric-grid single-column">
-          <article><strong>Orden</strong><span>Información más organizada y entendible</span></article>
+      <div class={`glow-card`}>
+        <p class={`mini-label`}>Resultado esperado</p>
+        <h2>Menos desorden y más información útil para actuar</h2>
+        <div class={`metric-grid single-column`}>
+          <article><strong>Orden</strong><span>Información más clara y mejor estructurada</span></article>
           <article><strong>Patrones</strong><span>Hallazgos que no saltan a simple vista</span></article>
-          <article><strong>Prioridad</strong><span>Base para decidir qué atacar primero</span></article>
+          <article><strong>Decisión</strong><span>Base más sólida para priorizar acciones</span></article>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="section">
-    <div class="container">
+  <section class={`section`}>
+    <div class={`container`}>
       <SectionIntro
-        eyebrow="Aplicaciones"
-        title="Dónde puede aportar valor"
-        text="No se presenta como un concepto abstracto, sino como una ayuda práctica para entender mejor procesos, registros y comportamientos."
+        eyebrow={`Dónde aporta valor`}
+        title={`Aplicaciones prácticas del análisis de datos`}
+        text={`El enfoque está en resolver problemas reales y convertir información dispersa en señales que ayuden a mejorar procesos y decisiones.`}
       />
-      <div class="card-grid card-grid-3">
-        <article class="info-card">
-          <h3>Detección de inconsistencias</h3>
-          <p>Permite encontrar errores repetitivos, vacíos, duplicados o registros fuera de patrón.</p>
+      <div class={`card-grid card-grid-3`}>
+        <article class={`info-card`}>
+          <h3>Detectar inconsistencias</h3>
+          <p>Permite encontrar vacíos, duplicados, errores repetitivos o registros fuera de comportamiento esperado.</p>
         </article>
-        <article class="info-card">
-          <h3>Lectura operativa</h3>
-          <p>Ayuda a ver cuellos de botella, tiempos muertos, concentraciones y tendencias.</p>
+        <article class={`info-card`}>
+          <h3>Entender mejor la operación</h3>
+          <p>Ayuda a identificar cuellos de botella, concentraciones, tendencias y oportunidades de mejora.</p>
         </article>
-        <article class="info-card">
-          <h3>Base para crecer</h3>
-          <p>Una mejor lectura de datos abre camino a reportes, automatización o inteligencia artificial aplicada.</p>
+        <article class={`info-card`}>
+          <h3>Preparar el crecimiento</h3>
+          <p>Una mejor lectura de datos facilita luego reportes, automatización e inteligencia artificial aplicada.</p>
         </article>
       </div>
     </div>
   </section>
 
-  <section class="section section-soft">
-    <div class="container two-col-grid">
-      <article class="info-card">
+  <section class={`section section-soft`}>
+    <div class={`container two-col-grid`}>
+      <article class={`info-card`}>
         <SectionIntro
-          eyebrow="Flujo de trabajo"
-          title="Una ruta simple para convertir datos en señales útiles"
-          text="La propuesta busca sonar práctica y aterrizada."
+          eyebrow={`Cómo se trabaja`}
+          title={`Una ruta simple para convertir datos en hallazgos útiles`}
+          text={`El proceso busca claridad, practicidad y resultados entendibles.`}
         />
-        <ul class="detail-list">
-          <li>Recepción y revisión de fuentes de datos.</li>
-          <li>Limpieza, estructura y lectura exploratoria.</li>
+        <ul class={`detail-list`}>
+          <li>Recepción y revisión de las fuentes de información.</li>
+          <li>Limpieza, organización y análisis exploratorio.</li>
           <li>Detección de patrones, inconsistencias y oportunidades.</li>
-          <li>Entrega de hallazgos accionables y ruta sugerida.</li>
+          <li>Entrega de hallazgos accionables y posibles caminos de mejora.</li>
         </ul>
       </article>
 
-      <article class="info-card accent-card">
-        <p class="mini-label">Enfoque</p>
-        <h3>Más entendimiento y menos jerga</h3>
+      <article class={`info-card accent-card`}>
+        <p class={`mini-label`}>Enfoque</p>
+        <h3>Más claridad y menos complejidad innecesaria</h3>
         <p>
-          El valor no está en mencionar técnicas complejas, sino en traducir datos desordenados
-          en información que ayude de verdad.
+          El valor está en traducir datos confusos o dispersos en información entendible,
+          útil y cercana a la realidad del negocio o del proceso.
         </p>
       </article>
     </div>
   </section>
 
-  <section class="section">
-    <div class="container">
-      <SectionIntro eyebrow="Preguntas frecuentes" title="Dudas comunes sobre Data Mining" text="Estas respuestas refuerzan una propuesta más práctica y fácil de entender." />
+  <section class={`section`}>
+    <div class={`container`}>
+      <SectionIntro eyebrow={`Preguntas frecuentes`} title={`Dudas comunes sobre Data Mining`} text={`Estas respuestas ayudan a entender mejor cómo puede aportar este servicio.`} />
       <FaqAccordion items={faqData} client:visible />
     </div>
   </section>
 </BaseLayout>
+// --- FIN CAMBIO NUEVO ---

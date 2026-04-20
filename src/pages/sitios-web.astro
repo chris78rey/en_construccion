@@ -1,4 +1,5 @@
 ---
+// --- INICIO CAMBIO NUEVO ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionIntro from '../components/SectionIntro.astro';
 import FaqAccordion from '../components/FaqAccordion.vue';
@@ -6,95 +7,96 @@ import { faqSitios } from '../data/site';
 ---
 
 <BaseLayout
-  title="Da-TIca | Sitios web profesionales"
-  description="Sitios web profesionales con estructura clara, buena velocidad y base lista para crecer."
+  title={`Da-TIca | Sitios web profesionales`}
+  description={`Sitios web profesionales con estructura clara, buena velocidad y base lista para crecer.`}
   pathname={Astro.url.pathname}
 >
-  <section class="hero page-hero">
-    <div class="container hero-grid">
-      <div class="hero-copy">
-        <span class="eyebrow">Sitios web</span>
-        <h1>Una página clara, profesional y lista para publicarse.</h1>
+  <section class={`hero page-hero`}>
+    <div class={`container hero-grid`}>
+      <div class={`hero-copy`}>
+        <span class={`eyebrow`}>Sitios web</span>
+        <h1>Una página profesional para mostrar mejor un negocio, consultorio o marca personal.</h1>
         <p>
-          Esta línea está pensada para negocios, consultorios, emprendimientos y marcas personales
-          que necesitan presencia digital sin complicarse con temas técnicos.
+          Esta línea está pensada para quienes necesitan una presencia digital clara, ordenada y confiable,
+          sin enredarse con lo técnico y con una imagen que ayude a generar mejores oportunidades.
         </p>
-        <div class="button-row">
-          <a class="button" href="mailto:crrb@da-tica.com?subject=Quiero%20mi%20sitio%20web">Solicitar información</a>
-          <a class="button button-secondary" href="/">Volver al inicio</a>
+        <div class={`button-row`}>
+          <a class={`button`} href={`mailto:crrb@da-tica.com?subject=Quiero%20mi%20sitio%20web`}>Solicitar información</a>
+          <a class={`button button-secondary`} href={`/`}>Volver al inicio</a>
         </div>
       </div>
 
-      <aside class="pricing-card">
-        <p class="mini-label">Desde</p>
-        <div class="price">6 USD<span>/mes</span></div>
-        <ul class="detail-list compact">
-          <li>Estructura profesional</li>
-          <li>Diseño responsive</li>
-          <li>SEO base y velocidad</li>
-          <li>Ayuda para publicación</li>
+      <aside class={`pricing-card`}>
+        <p class={`mini-label`}>Desde</p>
+        <div class={`price`}>6 USD<span>/mes</span></div>
+        <ul class={`detail-list compact`}>
+          <li>Diseño profesional</li>
+          <li>Adaptación a celular</li>
+          <li>Velocidad y SEO base</li>
+          <li>Apoyo para publicación</li>
         </ul>
       </aside>
     </div>
   </section>
 
-  <section class="section">
-    <div class="container">
+  <section class={`section`}>
+    <div class={`container`}>
       <SectionIntro
-        eyebrow="Qué incluye"
-        title="Lo que se busca resolver con esta línea"
-        text="La meta no es solo tener una página bonita, sino una presencia útil para comunicar valor, facilitar contacto y transmitir confianza."
+        eyebrow={`Qué aporta`}
+        title={`Una web que no solo se ve bien, también ayuda a comunicar mejor`}
+        text={`El objetivo es que la persona que visite la página entienda rápido qué se ofrece, por qué vale la pena y cómo ponerse en contacto.`}
       />
 
-      <div class="card-grid card-grid-3">
-        <article class="info-card">
-          <h3>Claridad comercial</h3>
-          <p>El visitante entiende mejor qué se ofrece, para quién sirve y cómo dar el siguiente paso.</p>
+      <div class={`card-grid card-grid-3`}>
+        <article class={`info-card`}>
+          <h3>Más confianza</h3>
+          <p>Una buena presentación digital ayuda a que el negocio se perciba más serio, ordenado y profesional.</p>
         </article>
-        <article class="info-card">
-          <h3>Mejor imagen</h3>
-          <p>El diseño transmite más profesionalismo que una sola página saturada o desordenada.</p>
+        <article class={`info-card`}>
+          <h3>Más claridad</h3>
+          <p>El contenido se organiza para que el visitante entienda mejor el servicio y no se pierda entre demasiada información.</p>
         </article>
-        <article class="info-card">
-          <h3>Base escalable</h3>
-          <p>La estructura permite crecer luego con blog, campañas, nuevas secciones o funciones adicionales.</p>
+        <article class={`info-card`}>
+          <h3>Más posibilidad de crecer</h3>
+          <p>La base queda lista para añadir nuevas secciones, campañas, formularios o mejoras en etapas posteriores.</p>
         </article>
       </div>
     </div>
   </section>
 
-  <section class="section section-soft">
-    <div class="container">
+  <section class={`section section-soft`}>
+    <div class={`container`}>
       <SectionIntro
-        eyebrow="Proceso"
-        title="Una implementación simple y progresiva"
-        text="La propuesta está pensada para avanzar por etapas sin volver pesado el sitio ni complicar la publicación."
+        eyebrow={`Proceso`}
+        title={`Una ruta simple para pasar de la idea a una página publicada`}
+        text={`Se trabaja por etapas para que el resultado sea claro, funcional y fácil de mantener.`}
       />
 
-      <div class="timeline-grid">
-        <article class="step-card"><span>01</span><h3>Definir mensaje</h3><p>Se aclara oferta, servicio principal y objetivo de la página.</p></article>
-        <article class="step-card"><span>02</span><h3>Diseñar estructura</h3><p>Se separan secciones para que el contenido respire y guíe al visitante.</p></article>
-        <article class="step-card"><span>03</span><h3>Construir la versión inicial</h3><p>Se deja una página clara, rápida y bien presentada.</p></article>
-        <article class="step-card"><span>04</span><h3>Publicar y crecer</h3><p>La base queda lista para hosting, VPS o futuras mejoras sin rehacer el proyecto.</p></article>
+      <div class={`timeline-grid`}>
+        <article class={`step-card`}><span>01</span><h3>Entender el servicio</h3><p>Se define qué se ofrece, a quién va dirigido y cuál es el mensaje principal.</p></article>
+        <article class={`step-card`}><span>02</span><h3>Organizar el contenido</h3><p>Se estructura la información para que la página guíe mejor al visitante.</p></article>
+        <article class={`step-card`}><span>03</span><h3>Construir la versión inicial</h3><p>Se prepara una web clara, rápida y bien presentada para comenzar con fuerza.</p></article>
+        <article class={`step-card`}><span>04</span><h3>Publicar y mejorar</h3><p>Luego se puede crecer con nuevas secciones, funciones o campañas según la necesidad.</p></article>
       </div>
     </div>
   </section>
 
-  <section class="section">
-    <div class="container two-col-grid">
-      <article class="info-card accent-card">
-        <p class="mini-label">Ventaja</p>
-        <h3>Una web profesional sin volverla pesada</h3>
+  <section class={`section`}>
+    <div class={`container two-col-grid`}>
+      <article class={`info-card accent-card`}>
+        <p class={`mini-label`}>Ventaja</p>
+        <h3>Una web profesional sin hacer pesado el proyecto</h3>
         <p>
-          La estructura queda pensada para cargar rápido, verse bien y permitir bloques interactivos
-          solo donde realmente aporten valor.
+          La idea es contar con una página moderna, rápida y agradable de recorrer,
+          con espacio para incorporar funciones extra solo cuando realmente aporten valor.
         </p>
       </article>
 
-      <article class="info-card">
-        <SectionIntro eyebrow="Preguntas frecuentes" title="Dudas comunes" text="Estas respuestas ayudan a que el visitante entienda mejor el enfoque." />
+      <article class={`info-card`}>
+        <SectionIntro eyebrow={`Preguntas frecuentes`} title={`Dudas comunes`} text={`Estas respuestas ayudan a comprender mejor cómo funciona esta línea de servicio.`} />
         <FaqAccordion items={faqSitios} client:visible />
       </article>
     </div>
   </section>
 </BaseLayout>
+// --- FIN CAMBIO NUEVO ---

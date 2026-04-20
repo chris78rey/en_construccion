@@ -1,11 +1,13 @@
+// --- INICIO CAMBIO NUEVO ---
 export const site = {
   brand: 'Da-TIca',
   email: 'crrb@da-tica.com',
   youtube: 'https://www.youtube.com/@Da-Tica',
   whatsapp: 'https://wa.me/593000000000',
-  headline: 'Sitios web, Data Mining y soluciones digitales aplicadas con una estructura clara.',
+  headline:
+    'Sitios web, análisis de datos y formación práctica para negocios y profesionales que quieren avanzar con más claridad.',
   description:
-    'Da-TIca reúne servicios de sitios web, análisis de datos y soluciones digitales aplicadas para negocios, profesionales y proyectos que necesitan comunicar mejor y operar con más claridad.',
+    'Da-TIca ayuda a negocios, profesionales y marcas personales a verse mejor en internet, entender mejor su información y aprovechar herramientas de automatización e inteligencia artificial aplicada.',
 };
 
 export const nav = [
@@ -20,19 +22,19 @@ export const services = [
     index: '01',
     href: '/sitios-web/',
     label: 'Sitios web',
-    title: 'Presencia web profesional para negocio, consultorio o marca personal',
+    title: 'Sitios web que transmiten confianza desde la primera visita',
     description:
-      'Páginas claras, rápidas y pensadas para que el visitante entienda el servicio, encuentre contacto y perciba una imagen profesional desde la primera visita.',
-    bullets: ['Diseño limpio', 'Carga rápida', 'Base escalable'],
+      'Páginas claras, rápidas y bien estructuradas para que el cliente entienda el servicio, encuentre contacto y perciba una imagen profesional.',
+    bullets: ['Más confianza', 'Más claridad', 'Más contacto'],
   },
   {
     index: '02',
     href: '/data-mining/',
     label: 'Data Mining',
-    title: 'Información útil para detectar patrones, problemas y oportunidades',
+    title: 'Análisis de datos para descubrir patrones y tomar mejores decisiones',
     description:
-      'Servicios orientados a limpieza, exploración y entendimiento de datos para apoyar decisiones, priorizar mejoras y preparar automatización o inteligencia artificial aplicada.',
-    bullets: ['Orden', 'Hallazgos', 'Decisión'],
+      'Servicios orientados a ordenar, revisar y analizar información para detectar errores, tendencias, riesgos y oportunidades que ayuden a mejorar procesos.',
+    bullets: ['Más orden', 'Más hallazgos', 'Más criterio'],
   },
   {
     index: '03',
@@ -40,8 +42,8 @@ export const services = [
     label: 'Cursos',
     title: 'Formación práctica en datos, automatización, prompts e inteligencia artificial aplicada',
     description:
-      'Una línea de contenidos orientada a uso real para ayudar a aprender herramientas que generen valor desde etapas tempranas.',
-    bullets: ['Aplicación real', 'Explicación clara', 'Próximamente'],
+      'Contenidos pensados para enseñar herramientas útiles con enfoque real, lenguaje claro y aplicación inmediata en proyectos y trabajo diario.',
+    bullets: ['Enfoque práctico', 'Explicación clara', 'Próximamente'],
   },
 ];
 
@@ -49,22 +51,22 @@ export const faqSitios = [
   {
     question: '¿La página puede empezar simple y luego crecer?',
     answer:
-      'Sí. La estructura queda lista para comenzar con una versión clara y profesional, y luego añadir nuevas secciones, formularios, campañas o mejoras sin rehacer todo el sitio.',
+      'Sí. Se puede comenzar con una versión clara y profesional, y después añadir nuevas secciones, formularios, campañas o mejoras sin rehacer todo el sitio.',
   },
   {
     question: '¿Incluye ayuda para publicar la página?',
     answer:
-      'Sí. La idea es acompañar desde la estructura del sitio hasta dejarlo listo para publicación en hosting o VPS, según la necesidad del proyecto.',
+      'Sí. Se brinda acompañamiento para dejar el sitio listo para publicarse en hosting o VPS, según la necesidad del proyecto.',
   },
   {
     question: '¿Sirve para un consultorio, negocio o marca personal?',
     answer:
-      'Sí. La propuesta está pensada para negocios, profesionales, consultorios y marcas que necesitan presencia digital con mejor imagen y contacto más claro.',
+      'Sí. La propuesta está pensada para consultorios, negocios, emprendimientos y marcas personales que necesitan una presencia digital más seria y mejor organizada.',
   },
   {
     question: '¿Se puede añadir formulario o funciones extra después?',
     answer:
-      'Sí. La base permite crecer por etapas y sumar formularios, reservas, catálogos o integraciones cuando el proyecto lo necesite.',
+      'Sí. La base puede crecer por etapas y luego incorporar formularios, reservas, catálogos, integraciones o nuevas secciones.',
   },
 ];
 
@@ -72,16 +74,17 @@ export const faqData = [
   {
     question: '¿Qué tipo de información se puede analizar?',
     answer:
-      'Tablas de Excel, CSV, exportaciones de sistemas, registros operativos y otras fuentes que necesiten orden, revisión o interpretación para apoyar decisiones.',
+      'Se pueden analizar tablas de Excel, CSV, exportaciones de sistemas, registros operativos y otras fuentes que necesiten orden, revisión o interpretación.',
   },
   {
     question: '¿Sirve aunque los datos estén desordenados?',
     answer:
-      'Sí. Una parte clave del trabajo es limpiar, estructurar y entender la información antes de buscar patrones o generar conclusiones útiles.',
+      'Sí. Una parte importante del trabajo consiste en limpiar, estructurar y entender la información antes de buscar patrones o conclusiones.',
   },
   {
     question: '¿Esto puede abrir camino a automatización o inteligencia artificial?',
     answer:
-      'Sí. Cuando la información se entiende mejor, luego es más fácil construir reportes, reglas automáticas y soluciones con inteligencia artificial aplicada.',
+      'Sí. Cuando los datos están mejor entendidos, resulta más fácil construir reportes, reglas automáticas y soluciones con inteligencia artificial aplicada.',
   },
 ];
+// --- FIN CAMBIO NUEVO ---

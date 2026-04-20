@@ -1,0 +1,116 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionIntro from '../components/SectionIntro.astro';
+import ServiceCard from '../components/ServiceCard.astro';
+import { services, site } from '../data/site';
+---
+
+<BaseLayout title="Da-TIca | Sitios web, Data Mining y cursos" description={site.description} pathname={Astro.url.pathname}>
+  <section class="hero hero-home">
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <span class="eyebrow">Soluciones digitales</span>
+        <h1>Una oferta clara para tres necesidades distintas.</h1>
+        <p>
+          Da-TIca reúne tres líneas de trabajo: sitios web para negocios y profesionales,
+          Data Mining para aprovechar mejor la información y una línea de cursos que se encuentra en preparación.
+        </p>
+        <div class="button-row">
+          <a class="button" href="/sitios-web/">Ver sitios web</a>
+          <a class="button button-secondary" href="/data-mining/">Ver Data Mining</a>
+        </div>
+        <ul class="hero-points">
+          <li>Sitios web desde 6 USD al mes.</li>
+          <li>Servicios separados para que cada visitante encuentre lo suyo rápido.</li>
+          <li>Una estructura lista para crecer por etapas.</li>
+        </ul>
+      </div>
+
+      <div class="hero-panel glow-card">
+        <div class="stack-badge">Da-TIca</div>
+        <h2>Tres caminos claros dentro del mismo sitio</h2>
+        <p>
+          La portada funciona como entrada principal y cada línea tiene su propia página para evitar mezclar mensajes,
+          reducir ruido visual y ayudar a que el visitante llegue más rápido a lo que busca.
+        </p>
+        <div class="metric-grid">
+          <article>
+            <strong>Más claridad</strong>
+            <span>Servicios separados por necesidad</span>
+          </article>
+          <article>
+            <strong>Más confianza</strong>
+            <span>Una imagen más profesional</span>
+          </article>
+          <article>
+            <strong>Más orden</strong>
+            <span>Contenido mejor distribuido</span>
+          </article>
+          <article>
+            <strong>Más futuro</strong>
+            <span>Base lista para nuevas secciones</span>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <SectionIntro
+        eyebrow="Servicios"
+        title="Cada línea tiene su propio espacio"
+        text="La portada orienta. Cada servicio desarrolla su propia promesa de valor para que el visitante entienda mejor qué obtiene y cómo avanzar."
+      />
+
+      <div class="card-grid card-grid-3">
+        {services.map((service) => <ServiceCard {...service} />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-soft">
+    <div class="container">
+      <SectionIntro
+        eyebrow="Perfil"
+        title="Una propuesta que combina presencia web, datos y soluciones digitales aplicadas"
+        text="La comunicación se presenta de forma simple para el cliente final, pero con una base lista para crecer por etapas cuando el proyecto lo necesite."
+      />
+
+      <div class="two-col-grid">
+        <article class="info-card">
+          <h3>Qué comunica esta versión del sitio</h3>
+          <ul class="detail-list">
+            <li>Una oferta mejor separada por tipo de necesidad.</li>
+            <li>Una imagen más seria, ordenada y confiable.</li>
+            <li>Una base lista para añadir casos, testimonios o campañas después.</li>
+            <li>Espacio para mostrar experiencia en datos, automatización e inteligencia artificial aplicada.</li>
+          </ul>
+        </article>
+
+        <article class="info-card accent-card">
+          <p class="mini-label">Enfoque</p>
+          <h3>Menos saturación, más comprensión</h3>
+          <p>
+            Cuando el visitante entiende rápido qué se ofrece, para quién sirve y cómo contactarse,
+            aumenta la probabilidad de que avance al siguiente paso.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container cta-banner">
+      <div>
+        <span class="eyebrow">Contacto</span>
+        <h2>Una base lista para presentar servicios con una imagen más sólida.</h2>
+        <p>El sitio queda preparado para publicarse y seguir creciendo sin volverse desordenado.</p>
+      </div>
+      <div class="button-row">
+        <a class="button" href="mailto:crrb@da-tica.com?subject=Quiero%20informaci%C3%B3n%20de%20Da-TIca">Escribir por correo</a>
+        <a class="button button-secondary" href="https://www.youtube.com/@Da-Tica" target="_blank" rel="noreferrer noopener">Ver canal</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

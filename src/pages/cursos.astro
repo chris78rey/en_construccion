@@ -1,32 +1,33 @@
 ---
+// --- INICIO CAMBIO NUEVO ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionIntro from '../components/SectionIntro.astro';
 ---
 
 <BaseLayout
-  title="Da-TIca | Cursos en preparación"
-  description="Cursos prácticos sobre datos, automatización, prompts e inteligencia artificial aplicada."
+  title={`Da-TIca | Cursos en preparación`}
+  description={`Cursos prácticos sobre datos, automatización, prompts e inteligencia artificial aplicada.`}
   pathname={Astro.url.pathname}
 >
-  <section class="hero page-hero">
-    <div class="container hero-grid">
-      <div class="hero-copy">
-        <span class="eyebrow">Cursos</span>
-        <h1>La línea de cursos está en preparación.</h1>
+  <section class={`hero page-hero`}>
+    <div class={`container hero-grid`}>
+      <div class={`hero-copy`}>
+        <span class={`eyebrow`}>Cursos</span>
+        <h1>Formación práctica en preparación para aprender herramientas que sí aportan valor.</h1>
         <p>
-          Esta sección queda visible para anunciar futuras formaciones prácticas relacionadas con datos,
-          inteligencia artificial aplicada y automatización útil.
+          Esta línea reunirá contenidos sobre datos, automatización, prompts e inteligencia artificial aplicada,
+          con enfoque claro, útil y orientado a situaciones reales de trabajo y proyectos.
         </p>
-        <div class="button-row">
-          <a class="button" href="mailto:crrb@da-tica.com?subject=Quiero%20informaci%C3%B3n%20sobre%20cursos">Solicitar información</a>
-          <a class="button button-secondary" href="/">Volver al inicio</a>
+        <div class={`button-row`}>
+          <a class={`button`} href={`mailto:crrb@da-tica.com?subject=Quiero%20informaci%C3%B3n%20sobre%20cursos`}>Solicitar información</a>
+          <a class={`button button-secondary`} href={`/`}>Volver al inicio</a>
         </div>
       </div>
 
-      <article class="glow-card">
-        <p class="mini-label">Próximamente</p>
+      <article class={`glow-card`}>
+        <p class={`mini-label`}>Próximamente</p>
         <h2>Temáticas previstas</h2>
-        <ul class="detail-list compact">
+        <ul class={`detail-list compact`}>
           <li>Prompts y uso práctico de IA</li>
           <li>Automatización orientada a resultados</li>
           <li>Fundamentos de datos aplicados</li>
@@ -36,29 +37,30 @@ import SectionIntro from '../components/SectionIntro.astro';
     </div>
   </section>
 
-  <section class="section">
-    <div class="container two-col-grid">
-      <article class="info-card">
+  <section class={`section`}>
+    <div class={`container two-col-grid`}>
+      <article class={`info-card`}>
         <SectionIntro
-          eyebrow="Estado"
-          title="Página en preparación"
-          text="La redacción queda pensada para comunicar avance y expectativa, sin parecer una página vacía."
+          eyebrow={`Estado`}
+          title={`Una línea de formación que se abrirá por etapas`}
+          text={`La propuesta busca ofrecer contenidos útiles, bien explicados y fáciles de llevar a la práctica.`}
         />
-        <ul class="detail-list">
+        <ul class={`detail-list`}>
           <li>Contenido todavía en desarrollo.</li>
           <li>Enfoque práctico y aplicable.</li>
-          <li>Espacio listo para publicar nuevos cursos después.</li>
+          <li>Temas pensados para trabajo real y proyectos concretos.</li>
         </ul>
       </article>
 
-      <article class="info-card accent-card">
-        <p class="mini-label">Objetivo</p>
-        <h3>Preparar una futura línea de formación con una imagen consistente</h3>
+      <article class={`info-card accent-card`}>
+        <p class={`mini-label`}>Objetivo</p>
+        <h3>Aprender herramientas modernas sin perderse en teoría innecesaria</h3>
         <p>
-          Esta sección queda lista para convertirse luego en catálogo, landing page o centro de contenidos
-          sin tener que rehacer la estructura visual del sitio.
+          La meta de esta línea será ayudar a entender mejor cómo usar datos, automatización,
+          prompts e inteligencia artificial de forma útil y aterrizada.
         </p>
       </article>
     </div>
   </section>
 </BaseLayout>
+// --- FIN CAMBIO NUEVO ---
