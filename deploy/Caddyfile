@@ -1,45 +1,27 @@
-# ==============================================================================
-# Caddyfile - Da-TIca VPS
-# ==============================================================================
-# HTTPS automático: Caddy obtiene y renueva certificados Let's Encrypt
-# Redirige HTTP -> HTTPS automáticamente
-# ==============================================================================
-
 {
     admin off
     email {$LETSENCRYPT_EMAIL}
     storage file_system /data
 }
 
-# ------------------------------------------------------------------------------
-# Redirección www -> dominio principal (permanent)
-# ------------------------------------------------------------------------------
 www.{$DOMAIN} {
     redir https://{$DOMAIN}{uri} permanent
 }
 
-# ------------------------------------------------------------------------------
-# Dominio principal con HTTPS
-# ------------------------------------------------------------------------------
 {$DOMAIN} {
-    # Compresión para mejor performance
     encode zstd gzip
 
-    # Headers de seguridad
     header {
         X-Content-Type-Options nosniff
         X-Frame-Options DENY
         Referrer-Policy strict-origin-when-cross-origin
-        X-XSS-Protection 1; mode=block
         Strict-Transport-Security max-age=31536000; includeSubDomains
     }
 
-    # Logging a stdout (visible con docker compose logs)
     log {
         output stdout
         format console
     }
 
-    # Proxy inverso al contenedor web (puerto interno 8080)
     reverse_proxy web:8080
 }

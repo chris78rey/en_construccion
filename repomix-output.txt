@@ -1,0 +1,2174 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+.dockerignore
+.env.vps.example
+deploy/Caddyfile
+docker-compose.vps.yml
+docker-compose.yml
+public/favicon.svg
+public/robots.txt
+README_COOLIFY.md
+README_INTERACTIVITY.md
+README_VPS.md
+scripts/first_deploy.sh
+scripts/update_deploy.sh
+web/cursos.html
+web/data-mining.html
+web/Dockerfile
+web/index.html
+web/README_EJECUCION.txt
+web/robots.txt
+web/sitemap.xml
+web/sitios-web.html
+web/styles.css
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path=".dockerignore">
+# ==============================================================================
+# Docker Ignore - Archivos a excluir del Build
+# ==============================================================================
+
+# Control de versiones
+.git
+.gitignore
+
+# Dependencias y builds locales
+node_modules
+dist
+.vscode
+.idea
+*.log
+
+# Archivos sensibles
+.env
+.env.*
+!.env.example
+!.env.vps.example
+
+# Documentación local
+*.md
+!README.md
+
+# Archivos temporales
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db
+
+# Tests
+tests/
+__tests__/
+*.test.js
+*.spec.js
+</file>
+
+<file path=".env.vps.example">
+# ==============================================================================
+# Variables de Entorno - Da-TIca VPS Deployment
+# ==============================================================================
+# Copiar a .env antes de ejecutar: cp .env.vps.example .env
+# ==============================================================================
+
+# Dominio principal (sin https://, sin www.)
+DOMAIN=da-tica.com
+
+# Email para Let's Encrypt (para notificaciones de certificados)
+LETSENCRYPT_EMAIL=admin@da-tica.com
+</file>
+
+<file path="deploy/Caddyfile">
+# ==============================================================================
+# Caddyfile - Da-TIca VPS
+# ==============================================================================
+# HTTPS automático: Caddy obtiene y renueva certificados Let's Encrypt
+# Redirige HTTP -> HTTPS automáticamente
+# ==============================================================================
+
+{
+    admin off
+    email {$LETSENCRYPT_EMAIL}
+    storage file_system /data
+}
+
+# ------------------------------------------------------------------------------
+# Redirección www -> dominio principal (permanent)
+# ------------------------------------------------------------------------------
+www.{$DOMAIN} {
+    redir https://{$DOMAIN}{uri} permanent
+}
+
+# ------------------------------------------------------------------------------
+# Dominio principal con HTTPS
+# ------------------------------------------------------------------------------
+{$DOMAIN} {
+    # Compresión para mejor performance
+    encode zstd gzip
+
+    # Headers de seguridad
+    header {
+        X-Content-Type-Options nosniff
+        X-Frame-Options DENY
+        Referrer-Policy strict-origin-when-cross-origin
+        X-XSS-Protection 1; mode=block
+        Strict-Transport-Security max-age=31536000; includeSubDomains
+    }
+
+    # Logging a stdout (visible con docker compose logs)
+    log {
+        output stdout
+        format console
+    }
+
+    # Proxy inverso al contenedor web (puerto interno 8080)
+    reverse_proxy web:8080
+}
+</file>
+
+<file path="docker-compose.vps.yml">
+# ==============================================================================
+# Da-TIca VPS Deployment - Docker Compose with Caddy (HTTPS automatico)
+# ==============================================================================
+# Uso: docker compose -f docker-compose.vps.yml up -d --build
+# Requiere: Puertos 80 y 443 abiertos, dominio apuntando al VPS
+# ==============================================================================
+
+services:
+  # ---------------------------------------------------------------------------
+  # Servicio Web - Nginx sirviendo sitio estático en puerto 8080
+  # ---------------------------------------------------------------------------
+  web:
+    container_name: datica-web
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    image: datica-portal-web:1.0.0
+    restart: unless-stopped
+    expose:
+      - '8080'
+    networks:
+      - datica-web
+    healthcheck:
+      test: ['CMD', 'wget', '-qO-', 'http://127.0.0.1:8080/']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  # ---------------------------------------------------------------------------
+  # Proxy Caddy - HTTPS automático, certificados, redirección HTTP->HTTPS
+  # ---------------------------------------------------------------------------
+  caddy:
+    image: caddy:2-alpine
+    container_name: datica-caddy
+    restart: unless-stopped
+    depends_on:
+      - web
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp'
+    environment:
+      - DOMAIN=${DOMAIN:-da-tica.com}
+      - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL:-admin@da-tica.com}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - datica-web
+
+networks:
+  datica-web:
+    driver: bridge
+
+volumes:
+  caddy_data:
+  caddy_config:
+</file>
+
+<file path="public/favicon.svg">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Da-TIca">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#06b6d4" />
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="18" fill="#081120" />
+  <path d="M16 18h14c13 0 20 7 20 14s-7 14-20 14h-6v10H16V18zm14 20c8 0 12-2.6 12-6s-4-6-12-6h-6v12h6z" fill="url(#g)" />
+  <circle cx="48" cy="18" r="4" fill="#38bdf8" />
+</svg>
+</file>
+
+<file path="public/robots.txt">
+User-agent: *
+Allow: /
+</file>
+
+<file path="README_COOLIFY.md">
+# Da-TIca - Despliegue en Coolify
+
+## Configuración en Coolify
+
+### Dominios
+
+En **Configuration → General → Domains for web**, configurar:
+
+```
+https://portal.da-tica.com:8080,https://www.portal.da-tica.com:8080
+```
+
+⚠️ **Importante:** El puerto `:8080` es obligatorio porque el contenedor escucha internamente en ese puerto. La variable `DOMAIN` en el compose **NO controla** el proxy de Coolify.
+
+### Variables de Entorno
+
+Para este sitio estático, **no son necesarias**. Se pueden eliminar:
+
+- `CLIENT_ID`
+- `DOMAIN`
+- `DB_NAME`, `DB_USER`, `DB_PASSWORD`
+
+El campo **Domains** en Coolify es el que controla el routing.
+
+## docker-compose.yml
+
+```yaml
+services:
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    image: da-tica_portal_web:1.0.0
+    restart: unless-stopped
+    expose:
+      - '8080'
+    healthcheck:
+      test:
+        - CMD
+        - wget
+        - '-qO-'
+        - 'http://127.0.0.1:8080/'
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+```
+
+## Estructura del Proyecto
+
+```
+web/
+├── index.html
+├── sitios-web.html
+├── data-mining.html
+├── cursos.html
+├── styles.css
+├── Dockerfile          # Build nginx :8080
+├── robots.txt
+└── img/                # Imágenes (vacío si no se usa)
+```
+
+## Solución de Problemas
+
+### "No Available Server (503)"
+
+1. Verificar que el contenedor esté **Running (healthy)**
+2. Configurar dominio en **Domains for web** con `:8080`
+3. Verificar DNS:
+   ```bash
+   nslookup portal.da-tica.com
+   ```
+
+### Contenedor no levanta
+
+```bash
+# Ver logs del contenedor en Coolify
+docker logs <container_name>
+
+# Test interno
+docker exec <container_name> wget -qO- http://127.0.0.1:8080/
+```
+
+## Flujo de Despliegue
+
+1. Crear aplicación en Coolify
+2. Vincular repositorio GitHub (rama DESARROLLO)
+3. Configurar **Build Pack** → Docker Compose
+4. En **Domains for web**: `https://portal.da-tica.com:8080`
+5. Deploy
+6. Verificar: `https://portal.da-tica.com`
+
+## DNS Requerido
+
+| Tipo | Host | Valor |
+|------|------|-------|
+| A | portal.da-tica.com | IP_DEL_VPS |
+| A | www.portal.da-tica.com | IP_DEL_VPS |
+</file>
+
+<file path="README_INTERACTIVITY.md">
+# 🎯 RESUMEN EJECUTIVO - Mejoras Interactivas UI/UX
+
+**Fecha:** 2026-02-07  
+**Framework:** Alpine.js 3.x (CDN)  
+**Archivo Modificado:** `web/index.html`  
+**Tiempo de Implementación:** Non-invasivo, sin romper funcionalidad existente
+
+---
+
+## 📌 ¿QUÉ SE IMPLEMENTÓ?
+
+### 5 Características Interactivas Nuevas:
+
+| # | Característica | Ubicación | Tecnología | Estado |
+|---|---|---|---|---|
+| 1️⃣ | **Acordeones Expandibles** | "El Triángulo de la Crisis" | Alpine.js | ✅ Activo |
+| 2️⃣ | **Modales Informativos** | "Soluciones Productized" | Alpine.js | ✅ Activo |
+| 3️⃣ | **Calculadora ROI Interactiva** | "ICP Selector → CFO Tab" | Alpine.js | ✅ Activo |
+| 4️⃣ | **Animaciones de Scroll** | Tarjetas de servicios | Vanilla JS | ✅ Activo |
+| 5️⃣ | **Contadores Animados** | Métricas Authority | Vanilla JS | ✅ Activo |
+
+---
+
+## 🚀 IMPACTO INMEDIATO
+
+```
+MÉTRICA                           ANTES    DESPUÉS    MEJORA
+────────────────────────────────────────────────────────────
+Botones funcionales (Servicios)    0/4      4/4       +400%
+Interactividad CFO                 Nula     Sí        ✨
+Contenido expandible               No       Sí        ✨
+Animaciones visuales               0        5 tipos   ✨
+Engagement usuario                 Bajo     Alto      ✨
+Profesionalismo percibido          Alto     Muy Alto  ✨
+```
+
+---
+
+## 💡 CÓMO FUNCIONA CADA CARACTERÍSTICA
+
+### 1️⃣ **Acordeones en Pain Points**
+**Sección:** "El Triángulo de la Crisis 2026"  
+**Interacción:** Click en tarjeta → Expande con detalles técnicos
+
+```
+Antes:  ⚡ Fragmentación por IA [Leer solo descripción]
+         
+Después: ⚡ Fragmentación por IA
+         ├─ Diagnóstico técnico revelado
+         ├─ Fragmentación: Alto
+         ├─ Impacto ACID: Crítico
+         └─ [Botón de acción]
+```
+
+**Beneficio:** Profundidad técnica sin saturar la UI inicial.
+
+---
+
+### 2️⃣ **Modales para Servicios**
+**Sección:** "Soluciones Productized"  
+**Interacción:** Click "Ver Detalles" → Modal con contenido extenso
+
+```
+Modal 1: Modernización Legacy (🏛️)
+├─ Timeline 6-12 meses
+├─ 3 fases de migración detalladas
+└─ [Solicitar Evaluación]
+
+Modal 2: Ultra-Baja Latencia (⚡)
+├─ Benchmarks: P99: 45ms
+├─ Memory: 120MB
+└─ [Ver Caso de Uso]
+
+Modal 3: IA Soberana & RAG (🧠)
+├─ Stack soberano (Oracle + Llama2)
+└─ [Consultar Arquitectura]
+
+Modal 4: Auditoría Proactiva (📊)
+├─ KNIME + Benford
+├─ 85% menos tiempo
+└─ [Programar Demo]
+```
+
+**Beneficio:** Contenido detallado sin perder navegación.
+
+---
+
+### 3️⃣ **Calculadora ROI Interactiva**
+**Sección:** Tab "Soy CFO" en ICP Selector  
+**Interacción:** Mueve sliders → Cálculos en tiempo real
+
+```
+Sliders:
+  • Costo Cloud Actual: $500K → $10M
+  • Reducción Esperada: 20% → 80%
+  • Período Amortización: 1 → 5 años
+
+Resultado en Tiempo Real:
+  ✓ Costo Actual:        $2.5M
+  ✓ Costo Optimizado:    $1.5M
+  ✓ Ahorro Anual:        $1.0M ✨
+  ✓ ROI Total (5 años):  $5.0M ✨
+```
+
+**Beneficio:** Herramienta de decision para CFO/stakeholders.
+
+---
+
+### 4️⃣ **Animaciones de Scroll**
+**Sección:** Tarjetas de "Soluciones Productized"  
+**Interacción:** Automática al scroll
+
+```
+Timeline al entrar en viewport:
+  0ms:     Invisible (opacity: 0%, Y: +20px)
+  300ms:   Semi-visible
+  600ms:   Completamente visible ✓
+```
+
+**Beneficio:** Impacto visual profesional sin distracciones.
+
+---
+
+### 5️⃣ **Contadores Animados**
+**Sección:** "Authority Metrics"  
+**Interacción:** Automática al scroll
+
+```
+Al alcanzar viewport:
+  325K:     0 → 325K (1.5s)  ✨
+  1.2M:     0 → 1.2M (1.5s)  ✨
+  <50ms:    0 → <50ms (1.5s) ✨
+  20+:      0 → 20+ (1.5s)   ✨
+```
+
+**Beneficio:** Impacto emocional memorable en métricas clave.
+
+---
+
+## 🛠️ STACK TÉCNICO
+
+### Framework: Alpine.js 3.x
+```html
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+```
+
+**Por qué Alpine.js:**
+- ✅ **Zero build process** (CDN directo)
+- ✅ **16KB** (muy ligero)
+- ✅ **Perfecto para sitios estáticos** (no necesita React/Vue)
+- ✅ **Progressive enhancement** (sin JS = sitio sigue funcional)
+- ✅ **Compatible 100% con Coolify** (no requiere cambios en docker-compose.yml)
+
+### Componentes Alpine:
+```javascript
+1. painPointsAccordion()    // Estado: openAccordion
+2. servicesModals()         // Estado: activeModal
+3. roiCalculator()          // Estado: showCalculator, valores
+4. IntersectionObserver     // Scroll animations (vanilla JS)
+5. requestAnimationFrame    // Counter animations (vanilla JS)
+```
+
+---
+
+## 📊 ESTADÍSTICAS DE CAMBIO
+
+```
+Líneas HTML:      619 → 1,138  (+519 líneas, +83%)
+Líneas CSS:       280 → 510    (+230 líneas, +82%)
+Líneas JS:        25 → 180     (+155 líneas, +620%)
+
+Tamaño Total:     28 KB → 52 KB (+24 KB embebido)
+Alpine.js CDN:    -          +16 KB (externo)
+────────────────────────────────────────────
+OVERHEAD TOTAL:   ~40 KB (una imagen JPG típica: 200+ KB)
+
+PROPORCIÓN COSTO/BENEFICIO: EXCELENTE
+```
+
+---
+
+## ✅ COMPATIBILIDAD
+
+### Navegadores:
+- ✅ Chrome 87+
+- ✅ Firefox 85+
+- ✅ Safari 14+
+- ✅ Edge 87+
+- ✅ Mobile (iOS/Android Chrome)
+- ❌ IE11 (no compatible con Alpine.js)
+
+### Deployment:
+- ✅ Coolify (sin cambios en docker-compose.yml)
+- ✅ Nginx estático
+- ✅ AWS S3 + CloudFront
+- ✅ GitHub Pages
+- ✅ Desarrollo local (python -m http.server)
+
+---
+
+## 🎯 CAMBIOS REALIZADOS
+
+### SIN RUPTURA DE FUNCIONALIDAD:
+```
+✓ Theme toggle (dark/light) → Intacto
+✓ ICP tabs (CTO/CFO) → Lógica original preservada
+✓ Navigation links → Sin cambios
+✓ Footer & contenido → Idéntico
+✓ Estilos visuales → Coherente
+```
+
+### NUEVO AGREGADO:
+```
+✓ Alpine.js CDN (línea 9-10)
+✓ 4 componentes reactivos (x-data)
+✓ Eventos interactivos (@click, @input)
+✓ Bindeos dinámicos (x-show, x-bind:class)
+✓ 230 líneas CSS nuevas (modales, acordeones, animaciones)
+✓ 155 líneas JS nuevas (funciones Alpine + observers)
+```
+
+---
+
+## 🚀 CÓMO PROBAR LAS CARACTERÍSTICAS
+
+### Quick Test (2 minutos):
+```
+1. Abre: http://localhost:8000/web/index.html
+   (o tu Coolify URL)
+
+2. Acordeones:
+   Scroll → "El Triángulo de la Crisis"
+   Click en cualquier tarjeta → Expande
+
+3. Modales:
+   Scroll → "Soluciones Productized"
+   Click "Ver Detalles" → Modal aparece
+   Click X → Cierra
+
+4. Calculadora:
+   Click tab "Soy CFO" → Busca "Abrir Calculadora"
+   Mueve sliders → Números cambian
+
+5. Animaciones:
+   Reload página
+   Scroll lentamente → Observa tarjetas animar
+   Observa contadores de métricas contar
+```
+
+---
+
+## 📁 ARCHIVOS DE REFERENCIA
+
+| Archivo | Propósito |
+|---------|-----------|
+| `QUICK_START.md` | Guía rápida (5 min) |
+| `INTERACTIVE_FEATURES.md` | Descripción técnica completa |
+| `FEATURE_LOCATIONS.md` | Ubicación exacta en código (líneas) |
+| `IMPLEMENTATION_SUMMARY.md` | Resumen técnico detallado |
+| `VISUAL_OVERVIEW.md` | Capturas de texto de UI |
+| `TROUBLESHOOTING.md` | Guía de debugging |
+
+---
+
+## 💼 CASOS DE USO
+
+### Para **CTOs:**
+- Modales de arquitectura técnica
+- Benchmarks en tiempo real
+- Comparación Rust vs Java
+- Stack soberano para IA
+
+### Para **CFOs:**
+- Calculadora ROI interactiva
+- Cálculo de ahorro OPEX
+- Período de amortización
+- Impacto financiero visualizado
+
+### Para **Usuarios Generales:**
+- Accordeones revelan profundidad sin saturar
+- Animaciones generan confianza (sitio "vivo")
+- Interactividad aumenta engagement
+- Profesionalismo percibido aumenta
+
+---
+
+## 🔐 SEGURIDAD & PERFORMANCE
+
+### Sin Problemas de Seguridad:
+```
+✓ Sin hardcoding de credenciales
+✓ Sin datos sensibles en JavaScript
+✓ Sin vulnerabilidades XSS (Alpine.js escapa HTML)
+✓ CDN verificado (jsDelivr es confiable)
+✓ Fallback limpio si CDN falla
+```
+
+### Performance Optimizado:
+```
+✓ Lazy load (Alpine carga cuando lo necesita)
+✓ Smooth 60fps (requestAnimationFrame)
+✓ Memory efficient (observadores aislados)
+✓ Zero bundle overhead (no build process)
+✓ Progressive enhancement (funciona sin JS)
+```
+
+---
+
+## 🎓 PRÓXIMAS MEJORAS OPCIONALES
+
+Si quieres expandir en el futuro:
+
+1. **Persistencia:** Guardar valores calculadora en localStorage
+2. **Export:** Botón para descargar PDF del ROI
+3. **Animations:** Stagger effects en listas modales
+4. **Validación:** Input ranges con feedback visual
+5. **i18n:** Multi-idioma en formatos numéricos
+6. **Analytics:** Track clicks en modales/calculadora
+7. **Video:** Embeber demos dentro de modales
+8. **Chat:** Widget de soporte interactivo
+
+---
+
+## ✨ RESULTADO FINAL
+
+### Antes:
+```
+Sitio estático profesional
+│
+├─ Visitante lee
+├─ Visitante desaparece
+└─ Tasa de conversión: Baja
+```
+
+### Después:
+```
+Sitio estático + Interactivo
+│
+├─ Visitante explora modales
+├─ Visitante calcula ROI
+├─ Visitante ve animaciones profesionales
+└─ Tasa de conversión: Mejorada ✨
+```
+
+---
+
+## 🎉 CONCLUSIÓN
+
+**✅ Se implementaron 5 características interactivas sin romper nada.**
+
+- Framework ligero (Alpine.js, 16KB)
+- Cero dependencias npm
+- Cero build process
+- 100% compatible con Coolify
+- Overhead mínimo (~40KB embebido)
+- Máximo impacto en UX/conversión
+
+**El sitio mantiene su esencia estática y profesional, pero ahora es interactivo, memorable y eficaz.**
+
+---
+
+## 📞 SOPORTE RÁPIDO
+
+**Si algo no funciona:**
+1. Abre DevTools (F12)
+2. Busca errores en Console
+3. Verifica que Alpine.js cargó (`typeof Alpine`)
+4. Lee `TROUBLESHOOTING.md` para soluciones
+
+**Si quieres personalizar:**
+1. Ver `FEATURE_LOCATIONS.md` para encontrar código
+2. Modificar valores/estilos según necesidad
+3. Hard refresh (Ctrl+Shift+R) para ver cambios
+
+---
+
+**¡Tu sitio ahora es más interactivo, profesional y eficaz! 🚀**
+</file>
+
+<file path="README_VPS.md">
+# Da-TIca - Despliegue en VPS Propio
+
+Guía para desplegar el sitio en un VPS propio usando Docker Compose + Caddy.
+
+## Prerrequisitos
+
+- VPS con Ubuntu/Debian
+- Docker y Docker Compose instalados
+- Dominio apuntando al VPS (registros A)
+- Puertos 80 y 443 abiertos
+
+## Estructura de Archivos
+
+```
+├── web/                    # Contenido estático del sitio
+│   ├── index.html
+│   ├── styles.css
+│   ├── sitios-web.html
+│   ├── data-mining.html
+│   ├── cursos.html
+│   └── Dockerfile          # Build de imagen nginx
+├── deploy/
+│   └── Caddyfile           # Configuración del proxy HTTPS
+├── scripts/
+│   ├── first_deploy.sh     # Script para primer despliegue
+│   └── update_deploy.sh    # Script para actualizaciones
+├── docker-compose.vps.yml  # Compose para VPS propio
+├── .env.vps.example        # Variables de entorno ejemplo
+└── .dockerignore           # Archivos excluidos del build
+```
+
+## Pasos de Instalación
+
+### 1. Preparar el VPS
+
+```bash
+# Instalar Docker
+sudo apt update
+sudo apt install -y docker.io docker-compose-plugin
+sudo systemctl enable --now docker
+
+# Abrir firewall
+sudo ufw allow OpenSSH
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+sudo ufw allow 443/udp
+sudo ufw enable
+```
+
+### 2. Verificar que los puertos no estén ocupados
+
+```bash
+sudo ss -tulpn | grep -E ':80|:443'
+```
+
+Si hay nginx o apache2, detenerlos:
+
+```bash
+sudo systemctl stop nginx apache2
+sudo systemctl disable nginx apache2
+```
+
+### 3. Subir los archivos al VPS
+
+```bash
+# Desde tu máquina local
+scp -r . user@tu-vps:/opt/datica/
+```
+
+### 4. Configurar variables de entorno
+
+```bash
+cd /opt/datica
+cp .env.vps.example .env
+nano .env  # Editar DOMAIN y LETSENCRYPT_EMAIL
+```
+
+### 5. Primer despliegue
+
+```bash
+cd /opt/datica
+bash scripts/first_deploy.sh
+```
+
+### 6. Verificar funcionamiento
+
+```bash
+# Ver estado de contenedores
+docker compose -f docker-compose.vps.yml ps
+
+# Ver logs
+docker compose -f docker-compose.vps.yml logs -f
+
+# Probar desde el navegador
+# https://tu-dominio.com
+```
+
+## Actualizaciones
+
+Cuando modifiques el código del sitio:
+
+```bash
+cd /opt/datica
+bash scripts/update_deploy.sh
+```
+
+## Comandos Útiles
+
+```bash
+# Ver estado
+docker compose -f docker-compose.vps.yml ps
+
+# Ver logs en vivo
+docker compose -f docker-compose.vps.yml logs -f
+
+# Reiniciar servicios
+docker compose -f docker-compose.vps.yml restart
+
+# Detener todo
+docker compose -f docker-compose.vps.yml down
+
+# Ver contenedores en ejecución
+docker ps
+
+# Limpiar volúmenes (⚠️ borra certificados)
+docker compose -f docker-compose.vps.yml down -v
+```
+
+## DNS Requerido
+
+En tu proveedor de dominio, crear:
+
+| Tipo | Nombre | Valor |
+|------|--------|-------|
+| A | da-tica.com | IP_DEL_VPS |
+| A | www.da-tica.com | IP_DEL_VPS |
+
+## Solución de Problemas
+
+### Caddy no obtiene certificado
+
+1. Verificar que el dominio apunta correctamente:
+   ```bash
+   dig da-tica.com
+   ```
+
+2. Verificar que los puertos están abiertos:
+   ```bash
+   curl -I http://tu-vps-ip
+   ```
+
+3. Revisar logs de Caddy:
+   ```bash
+   docker compose -f docker-compose.vps.yml logs caddy
+   ```
+
+### Error 502 Bad Gateway
+
+1. Verificar que el contenedor web está corriendo:
+   ```bash
+   docker compose -f docker-compose.vps.yml ps
+   ```
+
+2. Verificar que nginx responde:
+   ```bash
+   docker exec datica-web wget -qO- http://localhost:8080/
+   ```
+
+### Contenedor no inicia
+
+```bash
+# Ver logs detallados
+docker compose -f docker-compose.vps.yml logs web
+
+# Rebuild sin caché
+docker compose -f docker-compose.vps.yml build --no-cache web
+docker compose -f docker-compose.vps.yml up -d
+```
+</file>
+
+<file path="scripts/first_deploy.sh">
+#!/usr/bin/env bash
+# ==============================================================================
+# Da-TIca - Script de Primer Despliegue en VPS
+# ==============================================================================
+# Ejecutar UNA SOLA VEZ al configurar el servidor por primera vez
+# ==============================================================================
+set -euo pipefail
+
+SCRIPT_DIR=$(cd $(dirname $0) && pwd)
+PROJECT_DIR=$(dirname $SCRIPT_DIR)
+
+echo '=============================================='
+echo 'Da-TIca VPS - Primer Despliegue'
+echo '=============================================='
+echo ''
+
+# --- Validaciones previas ---
+cd $PROJECT_DIR
+
+if [ ! -f .env ]; then
+    echo '❌ ERROR: Falta el archivo .env'
+    echo '   Ejecuta: cp .env.vps.example .env'
+    echo '   Luego edita .env y coloca tu DOMAIN correcto'
+    exit 1
+fi
+
+echo '[1/5] Validando configuración Docker Compose...'
+docker compose -f docker-compose.vps.yml config > /dev/null
+echo '   ✅ Configuración válida'
+
+echo ''
+echo '[2/5] Verificando puertos 80 y 443...'
+if ss -tulpn | grep -E ':80|:443' | grep -v grep | grep -q docker; then
+    echo '   ⚠️  Los puertos están siendo usados por Docker (correcto)'
+else
+    # Verificar que no haya otros servicios
+    if ss -tulpn | grep ':80 ' | grep -v docker | grep -q .; then
+        echo '   ❌ ERROR: Puerto 80 ocupado por otro servicio'
+        echo '   Detén nginx/apache2 si están instalados:'
+        echo '   sudo systemctl stop nginx apache2'
+        echo '   sudo systemctl disable nginx apache2'
+        exit 1
+    fi
+fi
+echo '   ✅ Puertos disponibles'
+
+echo ''
+echo '[3/5] Construyendo imagen Docker...'
+docker compose -f docker-compose.vps.yml build --no-cache web
+echo '   ✅ Imagen construida'
+
+echo ''
+echo '[4/5] Levantando servicios...'
+docker compose -f docker-compose.vps.yml up -d
+echo '   ✅ Servicios iniciados'
+
+echo ''
+echo '[5/5] Verificando estado...'
+sleep 3
+docker compose -f docker-compose.vps.yml ps
+
+echo ''
+echo '=============================================='
+echo '✅ DESPLIEGUE COMPLETADO'
+echo '=============================================='
+echo ''
+echo 'Logs de Caddy (verificar certificados):'
+docker compose -f docker-compose.vps.yml logs --tail=30 caddy
+echo ''
+echo 'Logs de Web:'
+docker compose -f docker-compose.vps.yml logs --tail=20 web
+echo ''
+echo '=============================================='
+echo 'VALIDACIÓN MANUAL'
+echo '=============================================='
+DOMAIN_VALUE=$(grep DOMAIN .env | cut -d '=' -f2)
+echo ''
+echo 'Desde el VPS, prueba:'
+echo '  curl -I http://localhost'
+echo ''
+echo 'Desde tu navegador:'
+echo '  https://'$DOMAIN_VALUE
+echo ''
+echo '=============================================='
+</file>
+
+<file path="scripts/update_deploy.sh">
+#!/usr/bin/env bash
+# ==============================================================================
+# Da-TIca - Script de Actualización
+# ==============================================================================
+# Ejecutar cada vez que se actualice el código del sitio
+# ==============================================================================
+set -euo pipefail
+
+SCRIPT_DIR=$(cd $(dirname $0) && pwd)
+PROJECT_DIR=$(dirname $SCRIPT_DIR)
+
+echo '=============================================='
+echo 'Da-TIca VPS - Actualización'
+echo '=============================================='
+echo ''
+
+cd $PROJECT_DIR
+
+echo '[1/5] Asegurando que los servicios están corriendo...'
+docker compose -f docker-compose.vps.yml ps
+
+echo ''
+echo '[2/5] Reconstruyendo imagen web...'
+docker compose -f docker-compose.vps.yml build web
+
+echo ''
+echo '[3/5] Recargando servicios...'
+docker compose -f docker-compose.vps.yml up -d
+
+echo ''
+echo '[4/5] Limpiando imágenes sin uso...'
+docker image prune -f
+
+echo ''
+echo '[5/5] Estado final:'
+docker compose -f docker-compose.vps.yml ps
+
+echo ''
+echo '=============================================='
+echo '✅ ACTUALIZACIÓN COMPLETADA'
+echo '=============================================='
+echo ''
+echo 'Logs recientes de Caddy:'
+docker compose -f docker-compose.vps.yml logs --tail=20 caddy
+echo ''
+echo 'Logs recientes de Web:'
+docker compose -f docker-compose.vps.yml logs --tail=20 web
+</file>
+
+<file path="web/README_EJECUCION.txt">
+Paquete final limpio para entregar al programador.
+
+Archivos a copiar dentro de la carpeta web/ del proyecto:
+- styles.css
+- index.html
+- sitios-web.html
+- data-mining.html
+- cursos.html
+
+Notas:
+1. No hace falta tocar Docker ni docker-compose si los enlaces usan .html.
+2. Si el despliegue actual sigue apuntando a la carpeta web/, estos archivos quedan servidos por nginx al hacer rebuild.
+3. Las imágenes siguen apuntando a:
+   - web/img/hero-data-center.png
+   - web/img/services-data-flow.png
+   - web/img/ai-governance-shield.png
+</file>
+
+<file path="web/robots.txt">
+User-agent: *
+Allow: /
+
+Sitemap: https://da-tica.com/sitemap.xml
+
+# Archivos estáticos permitidos
+Allow: /styles.css
+Allow: /img/
+
+# Archivos no esenciales
+Disallow: /default.conf
+Disallow: /Dockerfile
+</file>
+
+<file path="web/sitemap.xml">
+<?xml version=1.0 encoding=UTF-8?>
+<urlset xmlns=http://www.sitemaps.org/schemas/sitemap/0.9>
+  <url>
+    <loc>https://da-tica.com/</loc>
+    <lastmod>2026-04-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://da-tica.com/sitios-web.html</loc>
+    <lastmod>2026-04-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://da-tica.com/data-mining.html</loc>
+    <lastmod>2026-04-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://da-tica.com/cursos.html</loc>
+    <lastmod>2026-04-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+</urlset>
+</file>
+
+<file path="web/Dockerfile">
+# Production Dockerfile for static site (nginx)
+FROM nginx:1.26.3-alpine
+
+LABEL maintainer="da-tica <ops@da-tica.example>"
+LABEL description="Static site served by nginx on port 8080 (multi-page ready)"
+
+RUN rm -f /etc/nginx/conf.d/default.conf
+
+RUN mkdir -p /etc/nginx/conf.d &&     cat > /etc/nginx/conf.d/default.conf <<'NGINX_CONF'
+server {
+  listen 8080;
+  server_name _;
+
+  root /usr/share/nginx/html;
+  index index.html;
+
+  # Serve static files directly (multi-page support)
+  location / {
+    try_files $uri $uri/ =404;
+  }
+
+  # Static assets: long cache
+  location ~* \.(?:css|js|json|png|jpg|jpeg|svg|gif|ico|webp|woff2?)$ {
+    try_files $uri =404;
+    access_log off;
+    add_header Cache-Control "public, max-age=604800, immutable";
+  }
+
+  # HTML files: no cache for updates
+  location ~* \.html?$ {
+    add_header Cache-Control "no-cache, must-revalidate";
+  }
+
+  # Security headers
+  add_header X-Content-Type-Options nosniff;
+  add_header X-Frame-Options DENY;
+
+  location ~ /\. {
+    deny all;
+  }
+}
+NGINX_CONF
+
+COPY . /usr/share/nginx/html
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3   CMD wget -qO- --timeout=2 http://127.0.0.1:8080/ >/dev/null 2>&1 || exit 1
+
+CMD ["nginx", "-g", "daemon off;"]
+</file>
+
+<file path="web/styles.css">
+/* --- INICIO CAMBIO NUEVO --- */
+:root {
+  --bg: #f4f7fb;
+  --bg-elevated: rgba(255, 255, 255, 0.88);
+  --surface: #ffffff;
+  --surface-2: #f8fbff;
+  --text: #0f172a;
+  --muted: #5b6b83;
+  --line: rgba(15, 23, 42, 0.1);
+  --line-strong: rgba(37, 99, 235, 0.24);
+  --primary: #1d4ed8;
+  --primary-2: #2563eb;
+  --primary-soft: rgba(37, 99, 235, 0.1);
+  --success: #0f9f6e;
+  --shadow-lg: 0 24px 80px rgba(15, 23, 42, 0.12);
+  --shadow-md: 0 12px 30px rgba(15, 23, 42, 0.08);
+  --radius-xl: 28px;
+  --radius-lg: 22px;
+  --radius-md: 16px;
+  --container: 1160px;
+}
+
+[data-theme="dark"] {
+  --bg: #08101f;
+  --bg-elevated: rgba(15, 23, 42, 0.78);
+  --surface: #0f172a;
+  --surface-2: #111c31;
+  --text: #eff6ff;
+  --muted: #9db0ca;
+  --line: rgba(148, 163, 184, 0.18);
+  --line-strong: rgba(56, 189, 248, 0.32);
+  --primary: #60a5fa;
+  --primary-2: #38bdf8;
+  --primary-soft: rgba(56, 189, 248, 0.12);
+  --success: #34d399;
+  --shadow-lg: 0 28px 80px rgba(2, 6, 23, 0.55);
+  --shadow-md: 0 16px 34px rgba(2, 6, 23, 0.4);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 30%),
+    radial-gradient(circle at 85% 15%, rgba(56, 189, 248, 0.12), transparent 24%),
+    var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+.container { width: min(100% - 2rem, var(--container)); margin: 0 auto; }
+.section { padding: 5rem 0; }
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 0.55rem; padding: 0.45rem 0.85rem;
+  border-radius: 999px; border: 1px solid var(--line-strong); background: var(--primary-soft);
+  color: var(--primary); font-weight: 700; font-size: 0.86rem; letter-spacing: 0.02em;
+}
+.eyebrow::before {
+  content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+.section-head { max-width: 780px; margin-bottom: 2rem; }
+.section-head h2 {
+  font-size: clamp(1.9rem, 3.8vw, 2.9rem); line-height: 1.1; letter-spacing: -0.03em;
+  margin: 0.95rem 0 1rem;
+}
+.section-head p, .lead, .hero-copy p, .page-hero p { color: var(--muted); font-size: 1.05rem; }
+.site-header {
+  position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(16px);
+  background: color-mix(in srgb, var(--bg) 72%, transparent); border-bottom: 1px solid var(--line);
+}
+.header-inner {
+  min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+}
+.brand { font-size: 1.05rem; font-weight: 800; letter-spacing: -0.02em; }
+.brand span { color: var(--primary); }
+.nav-wrap { display: flex; align-items: center; gap: 0.9rem; }
+.main-nav {
+  display: flex; align-items: center; gap: 0.35rem; padding: 0.35rem; border: 1px solid var(--line);
+  border-radius: 999px; background: var(--bg-elevated); box-shadow: var(--shadow-md); flex-wrap: wrap;
+}
+.main-nav a {
+  padding: 0.6rem 0.95rem; border-radius: 999px; color: var(--muted); font-weight: 600;
+  font-size: 0.94rem; transition: background 0.2s ease, color 0.2s ease;
+}
+.main-nav a:hover, .main-nav a.active { background: var(--primary-soft); color: var(--primary); }
+.theme-toggle {
+  width: 46px; height: 46px; border: 1px solid var(--line); background: var(--bg-elevated);
+  color: var(--text); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer; box-shadow: var(--shadow-md); transition: transform 0.2s ease, border-color 0.2s ease; font-size: 1rem;
+}
+.theme-toggle:hover { transform: translateY(-1px); border-color: var(--line-strong); }
+.hero, .page-hero { padding: 4.5rem 0 4.2rem; }
+.hero-grid, .two-col {
+  display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr); gap: 2rem; align-items: center;
+}
+.hero-copy h1, .page-hero h1 {
+  margin: 1.2rem 0 1rem; font-size: clamp(2.4rem, 5vw, 4.7rem); line-height: 0.98;
+  letter-spacing: -0.05em;
+}
+.hero-copy h1 span, .page-hero h1 span { color: var(--primary); }
+.hero-actions, .actions {
+  display: flex; flex-wrap: wrap; gap: 0.9rem; margin-top: 1.5rem;
+}
+.btn, .btn-secondary, .btn-link {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.55rem;
+  min-height: 52px; padding: 0 1.25rem; border-radius: 14px; font-weight: 700;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.btn {
+  background: linear-gradient(135deg, var(--primary), var(--primary-2)); color: #ffffff;
+  box-shadow: 0 16px 30px rgba(37, 99, 235, 0.24);
+}
+.btn-secondary {
+  border: 1px solid var(--line); background: var(--bg-elevated); color: var(--text); box-shadow: var(--shadow-md);
+}
+.btn-link { min-height: auto; padding: 0; color: var(--primary); }
+.btn:hover, .btn-secondary:hover, .btn-link:hover { transform: translateY(-2px); }
+.card, .hero-visual, .quote-box {
+  padding: 1.6rem; border-radius: var(--radius-lg); border: 1px solid var(--line);
+  background: var(--bg-elevated); box-shadow: var(--shadow-md);
+}
+.hero-visual img, .image-card img { border-radius: 18px; border: 1px solid var(--line); }
+.hero-points, .proof-list, .feature-list, .simple-list {
+  list-style: none; display: grid; gap: 0.8rem; margin-top: 1.2rem;
+}
+.hero-points li, .proof-list li, .feature-list li, .simple-list li {
+  position: relative; padding-left: 1.25rem; color: var(--muted);
+}
+.hero-points li::before, .proof-list li::before, .feature-list li::before, .simple-list li::before {
+  content: ""; position: absolute; left: 0; top: 0.6rem; width: 8px; height: 8px;
+  border-radius: 50%; background: var(--success);
+}
+.cards-3, .cards-2, .services-grid, .pricing-grid {
+  display: grid; gap: 1.25rem;
+}
+.cards-3, .pricing-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.cards-2, .services-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.service-card {
+  padding: 1.6rem; border-radius: var(--radius-lg); border: 1px solid var(--line);
+  background: var(--bg-elevated); box-shadow: var(--shadow-md);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+.service-card:hover { transform: translateY(-4px); border-color: var(--line-strong); }
+.service-top {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1rem;
+}
+.service-index {
+  width: 48px; height: 48px; border-radius: 14px; display: inline-flex; align-items: center; justify-content: center;
+  background: var(--primary-soft); color: var(--primary); font-weight: 800; letter-spacing: -0.03em;
+}
+.service-pill {
+  padding: 0.4rem 0.65rem; border-radius: 999px; border: 1px solid var(--line); color: var(--muted);
+  font-size: 0.8rem; font-weight: 700;
+}
+.service-card h3, .card h3, .quote-box h3 {
+  font-size: 1.22rem; line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 0.75rem;
+}
+.service-card p, .card p, .quote-box p { color: var(--muted); }
+.price-tag { display: inline-flex; align-items: baseline; gap: 0.35rem; margin: 0.8rem 0 1rem; font-weight: 800; letter-spacing: -0.03em; }
+.price-tag strong { font-size: 2rem; color: var(--primary); }
+.price-tag span { color: var(--muted); font-size: 0.95rem; }
+.mini-grid {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-top: 1.5rem;
+}
+.mini-stat { padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); }
+.mini-stat strong { display: block; margin-bottom: 0.2rem; font-size: 1.1rem; }
+.mini-stat span { color: var(--muted); font-size: 0.92rem; }
+.profile-grid, .contact-grid {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 360px); gap: 1.25rem; align-items: stretch;
+}
+.quote-box {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--surface) 92%, transparent), color-mix(in srgb, var(--surface-2) 96%, transparent));
+  border: 1px solid var(--line-strong);
+}
+.cta-panel {
+  padding: 2rem; border-radius: var(--radius-xl); border: 1px solid var(--line-strong);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--surface) 90%, transparent), color-mix(in srgb, var(--surface-2) 95%, transparent));
+  box-shadow: var(--shadow-lg); display: flex; justify-content: space-between; gap: 1.25rem; align-items: center;
+}
+.cta-panel h2 { font-size: clamp(1.8rem, 3vw, 2.5rem); line-height: 1.08; letter-spacing: -0.03em; margin-bottom: 0.8rem; }
+.cta-panel p { color: var(--muted); max-width: 64ch; }
+.breadcrumb { display: inline-flex; gap: 0.45rem; flex-wrap: wrap; color: var(--muted); font-size: 0.92rem; margin-bottom: 0.85rem; }
+.breadcrumb a { color: var(--primary); }
+.site-footer { padding: 1.4rem 0 2.2rem; border-top: 1px solid var(--line); }
+.footer-inner { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; color: var(--muted); }
+.footer-inner strong, .footer-inner a { color: var(--text); }
+
+@media (max-width: 1024px) {
+  .hero-grid, .two-col, .profile-grid, .contact-grid, .cta-panel { grid-template-columns: 1fr; }
+  .cards-3, .pricing-grid, .mini-grid, .cards-2, .services-grid { grid-template-columns: 1fr; }
+  .cta-panel { align-items: flex-start; }
+}
+@media (max-width: 720px) {
+  .header-inner { flex-direction: column; align-items: flex-start; padding: 0.8rem 0; }
+  .nav-wrap { width: 100%; justify-content: space-between; }
+  .main-nav { width: 100%; border-radius: 20px; }
+  .main-nav a { flex: 1 1 auto; text-align: center; font-size: 0.9rem; }
+  .hero, .page-hero, .section { padding: 3.8rem 0; }
+  .hero-copy h1, .page-hero h1 { font-size: clamp(2rem, 9vw, 3rem); }
+}
+/* --- FIN CAMBIO NUEVO --- */
+</file>
+
+<file path="web/cursos.html">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Da-TIca | Cursos en preparación</title>
+  <meta
+    name="description"
+    content="La línea de cursos de Da-TIca se encuentra en preparación y pronto incluirá contenidos prácticos sobre datos, IA y automatización."
+  />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html">Da-<span>TIca</span></a>
+      <div class="nav-wrap">
+        <nav class="main-nav" aria-label="Navegación principal">
+          <a href="index.html">Inicio</a>
+          <a href="sitios-web.html">Sitios web</a>
+          <a href="data-mining.html">Data Mining</a>
+          <a href="cursos.html" class="active">Cursos</a>
+          <a href="#estado">Estado</a>
+          <a href="#contacto">Contacto</a>
+        </nav>
+        <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">◐</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <div class="breadcrumb">
+          <a href="index.html">Inicio</a>
+          <span>•</span>
+          <span>Cursos</span>
+        </div>
+
+        <span class="eyebrow">Cursos</span>
+        <h1 style="max-width: 12ch;">La línea de cursos está <span>en preparación</span>.</h1>
+        <p class="lead">
+          Esta sección queda visible para anunciar futuras formaciones prácticas relacionadas con datos,
+          inteligencia artificial aplicada y automatización útil.
+        </p>
+
+        <div class="actions">
+          <a href="mailto:crrb@da-tica.com?subject=Quiero%20informaci%C3%B3n%20sobre%20cursos" class="btn">Solicitar información</a>
+          <a href="index.html" class="btn-secondary">Volver al inicio</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="estado">
+      <div class="container cards-2">
+        <div class="card">
+          <span class="eyebrow">Estado actual</span>
+          <h3>🚧 Página en construcción</h3>
+          <p>
+            La línea de cursos se encuentra en preparación y próximamente incorporará contenidos prácticos
+            sobre datos, inteligencia artificial y automatización aplicada.
+          </p>
+          <ul class="simple-list">
+            <li>Contenido todavía en desarrollo.</li>
+            <li>Enfoque práctico y aplicable.</li>
+            <li>Próxima publicación de nuevos cursos.</li>
+          </ul>
+        </div>
+
+        <div class="quote-box">
+          <span class="eyebrow">Próximamente</span>
+          <h3>Formación orientada a uso real</h3>
+          <p>
+            Esta sección reunirá cursos diseñados para ayudar a comprender y aplicar herramientas de datos,
+            automatización e inteligencia artificial en contextos reales.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="contacto">
+      <div class="container">
+        <div class="cta-panel">
+          <div>
+            <h2>La sección ya comunica que la línea existe y que pronto tendrá contenido propio.</h2>
+            <p>
+              Mientras la publicación avanza, el visitante puede dejar su interés por correo.
+            </p>
+          </div>
+          <a href="mailto:crrb@da-tica.com?subject=Quiero%20informaci%C3%B3n%20sobre%20cursos" class="btn">Solicitar información</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p><strong>© 2026 Da-TIca</strong> · Sitios web, Data Mining y soluciones digitales aplicadas</p>
+      <p><a href="mailto:crrb@da-tica.com">crrb@da-tica.com</a> · <a href="https://www.youtube.com/@Da-Tica" target="_blank" rel="noopener">📺 YouTube: @Da-Tica</a></p>
+    </div>
+  </footer>
+
+  <script>
+    const toggle = document.getElementById('themeToggle');
+    const root = document.documentElement;
+    const storageKey = 'theme-preference';
+
+    const applyTheme = (theme) => {
+      root.setAttribute('data-theme', theme);
+    };
+
+    const savedTheme = localStorage.getItem(storageKey);
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+    applyTheme(initialTheme);
+
+    if (toggle) {
+      toggle.addEventListener('click', () => {
+        const current = root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+        const next = current === 'dark' ? 'light' : 'dark';
+        localStorage.setItem(storageKey, next);
+        applyTheme(next);
+      });
+    }
+  </script>
+
+</body>
+</html>
+</file>
+
+<file path="web/data-mining.html">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Da-TIca | Data Mining aplicado al negocio</title>
+  <meta
+    name="description"
+    content="Servicios de Data Mining para entender mejor los datos, detectar patrones, ordenar información y apoyar decisiones."
+  />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html">Da-<span>TIca</span></a>
+      <div class="nav-wrap">
+        <nav class="main-nav" aria-label="Navegación principal">
+          <a href="index.html">Inicio</a>
+          <a href="sitios-web.html">Sitios web</a>
+          <a href="data-mining.html" class="active">Data Mining</a>
+          <a href="cursos.html">Cursos</a>
+          <a href="#beneficios">Beneficios</a>
+          <a href="#contacto">Contacto</a>
+        </nav>
+        <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">◐</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-hero">
+      <div class="container two-col">
+        <div>
+          <div class="breadcrumb">
+            <a href="index.html">Inicio</a>
+            <span>•</span>
+            <span>Data Mining</span>
+          </div>
+          <span class="eyebrow">Data Mining</span>
+          <h1>Datos mejor entendidos para tomar <span>mejores decisiones</span>.</h1>
+          <p class="lead">
+            Esta línea se enfoca en ordenar, analizar y aprovechar la información para detectar patrones,
+            inconsistencias, riesgos, oportunidades y caminos de mejora.
+          </p>
+          <div class="actions">
+            <a href="mailto:crrb@da-tica.com?subject=Quiero%20informaci%C3%B3n%20de%20Data%20Mining" class="btn">Solicitar información</a>
+            <a href="#beneficios" class="btn-secondary">Ver beneficios</a>
+          </div>
+          <ul class="hero-points">
+            <li>Detección de patrones y hallazgos relevantes.</li>
+            <li>Mejor comprensión de procesos y datos dispersos.</li>
+            <li>Orientación práctica para negocio y operación.</li>
+          </ul>
+        </div>
+
+        <div class="hero-visual">
+          <img src="img/services-data-flow.png" alt="Análisis y flujo inteligente de datos" />
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="beneficios">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Beneficios</span>
+          <h2>Una línea presentada con beneficios claros y lenguaje directo.</h2>
+          <p>
+            La página se enfoca en valor útil: orden, hallazgos y apoyo para decidir con más criterio.
+          </p>
+        </div>
+
+        <div class="cards-3">
+          <article class="service-card">
+            <div class="service-top">
+              <div class="service-index">01</div>
+              <span class="service-pill">Orden</span>
+            </div>
+            <h3>Información más organizada</h3>
+            <p>
+              Se trabaja sobre datos dispersos, repetidos o difíciles de interpretar para convertirlos en información útil.
+            </p>
+          </article>
+
+          <article class="service-card">
+            <div class="service-top">
+              <div class="service-index">02</div>
+              <span class="service-pill">Hallazgos</span>
+            </div>
+            <h3>Patrones y señales relevantes</h3>
+            <p>
+              El análisis permite encontrar tendencias, anomalías y oportunidades que no siempre se ven a simple vista.
+            </p>
+          </article>
+
+          <article class="service-card">
+            <div class="service-top">
+              <div class="service-index">03</div>
+              <span class="service-pill">Decisión</span>
+            </div>
+            <h3>Mejor apoyo para decidir</h3>
+            <p>
+              La información se convierte en insumo para priorizar acciones, mejorar procesos y reducir incertidumbre.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container cards-2">
+        <div class="card">
+          <span class="eyebrow">Aplicaciones</span>
+          <h3>Áreas donde puede ayudar</h3>
+          <ul class="simple-list">
+            <li>Detección de inconsistencias o errores repetitivos.</li>
+            <li>Segmentación y análisis de comportamiento.</li>
+            <li>Identificación de cuellos de botella.</li>
+            <li>Apoyo para priorización de mejoras.</li>
+            <li>Preparación para automatización o IA aplicada.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <span class="eyebrow">Enfoque</span>
+          <h3>Un análisis útil vale más que una lista larga de términos técnicos.</h3>
+          <p>
+            La sección se presenta con una idea clara: entender mejor los datos, descubrir patrones,
+            ordenar información y abrir camino a decisiones más sólidas.
+          </p>
+          <div class="mini-grid">
+            <div class="mini-stat">
+              <strong>Claridad</strong>
+              <span>Más entendimiento del estado real.</span>
+            </div>
+            <div class="mini-stat">
+              <strong>Prioridad</strong>
+              <span>Identificación de problemas clave.</span>
+            </div>
+            <div class="mini-stat">
+              <strong>Ruta</strong>
+              <span>Base para mejoras y automatización.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container cards-2">
+        <div class="card image-card">
+          <img src="img/ai-governance-shield.png" alt="Uso responsable de IA y análisis" />
+        </div>
+        <div class="card">
+          <span class="eyebrow">Diagnóstico</span>
+          <h3>Una base útil para mejorar procesos, automatización o inteligencia artificial aplicada.</h3>
+          <p>
+            Cuando el problema no es solo de datos sino también de lentitud operativa o trabajo manual,
+            el diagnóstico ayuda a ordenar el panorama y definir una ruta más clara.
+          </p>
+          <ul class="simple-list">
+            <li>Revisión del estado actual de datos y procesos.</li>
+            <li>Detección de oportunidades de mejora.</li>
+            <li>Recomendaciones para automatización o IA con criterio.</li>
+            <li>Avance por etapas con menor riesgo.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="contacto">
+      <div class="container">
+        <div class="cta-panel">
+          <div>
+            <h2>Cuando la información se entiende mejor, el negocio puede avanzar con más criterio.</h2>
+            <p>
+              Esta página deja a Data Mining con su propio lenguaje y su propia promesa de valor.
+            </p>
+          </div>
+          <a href="mailto:crrb@da-tica.com?subject=Quiero%20informaci%C3%B3n%20de%20Data%20Mining" class="btn">Solicitar diagnóstico</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p><strong>© 2026 Da-TIca</strong> · Sitios web, Data Mining y soluciones digitales aplicadas</p>
+      <p><a href="mailto:crrb@da-tica.com">crrb@da-tica.com</a> · <a href="https://www.youtube.com/@Da-Tica" target="_blank" rel="noopener">📺 YouTube: @Da-Tica</a></p>
+    </div>
+  </footer>
+
+  <script>
+    const toggle = document.getElementById('themeToggle');
+    const root = document.documentElement;
+    const storageKey = 'theme-preference';
+
+    const applyTheme = (theme) => {
+      root.setAttribute('data-theme', theme);
+    };
+
+    const savedTheme = localStorage.getItem(storageKey);
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+    applyTheme(initialTheme);
+
+    if (toggle) {
+      toggle.addEventListener('click', () => {
+        const current = root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+        const next = current === 'dark' ? 'light' : 'dark';
+        localStorage.setItem(storageKey, next);
+        applyTheme(next);
+      });
+    }
+  </script>
+
+</body>
+</html>
+</file>
+
+<file path="web/sitios-web.html">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Da-TIca | Sitios web desde 6 USD al mes</title>
+  <meta
+    name="description"
+    content="Sitios web desde 6 USD al mes, con apoyo para dominio, publicación, formularios, catálogos y opciones con base de datos."
+  />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html">Da-<span>TIca</span></a>
+      <div class="nav-wrap">
+        <nav class="main-nav" aria-label="Navegación principal">
+          <a href="index.html">Inicio</a>
+          <a href="sitios-web.html" class="active">Sitios web</a>
+          <a href="data-mining.html">Data Mining</a>
+          <a href="cursos.html">Cursos</a>
+          <a href="#planes">Opciones</a>
+          <a href="#contacto">Contacto</a>
+        </nav>
+        <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">◐</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-hero">
+      <div class="container two-col">
+        <div>
+          <div class="breadcrumb">
+            <a href="index.html">Inicio</a>
+            <span>•</span>
+            <span>Sitios web</span>
+          </div>
+          <span class="eyebrow">Sitios web</span>
+          <h1>Una página web clara, profesional y <span>lista para publicarse</span>.</h1>
+          <p class="lead">
+            Esta línea está pensada para negocios, consultorios, emprendimientos y marcas personales que necesitan presencia digital
+            sin complicarse con temas técnicos.
+          </p>
+          <div class="price-tag">
+            <strong>6 USD</strong>
+            <span>al mes desde la opción base</span>
+          </div>
+          <div class="actions">
+            <a href="mailto:crrb@da-tica.com?subject=Quiero%20mi%20sitio%20web" class="btn">Quiero mi sitio web</a>
+            <a href="#planes" class="btn-secondary">Ver opciones</a>
+          </div>
+          <ul class="hero-points">
+            <li>Apoyo para dominio y publicación.</li>
+            <li>Opciones informativas o con funciones adicionales.</li>
+            <li>Comunicación simple, enfocada en lo que el cliente obtiene.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Lo que puede obtener el cliente</h3>
+          <ul class="simple-list">
+            <li>Página para negocio, consultorio o marca personal.</li>
+            <li>Landing page para mostrar servicios y captar contactos.</li>
+            <li>Formulario de contacto o solicitud.</li>
+            <li>Catálogo de productos o servicios.</li>
+            <li>Página con reservas, registros o base de datos.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="planes">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Opciones</span>
+          <h2>Dos formas de empezar según la necesidad del negocio.</h2>
+          <p>
+            La oferta separa una opción más simple para presencia web y una opción con más funciones para negocios
+            que necesitan interacción o almacenamiento de información.
+          </p>
+        </div>
+
+        <div class="pricing-grid">
+          <article class="service-card">
+            <div class="service-top">
+              <div class="service-index">01</div>
+              <span class="service-pill">Opción base</span>
+            </div>
+            <h3>Sitio informativo</h3>
+            <p>
+              Ideal para mostrarse en internet con una página clara, económica y profesional.
+            </p>
+            <ul class="feature-list">
+              <li>Presentación del negocio o servicio.</li>
+              <li>WhatsApp, redes sociales, horarios y ubicación.</li>
+              <li>Apoyo con dominio y publicación inicial.</li>
+              <li>Desde 6 USD al mes en la modalidad base.</li>
+            </ul>
+          </article>
+
+          <article class="service-card">
+            <div class="service-top">
+              <div class="service-index">02</div>
+              <span class="service-pill">Opción funcional</span>
+            </div>
+            <h3>Sitio con formularios o base de datos</h3>
+            <p>
+              Para negocios que necesitan algo más que presencia: reservas, solicitudes, registros, consultas o paneles simples.
+            </p>
+            <ul class="feature-list">
+              <li>Formularios conectados a almacenamiento.</li>
+              <li>Solicitudes, cotizaciones o reservas.</li>
+              <li>Escalable según crecimiento del negocio.</li>
+              <li>Más valor para operaciones reales.</li>
+            </ul>
+          </article>
+
+          <article class="service-card">
+            <div class="service-top">
+              <div class="service-index">03</div>
+              <span class="service-pill">Acompañamiento</span>
+            </div>
+            <h3>Desde la idea hasta dejarla en línea</h3>
+            <p>
+              El cliente no necesita entender infraestructura. Lo importante es que su página quede visible, ordenada y útil.
+            </p>
+            <ul class="feature-list">
+              <li>Orientación para escoger dominio.</li>
+              <li>Configuración y publicación inicial.</li>
+              <li>Ajustes visuales por etapas.</li>
+              <li>Posibilidad de crecimiento posterior.</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container cards-2">
+        <div class="card">
+          <span class="eyebrow">Ejemplos</span>
+          <h3>Tipos de página que pueden desarrollarse</h3>
+          <ul class="simple-list">
+            <li>Página para consultorio o despacho.</li>
+            <li>Portafolio profesional.</li>
+            <li>Catálogo de productos o servicios.</li>
+            <li>Landing page para campañas o promociones.</li>
+            <li>Página con formulario de reservas o contacto.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <span class="eyebrow">Beneficios</span>
+          <h3>Presencia digital con capacidad de crecer por etapas.</h3>
+          <p>
+            La comunicación se centra en lo que el cliente obtiene: presencia web, mejor imagen, contacto más fácil
+            y una base lista para ampliar luego si el negocio lo necesita.
+          </p>
+          <div class="mini-grid">
+            <div class="mini-stat">
+              <strong>Presencia</strong>
+              <span>El negocio ya puede mostrarse en línea.</span>
+            </div>
+            <div class="mini-stat">
+              <strong>Contacto</strong>
+              <span>Más facilidad para captar clientes.</span>
+            </div>
+            <div class="mini-stat">
+              <strong>Crecimiento</strong>
+              <span>Posibilidad de ampliar por etapas.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="contacto">
+      <div class="container">
+        <div class="cta-panel">
+          <div>
+            <h2>La propuesta se enfoca en que la página quede visible, útil y alineada con el negocio.</h2>
+            <p>
+              Esta sección funciona como punto de entrada para clientes que necesitan resultados claros y una explicación simple.
+            </p>
+          </div>
+          <a href="mailto:crrb@da-tica.com?subject=Quiero%20mi%20sitio%20web" class="btn">Solicitar información</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p><strong>© 2026 Da-TIca</strong> · Sitios web, Data Mining y soluciones digitales aplicadas</p>
+      <p><a href="mailto:crrb@da-tica.com">crrb@da-tica.com</a> · <a href="https://www.youtube.com/@Da-Tica" target="_blank" rel="noopener">📺 YouTube: @Da-Tica</a></p>
+    </div>
+  </footer>
+
+  <script>
+    const toggle = document.getElementById('themeToggle');
+    const root = document.documentElement;
+    const storageKey = 'theme-preference';
+
+    const applyTheme = (theme) => {
+      root.setAttribute('data-theme', theme);
+    };
+
+    const savedTheme = localStorage.getItem(storageKey);
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+    applyTheme(initialTheme);
+
+    if (toggle) {
+      toggle.addEventListener('click', () => {
+        const current = root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+        const next = current === 'dark' ? 'light' : 'dark';
+        localStorage.setItem(storageKey, next);
+        applyTheme(next);
+      });
+    }
+  </script>
+
+</body>
+</html>
+</file>
+
+<file path="docker-compose.yml">
+# ==============================================================================
+# Da-TIca - Docker Compose para Coolify
+# ==============================================================================
+# Configuración simple: Coolify maneja el proxy Traefik automáticamente.
+# En Coolify, configurar dominios: https://da-tica.com:8080, https://www.da-tica.com:8080
+# ==============================================================================
+
+services:
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    image: da-tica_portal_web:1.0.0
+    restart: unless-stopped
+    expose:
+      - '8080'
+    healthcheck:
+      test:
+        - CMD
+        - wget
+        - '-qO-'
+        - 'http://127.0.0.1:8080/'
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+</file>
+
+<file path="web/index.html">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Da-TIca | Sitios web, Data Mining y cursos</title>
+  <meta
+    name="description"
+    content="Sitios web desde 6 USD al mes, servicios de Data Mining y una línea de cursos en preparación."
+  />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html">Da-<span>TIca</span></a>
+      <div class="nav-wrap">
+        <nav class="main-nav" aria-label="Navegación principal">
+          <a href="index.html" class="active">Inicio</a>
+          <a href="sitios-web.html">Sitios web</a>
+          <a href="data-mining.html">Data Mining</a>
+          <a href="cursos.html">Cursos</a>
+          <a href="#perfil">Perfil</a>
+          <a href="#contacto">Contacto</a>
+        </nav>
+        <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">◐</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <span class="eyebrow">Soluciones digitales</span>
+          <h1>Una oferta clara para <span>tres necesidades</span> distintas.</h1>
+          <p>
+            Da-TIca reúne tres líneas de trabajo: sitios web para negocios y profesionales,
+            Data Mining para aprovechar mejor la información y una línea de cursos que se encuentra en preparación.
+          </p>
+          <div class="hero-actions">
+            <a href="sitios-web.html" class="btn">Ver sitios web</a>
+            <a href="data-mining.html" class="btn-secondary">Ver Data Mining</a>
+          </div>
+          <ul class="hero-points">
+            <li>Sitios web desde 6 USD al mes.</li>
+            <li>Apoyo desde el dominio hasta la publicación.</li>
+            <li>Servicios separados para que cada visitante encuentre lo suyo rápido.</li>
+          </ul>
+        </div>
+        <div class="hero-visual">
+          <img src="img/hero-data-center.png" alt="Soluciones digitales para negocios" />
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Servicios</span>
+          <h2>Tres caminos claros dentro del mismo sitio.</h2>
+          <p>
+            La portada solo orienta. Cada línea tiene su propia página para evitar mezcla de mensajes y exceso de información.
+          </p>
+        </div>
+
+        <div class="cards-3">
+          <article class="service-card">
+            <div class="service-top">
+              <div class="service-index">01</div>
+              <span class="service-pill">Sitios web</span>
+            </div>
+            <h3>Presencia web para negocio, consultorio o marca personal</h3>
+            <p>
+              Páginas para mostrarse mejor en internet, captar contactos y empezar con una imagen más profesional.
+            </p>
+            <div class="actions">
+              <a href="sitios-web.html" class="btn-secondary">Entrar</a>
+            </div>
+          </article>
+
+          <article class="service-card">
+            <div class="service-top">
+              <div class="service-index">02</div>
+              <span class="service-pill">Data Mining</span>
+            </div>
+            <h3>Análisis de datos orientado a decisiones</h3>
+            <p>
+              Servicios para detectar patrones, ordenar información, reducir ruido y encontrar oportunidades de mejora.
+            </p>
+            <div class="actions">
+              <a href="data-mining.html" class="btn-secondary">Entrar</a>
+            </div>
+          </article>
+
+          <article class="service-card">
+            <div class="service-top">
+              <div class="service-index">03</div>
+              <span class="service-pill">Cursos</span>
+            </div>
+            <h3>Formación práctica en preparación</h3>
+            <p>
+              Una sección pensada para publicar contenidos útiles sobre datos, automatización e inteligencia artificial aplicada.
+            </p>
+            <div class="actions">
+              <a href="cursos.html" class="btn-secondary">Entrar</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="perfil">
+      <div class="container profile-grid">
+        <div class="card">
+          <span class="eyebrow">Perfil</span>
+          <h2 style="margin: 1rem 0 0.8rem; font-size: clamp(1.8rem, 3vw, 2.5rem); line-height: 1.1; letter-spacing: -0.03em;">
+            Un enfoque que combina presencia web, datos y soluciones digitales aplicadas.
+          </h2>
+          <p class="lead">
+            La propuesta se enfoca en resolver necesidades reales con una comunicación clara y con una base técnica suficiente
+            para construir soluciones útiles, escalables y alineadas con el negocio.
+          </p>
+          <ul class="proof-list">
+            <li>Visión integral entre sitio web, datos y automatización.</li>
+            <li>Comunicación simple para cliente final.</li>
+            <li>Capacidad para construir soluciones que crecen por etapas.</li>
+          </ul>
+        </div>
+
+        <aside class="quote-box">
+          <span class="eyebrow">Propuesta</span>
+          <h3>Una página más clara ayuda a que el visitante entienda rápido y avance al servicio correcto.</h3>
+          <p>
+            El sitio queda organizado para que cada línea de negocio tenga su propio espacio y un mensaje más preciso.
+          </p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" id="contacto">
+      <div class="container">
+        <div class="cta-panel">
+          <div>
+            <h2>Contacto directo para elegir la línea de servicio adecuada.</h2>
+            <p>
+              Si se necesita una página web, apoyo con datos o información sobre los futuros cursos, este es el punto de entrada.
+            </p>
+          </div>
+          <a href="mailto:crrb@da-tica.com?subject=Quiero%20informaci%C3%B3n%20de%20Da-TIca" class="btn">Contactar ahora</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p><strong>© 2026 Da-TIca</strong> · Sitios web, Data Mining y soluciones digitales aplicadas</p>
+      <p><a href="mailto:crrb@da-tica.com">crrb@da-tica.com</a> · <a href="https://www.youtube.com/@Da-Tica" target="_blank" rel="noopener">📺 YouTube: @Da-Tica</a></p>
+    </div>
+  </footer>
+
+  <script>
+    const toggle = document.getElementById('themeToggle');
+    const root = document.documentElement;
+    const storageKey = 'theme-preference';
+
+    const applyTheme = (theme) => {
+      root.setAttribute('data-theme', theme);
+    };
+
+    const savedTheme = localStorage.getItem(storageKey);
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+    applyTheme(initialTheme);
+
+    if (toggle) {
+      toggle.addEventListener('click', () => {
+        const current = root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+        const next = current === 'dark' ? 'light' : 'dark';
+        localStorage.setItem(storageKey, next);
+        applyTheme(next);
+      });
+    }
+  </script>
+
+</body>
+</html>
+</file>
+
+</files>

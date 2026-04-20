@@ -1,16 +1,9 @@
-# ==============================================================================
-# Da-TIca - Docker Compose para Coolify
-# ==============================================================================
-# Configuración simple: Coolify maneja el proxy Traefik automáticamente.
-# En Coolify, configurar dominios: https://da-tica.com:8080, https://www.da-tica.com:8080
-# ==============================================================================
-
 services:
   web:
     build:
-      context: ./web
+      context: .
       dockerfile: Dockerfile
-    image: da-tica_portal_web:1.0.0
+    image: da-tica_portal_web:astro-1.1.0
     restart: unless-stopped
     expose:
       - '8080'

@@ -1,0 +1,18 @@
+---
+const { index, href, label, title, description, bullets = [] } = Astro.props;
+---
+
+<article class="service-card">
+  <div class="service-top">
+    <span class="service-index">{index}</span>
+    <span class="service-pill">{label}</span>
+  </div>
+  <h3>{title}</h3>
+  <p>{description}</p>
+  <ul class="detail-list compact">
+    {bullets.map((item) => <li>{item}</li>)}
+  </ul>
+  <div class="button-row">
+    <a class="button button-secondary" href={href}>Entrar</a>
+  </div>
+</article>

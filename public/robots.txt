@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://da-tica.com/sitemap.xml

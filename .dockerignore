@@ -1,36 +1,8 @@
-# ==============================================================================
-# Docker Ignore - Archivos a excluir del Build
-# ==============================================================================
-
-# Control de versiones
 .git
 .gitignore
-
-# Dependencias y builds locales
 node_modules
 dist
 .vscode
 .idea
 *.log
-
-# Archivos sensibles
 .env
-.env.*
-!.env.example
-!.env.vps.example
-
-# Documentación local
-*.md
-!README.md
-
-# Archivos temporales
-*.tmp
-*.bak
-.DS_Store
-Thumbs.db
-
-# Tests
-tests/
-__tests__/
-*.test.js
-*.spec.js
