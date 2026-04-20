@@ -33,3 +33,12 @@ https://da-tica.com:8080,https://www.da-tica.com:8080
 - El recurso `web` debe quedar en **Running (healthy)**
 - El dominio debe abrir sin error 503
 - Si cambia código, hacer redeploy
+
+## Incidente documentado: puerto 80 ocupado
+
+Si el despliegue falla con `Bind for 0.0.0.0:80 failed: port is already allocated`, revisar la skill:
+
+
+`skills/deploy/coolify-puerto-80-ocupado/SKILL.md`
+
+Esta skill documenta que el problema no está en Astro ni en el código — es un conflicto de puertos en el host.

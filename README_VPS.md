@@ -53,3 +53,12 @@ docker compose -f docker-compose.vps.yml ps
 docker compose -f docker-compose.vps.yml logs -f
 curl -I https://da-tica.com
 ```
+
+## Incidente documentado: puerto 80 ocupado
+
+Si el despliegue falla con `Bind for 0.0.0.0:80 failed: port is already allocated`, revisar la skill:
+
+`skills/deploy/coolify-puerto-80-ocupado/SKILL.md`
+
+
+Esta skill documenta que el problema no está en Astro ni en el código — es un conflicto de puertos en el host.
