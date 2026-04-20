@@ -1,13 +1,13 @@
-// --- INICIO CAMBIO NUEVO ---
 export const site = {
   brand: 'Da-TIca',
   email: 'crrb@da-tica.com',
   youtube: 'https://www.youtube.com/@Da-Tica',
   whatsapp: 'https://wa.me/593000000000',
   headline:
-    'Sitios web, análisis de datos y formación práctica para negocios y profesionales que quieren avanzar con más claridad.',
+    'Sitios web, análisis de datos y automatización aplicada con una presencia digital más seria, clara y moderna.',
   description:
-    'Da-TIca ayuda a negocios, profesionales y marcas personales a verse mejor en internet, entender mejor su información y aprovechar herramientas de automatización e inteligencia artificial aplicada.',
+    'Da-TIca crea presencia web, servicios de análisis de datos y soluciones de automatización con un enfoque visual profesional, comunicación clara y base lista para crecer.',
+  tagline: 'Sitios web, data mining e IA aplicada',
 };
 
 export const nav = [
@@ -17,6 +17,36 @@ export const nav = [
   { href: '/cursos/', label: 'Cursos' },
 ];
 
+export const premiumStats = [
+  { value: 'Astro', label: 'Base rápida y moderna' },
+  { value: 'SEO', label: 'Estructura pensada para posicionar' },
+  { value: '24/7', label: 'Presencia digital siempre visible' },
+  { value: 'Escalable', label: 'Lista para crecer por etapas' },
+];
+
+export const premiumCapabilities = [
+  {
+    title: 'Presencia premium',
+    description:
+      'Diseño visual más limpio, profesional y confiable para que la primera impresión sume valor real.',
+  },
+  {
+    title: 'Mensaje más claro',
+    description:
+      'Contenido orientado al visitante para que entienda rápido qué se ofrece y por qué conviene.',
+  },
+  {
+    title: 'Velocidad y estructura',
+    description:
+      'Base ligera en Astro para cargar rápido, ordenar mejor el contenido y evitar una web pesada.',
+  },
+  {
+    title: 'Crecimiento por fases',
+    description:
+      'El sitio puede empezar simple y luego incorporar formularios, campañas, blog, portafolio o nuevas funciones.',
+  },
+];
+
 export const services = [
   {
     index: '01',
@@ -24,25 +54,25 @@ export const services = [
     label: 'Sitios web',
     title: 'Sitios web que transmiten confianza desde la primera visita',
     description:
-      'Páginas claras, rápidas y bien estructuradas para que el cliente entienda el servicio, encuentre contacto y perciba una imagen profesional.',
-    bullets: ['Más confianza', 'Más claridad', 'Más contacto'],
+      'Páginas rápidas, visualmente sólidas y mejor estructuradas para negocios, consultorios y marcas personales.',
+    bullets: ['Diseño moderno', 'Más confianza', 'Base escalable'],
   },
   {
     index: '02',
     href: '/data-mining/',
     label: 'Data Mining',
-    title: 'Análisis de datos para descubrir patrones y tomar mejores decisiones',
+    title: 'Análisis de datos para descubrir patrones y decidir con más criterio',
     description:
-      'Servicios orientados a ordenar, revisar y analizar información para detectar errores, tendencias, riesgos y oportunidades que ayuden a mejorar procesos.',
-    bullets: ['Más orden', 'Más hallazgos', 'Más criterio'],
+      'Servicios orientados a ordenar, revisar y analizar información para detectar tendencias, errores y oportunidades.',
+    bullets: ['Más orden', 'Más hallazgos', 'Más claridad'],
   },
   {
     index: '03',
     href: '/cursos/',
     label: 'Cursos',
-    title: 'Formación práctica en datos, automatización, prompts e inteligencia artificial aplicada',
+    title: 'Formación práctica en automatización, prompts e inteligencia artificial aplicada',
     description:
-      'Contenidos pensados para enseñar herramientas útiles con enfoque real, lenguaje claro y aplicación inmediata en proyectos y trabajo diario.',
+      'Contenidos pensados para enseñar herramientas útiles con aplicación real en trabajo, proyectos y procesos.',
     bullets: ['Enfoque práctico', 'Explicación clara', 'Próximamente'],
   },
 ];
@@ -87,4 +117,3 @@ export const faqData = [
       'Sí. Cuando los datos están mejor entendidos, resulta más fácil construir reportes, reglas automáticas y soluciones con inteligencia artificial aplicada.',
   },
 ];
-// --- FIN CAMBIO NUEVO ---

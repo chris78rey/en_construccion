@@ -1,6 +1,6 @@
 ---
 import ThemeToggle from './ThemeToggle.vue';
-import { nav } from '../data/site';
+import { nav, site } from '../data/site';
 
 const { pathname = '/' } = Astro.props;
 const isActive = (href) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
@@ -9,9 +9,10 @@ const isActive = (href) => (href === '/' ? pathname === '/' : pathname.startsWit
 <header class="site-header">
   <div class="container header-row">
     <a class="brand" href="/">
-      <span class="brand-mark">Da</span>
-      <span class="brand-sep">-</span>
-      <span class="brand-accent">TIca</span>
+      <span class="brand-lockup">
+        <span class="brand-name">{site.brand}</span>
+        <span class="brand-subtitle">{site.tagline}</span>
+      </span>
     </a>
 
     <nav class="main-nav" aria-label="Navegación principal">
@@ -25,8 +26,11 @@ const isActive = (href) => (href === '/' ? pathname === '/' : pathname.startsWit
     </nav>
 
     <div class="header-actions">
-      <a class="button button-secondary hide-mobile" href="mailto:crrb@da-tica.com?subject=Quiero%20informaci%C3%B3n">
-        Contacto
+      <a
+        class="button button-secondary hide-mobile"
+        href={`mailto:${site.email}?subject=Quiero%20informaci%C3%B3n%20sobre%20Da-TIca`}
+      >
+        Solicitar información
       </a>
       <ThemeToggle client:load />
     </div>

@@ -2,69 +2,88 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionIntro from '../components/SectionIntro.astro';
 import ServiceCard from '../components/ServiceCard.astro';
-import { services, site } from '../data/site';
+import { premiumCapabilities, premiumStats, services, site } from '../data/site';
 ---
 
-<BaseLayout title={site.headline} description={site.description} pathname={Astro.url.pathname}>
-  <section class={`hero hero-home`}>
-    <div class={`container hero-grid`}>
-      <div class={`hero-copy`}>
-        <span class={`eyebrow`}>Soluciones digitales</span>
-        <h1>{site.headline}</h1>
+<BaseLayout
+  title="Da-TIca | Sitios web, Data Mining y automatización aplicada"
+  description={site.description}
+  pathname={Astro.url.pathname}
+>
+  <section class="hero hero-home">
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <span class="eyebrow">Tema premium en Astro</span>
+        <h1>Un sitio más serio, más claro y con una presencia visual que sí se siente profesional.</h1>
         <p>
-          Da-TIca reúne tres líneas de servicio para negocios, profesionales y marcas personales:
-          sitios web para mejorar la presencia digital, Data Mining para entender mejor la información
-          y una futura línea de cursos enfocada en herramientas útiles y aplicables.
+          Da-TIca reúne sitios web, análisis de datos y automatización aplicada en una propuesta visual
+          más pulida, con mejor jerarquía, mejor percepción de marca y una base lista para crecer sin
+          volver pesada la web.
         </p>
-        <div class={`button-row`}>
-          <a class={`button`} href={`/sitios-web/`}>Ver sitios web</a>
-          <a class={`button button-secondary`} href={`/data-mining/`}>Ver Data Mining</a>
+
+        <div class="button-row">
+          <a class="button" href="/sitios-web/">Ver propuesta web</a>
+          <a class="button button-secondary" href={`mailto:${site.email}?subject=Quiero%20una%20web%20premium`}>
+            Solicitar información
+          </a>
         </div>
-        <ul class={`hero-points`}>
-          <li>Sitios web desde 6 USD al mes.</li>
-          <li>Servicios organizados para que cada persona encuentre rápido lo que necesita.</li>
-          <li>Una base profesional lista para crecer por etapas.</li>
-        </ul>
+
+        <div class="trust-row">
+          <span class="trust-chip">Diseño premium</span>
+          <span class="trust-chip">Rápido en Astro</span>
+          <span class="trust-chip">Base escalable</span>
+          <span class="trust-chip">Mensaje más comercial</span>
+        </div>
       </div>
 
-      <div class={`hero-panel glow-card`}>
-        <div class={`stack-badge`}>Da-TIca</div>
-        <h2>Una propuesta pensada para generar más claridad y más confianza</h2>
-        <p>
-          Cada línea tiene su propio espacio para que el visitante entienda mejor el servicio,
-          identifique si le conviene y pueda avanzar con más seguridad hacia el siguiente paso.
-        </p>
-        <div class={`metric-grid`}>
-          <article>
-            <strong>Más claridad</strong>
-            <span>Servicios separados por necesidad</span>
-          </article>
-          <article>
-            <strong>Más confianza</strong>
-            <span>Imagen seria y profesional</span>
-          </article>
-          <article>
-            <strong>Más orden</strong>
-            <span>Contenido mejor distribuido</span>
-          </article>
-          <article>
-            <strong>Más proyección</strong>
-            <span>Base lista para seguir creciendo</span>
-          </article>
+      <aside class="hero-preview glow-card">
+        <div class="preview-header">
+          <span class="stack-badge">Vista premium</span>
+          <span class="mini-label">Astro + rendimiento</span>
         </div>
-      </div>
+
+        <div class="preview-window">
+          <div class="preview-line preview-line-lg"></div>
+          <div class="preview-line preview-line-md"></div>
+          <div class="preview-grid">
+            <div class="preview-box"></div>
+            <div class="preview-box"></div>
+            <div class="preview-box"></div>
+          </div>
+        </div>
+
+        <div class="metric-grid">
+          {premiumStats.map((item) => (
+            <article>
+              <strong>{item.value}</strong>
+              <span>{item.label}</span>
+            </article>
+          ))}
+        </div>
+      </aside>
     </div>
   </section>
 
-  <section class={`section`}>
-    <div class={`container`}>
+  <section class="section section-soft">
+    <div class="container stat-strip">
+      {premiumStats.map((item) => (
+        <article class="stat-card">
+          <strong>{item.value}</strong>
+          <span>{item.label}</span>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
       <SectionIntro
-        eyebrow={`Servicios`}
-        title={`Tres líneas para resolver necesidades distintas`}
-        text={`Cada servicio responde a un problema concreto: verse mejor en internet, aprovechar mejor la información o aprender herramientas con aplicación real.`}
+        eyebrow="Servicios"
+        title="Tres líneas con mejor presencia y mejor estructura"
+        text="Cada línea queda presentada con más claridad para que el visitante entienda rápido qué recibe y por qué vale la pena avanzar."
       />
 
-      <div class={`card-grid card-grid-3`}>
+      <div class="card-grid card-grid-3">
         {services.map((service) => (
           <ServiceCard {...service} />
         ))}
@@ -72,47 +91,70 @@ import { services, site } from '../data/site';
     </div>
   </section>
 
-  <section class={`section section-soft`}>
-    <div class={`container`}>
+  <section class="section section-soft">
+    <div class="container">
       <SectionIntro
-        eyebrow={`Perfil`}
-        title={`Una propuesta que combina presencia digital, datos y soluciones aplicadas`}
-        text={`Da-TIca integra trabajo web, análisis de información, automatización, prompts e inteligencia artificial aplicada con una comunicación clara y orientada a resultados.`}
+        eyebrow="Lo que hace que se sienta mejor"
+        title="El cambio no es solo visual; también mejora percepción, lectura y valor"
+        text="La propuesta busca que el sitio se vea más caro, más limpio y más confiable sin perder velocidad ni simplicidad."
       />
 
-      <div class={`two-col-grid`}>
-        <article class={`info-card`}>
-          <h3>Lo que el visitante puede esperar</h3>
-          <ul class={`detail-list`}>
-            <li>Un servicio más claro, mejor explicado y más fácil de entender.</li>
-            <li>Una imagen digital más sólida y profesional.</li>
-            <li>Una base preparada para crecer con nuevas secciones o mejoras futuras.</li>
-            <li>Un enfoque práctico en datos, automatización e inteligencia artificial aplicada.</li>
-          </ul>
-        </article>
-
-        <article class={`info-card accent-card`}>
-          <p class={`mini-label`}>Enfoque</p>
-          <h3>Menos saturación y más comprensión</h3>
-          <p>
-            Cuando el mensaje es claro y la estructura acompaña, resulta más fácil que el visitante
-            comprenda el valor del servicio y tome la decisión de contactar.
-          </p>
-        </article>
+      <div class="capability-grid">
+        {premiumCapabilities.map((item) => (
+          <article class="capability-card">
+            <h3>{item.title}</h3>
+            <p>{item.description}</p>
+          </article>
+        ))}
       </div>
     </div>
   </section>
 
-  <section class={`section`}>
-    <div class={`container cta-banner`}>
+  <section class="section">
+    <div class="container two-col-grid">
+      <article class="featured-panel">
+        <span class="eyebrow">Dirección visual</span>
+        <h2>Menos apariencia de "página simple" y más sensación de producto profesional</h2>
+        <p>
+          La nueva home está pensada para vender mejor la percepción del servicio desde el primer scroll:
+          mejor jerarquía visual, mejor distribución, mejores bloques y un cierre más convincente.
+        </p>
+
+        <ul class="detail-list">
+          <li>Hero con más presencia y mejor composición</li>
+          <li>Tarjetas y bloques con más profundidad visual</li>
+          <li>Header y footer con acabado más serio</li>
+          <li>Base CSS moderna para que las demás páginas hereden mejor estilo</li>
+        </ul>
+      </article>
+
+      <article class="highlight-card">
+        <p class="mini-label">Aplicación inmediata</p>
+        <h3>Una base premium que luego puede crecer</h3>
+        <p>
+          Desde esta estructura ya se puede seguir con portafolio, casos, testimonios, blog, formularios,
+          agenda, captación de leads o una landing especializada por servicio.
+        </p>
+        <a class="button" href="/data-mining/">Explorar servicios</a>
+      </article>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container closing-cta">
       <div>
-        <span class={`eyebrow`}>Contacto</span>
-        <h2>Una presencia digital más clara puede abrir mejores oportunidades.</h2>
-        <p>El sitio está pensado para presentar servicios con una imagen seria, ordenada y profesional.</p>
+        <span class="eyebrow">Siguiente nivel</span>
+        <h2>La web ya puede empezar a sentirse como una plantilla de pago personalizada.</h2>
+        <p>
+          Con esta base, Da-TIca deja una imagen más fuerte y más moderna, lista para seguir refinándose por etapas.
+        </p>
       </div>
-      <div class={`button-row`}>
-        <a class={`button`} href={`mailto:${site.email}?subject=Quiero%20informaci%C3%B3n%20de%20Da-TIca`}>Solicitar información</a>
-        <a class={`button button-secondary`} href={site.youtube} target={`_blank`} rel={`noreferrer noopener`}>Ver canal</a>
+
+      <div class="button-row">
+        <a class="button" href="/sitios-web/">Ir a sitios web</a>
+        <a class="button button-secondary" href={`mailto:${site.email}?subject=Quiero%20mejorar%20mi%20sitio`}>
+          Continuar mejoras
+        </a>
       </div>
     </div>
   </section>
